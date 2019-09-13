@@ -1,2 +1,26 @@
-test1
-test 2 s nouta
+#include <iostream>
+using namespace std;
+
+const uint SIZE = 256;
+const uint BLOCK_SIZE = 8; 
+const uint TYPES_AMOUNT = 5; //log2(SIZE/BLOCK_SIZE) = 5
+unsigned char MEM[SIZE];
+
+uint ALLOCATED;
+uint TYPES_LIST[TYPES_AMOUNT];
+
+uint allocate(uint size, uint level) {
+    if (level > TYPES_AMOUNT) return -1;
+    return 0;
+}
+
+uint allocate(uint size) {
+    return allocate(size, 0);
+}
+
+
+
+int main() {
+    TYPES_LIST[0] = 1; //  1 -> 0 0 -> 0 0 0 0 -> ... on INIT
+    cout << allocate(5);
+}
