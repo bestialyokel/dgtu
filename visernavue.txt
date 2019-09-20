@@ -35,6 +35,9 @@ export default {
           return (this.state instanceof Array) ? this.state[0] : this.state;
       },
       calendarStartDate: function() {
+          let date = this.calendarState;
+          let prevMonthDays = 6 - date.getDay();
+          date.setDate(-prevMonthDays)
           return this.calendarState;
       },
       calendarEndDate: function() {
