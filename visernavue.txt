@@ -1,0 +1,70 @@
+<template>
+    <div class="datepicker">
+        <input type="text" name="datepicker"/>
+        <div class="modal">
+            <div v-for="n in calendarsAmount" class="calendar">
+                <div class="head">
+                    <button></button>
+                    <span class="title"></span>
+                    <div class="daysofweek"></div>
+                </div>
+                <div class="days">
+                    <!-- ДНИ -->
+                </div>
+            </div>
+        </div>
+     </div>
+</template>
+
+<script>
+export default {
+  name: 'DatePicker',
+  data: function() {
+      return {
+          showCalendar: false,
+          state: this.initState,
+          calendarState: {
+              month: this.calendarDate.getMonth();
+              year: this.calendarDate.getFullYear();
+          }
+      }
+  },
+  computed: {
+      calendarsAmount: function() {
+          return Number(this.range) + 1;
+      },
+      calendarDate: function() {
+          if (this.state instanceof Date) return this.state;
+          if (this.state instanceof Array) return this.state[0];
+          return new Date();
+      }
+  },
+  props: {
+    range: Boolean,
+    onChange: Function,
+    initState: {
+        type: [Array, Date],
+        default: null,
+        validator: function(value) {
+            if (value instanceof Date) return true;
+            else if (value instanceof Array && value.length == 2 && value[0] instanceof Date && value[1] instanceof Date) {
+                return true;
+            }
+            return false; 
+        }
+    }
+  },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+    .datepicker {
+        display: inline-block;
+    }
+    .calendar {
+        width: 200px;
+        height: 50px;
+        outline: 1px solid red;
+    }
+</style>
