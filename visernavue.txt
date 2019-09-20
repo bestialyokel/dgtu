@@ -2,7 +2,8 @@
     <div class="datepicker">
         <input type="text" name="datepicker"/>
         <div class="modal">
-            <div v-for="n in calendarsAmount" class="calendar">
+            <div v-for="n in calendarsAmount" :key="n" class="calendar">
+                {{calendarStartDate}}
                 <div class="head">
                     <button></button>
                     <span class="title"></span>
@@ -22,22 +23,23 @@ export default {
   data: function() {
       return {
           showCalendar: false,
-          state: this.initState,
-          calendarState: {
-              month: this.calendarDate.getMonth();
-              year: this.calendarDate.getFullYear();
-          }
+          state: this.initState || this.range ? [new Date(), new Date()] : new Date(),
       }
   },
   computed: {
       calendarsAmount: function() {
-          return Number(this.range) + 1;
+          if (this.state instanceof Array) return 2;
+          return 1;
       },
-      calendarDate: function() {
-          if (this.state instanceof Date) return this.state;
-          if (this.state instanceof Array) return this.state[0];
-          return new Date();
-      }
+      calendarState: function() {
+          return (this.state instanceof Array) ? this.state[0] : this.state;
+      },
+      calendarStartDate: function() {
+          return this.calendarState;
+      },
+      calendarEndDate: function() {
+          return 1;
+      } 
   },
   props: {
     range: Boolean,
