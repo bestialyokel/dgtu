@@ -2,63 +2,28 @@
     <div class="datepicker">
         <input type="text" name="datepicker"/>
         <div class="modal">
-            <div v-for="n in calendarsAmount" :key="n" class="calendar">
-                {{calendarStartDate}}
-                <div class="head">
-                    <button></button>
-                    <span class="title"></span>
-                    <div class="daysofweek"></div>
-                </div>
-                <div class="days">
-                    <!-- ДНИ -->
-                </div>
-            </div>
+            <Calendar/>
         </div>
      </div>
 </template>
 
 <script>
+import Calendar from './Calendar.vue'
+
 export default {
-  name: 'DatePicker',
-  data: function() {
-      return {
-          showCalendar: false,
-          state: this.initState || this.range ? [new Date(), new Date()] : new Date(),
-      }
-  },
-  computed: {
-      calendarsAmount: function() {
-          if (this.state instanceof Array) return 2;
-          return 1;
-      },
-      calendarState: function() {
-          return (this.state instanceof Array) ? this.state[0] : this.state;
-      },
-      calendarStartDate: function() {
-          let date = this.calendarState;
-          let prevMonthDays = 6 - date.getDay();
-          date.setDate(-prevMonthDays)
-          return this.calendarState;
-      },
-      calendarEndDate: function() {
-          return 1;
-      } 
-  },
-  props: {
-    range: Boolean,
-    onChange: Function,
-    initState: {
-        type: [Array, Date],
-        default: null,
-        validator: function(value) {
-            if (value instanceof Date) return true;
-            else if (value instanceof Array && value.length == 2 && value[0] instanceof Date && value[1] instanceof Date) {
-                return true;
-            }
-            return false; 
+    name: 'DatePicker',
+    components: {
+        Calendar
+    },
+    data: function() {
+        return {
+            state: this.initState
         }
+    },
+    props: {
+        range: Boolean,
+        initState: [Array, Date]
     }
-  },
 }
 </script>
 
@@ -66,10 +31,5 @@ export default {
 <style scoped>
     .datepicker {
         display: inline-block;
-    }
-    .calendar {
-        width: 200px;
-        height: 50px;
-        outline: 1px solid red;
     }
 </style>
