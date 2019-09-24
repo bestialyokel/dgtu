@@ -1,0 +1,131 @@
+<template>
+    <div class="calendar">
+        <div class="header">
+            <button @click="decMonth" class="day btn prev hover">p</button>
+            <span class="title">{{  [lang.shortMonths[_month], _year].join(' ')  }}</span>
+            <button @click="incMonth" class="day btn next hover">n</button>
+        </div>
+        <div class="days-header">
+            <div class="day" v-for="n in 7" :key="n">{{lang.shortWeekDays[n-1]}}</div>
+        </div>
+        <div class="days-container">
+            <div v-for="n in 42" :key="n - pmd(_year, _month)" :data-offset="n - pmd(_year, _month)" class="day hover" :class="(n - pmd(_year, _month)) | monthType">{{ dateNumber(n - pmd(_year, _month)) }}</div>
+        </div>
+    </div>
+</template>
+
+<script>
+
+let pmd = (year, month) => {
+    let date = new Date(year, month); 
+    date.setDate(1);
+    let day = date.getDay();
+    if (day == 0) return 6;
+    return day - 1;
+}
+
+
+var lang = {
+    weekDays: ['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'],
+    shortWeekDays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
+    shortMonths: ['янв.', 'февр.', 'март', 'апр.', 'май', 'июнь', 'июль', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'],
+
+}
+
+console.log(lang, pmd);
+export default {
+  name: 'Calendar',
+  data: function() {
+      return {
+          state: new Date(this.year, this.month),
+          lang,
+          pmd
+      }
+  },
+  methods: {
+      incMonth: function() {
+          this.state = new Date(this.state.getFullYear(), this.state.getMonth() + 1);
+      },
+      decMonth: function() {
+          this.state = new Date(this.state.getFullYear(), this.state.getMonth() - 1);
+      },
+      dateNumber: function(offset) {
+          let date = new Date(this.state.getYear(), this.state.getMonth() );
+          date.setDate(offset);
+          return date.getDate();
+      }
+  },
+  filters: {
+      monthType: function(offset) {
+          let date = new Date(this.state.getYear(), this.state.getMonth() );
+          date.setDate(offset);
+          if ( date.getMonth() != this.state.getMonth() ) return 'other'
+          return '';
+      }
+  },
+  computed: {
+      _year: function() {
+          return this.state.getFullYear();
+      },
+      _month: function() {
+          return this.state.getMonth();
+      },
+  },
+  props: {
+      year: {
+          type: Number,
+          default: new Date().getFullYear(),
+      },
+      month: {
+          type: Number,
+          default: new Date().getMonth(),
+      }
+  },
+}
+</script>
+
+<style scoped>
+    .days-container {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .day {
+        display: inline-block;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+        min-width: 32px;
+        width: 32px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    .calendar {
+        display: inline-block;
+        outline: 1px solid red;
+        width: 238px;
+        max-width: 238px;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .btn {
+        border: 0;
+        background: 0;
+        color: 0;
+        outline: 0;
+    }
+    .hover:hover {
+        background-color: #DADADA;
+    }
+</style>
