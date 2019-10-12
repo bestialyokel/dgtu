@@ -1,0 +1,97 @@
+/*
+Округление SIZE до 8+;
+Учет размеров в LIST;
+*/
+
+#include <iostream>
+#include <bitset>
+using namespace std;
+
+#define uint unsigned int
+#define pln(x) cout << x << endl;
+
+uint32_t clp2(uint32_t x) {
+   x = x - 1;
+   x = x | (x >> 1);
+   x = x | (x >> 2);
+   x = x | (x >> 4);
+   x = x | (x >> 8);
+   x = x | (x >> 16);
+   return x + 1;
+}
+
+const uint SIZE = 256;
+const uint BLOCK_SIZE = 8; 
+unsigned char MEM[SIZE];
+const unsigned char BMAP_SIZE = 32;
+uint BITMAP;
+uint *LIST[6];
+
+bool is_free(uint addr, int size) {
+    while (size > 0) {
+        int offset = addr+size-1;
+        if (BITMAP & (1<<offset)) return false;
+        size -= 1;
+    }
+    return true;
+}
+
+void set_busy(uint addr, uint size) {
+    while (size > 0) {
+        int offset = addr+size-1;
+        BITMAP |= ( 1 << offset);
+        size -= 1;
+    }
+}
+
+void set_free(uint addr, uint size) {
+    while (size > 0) {
+        int offset = addr+size-1;
+        BITMAP &= !(1 << offset);
+        size -= 1;
+    }
+}
+
+/*
+32 blocks
+1 - 8;
+2 - 16
+*/
+
+uint level(uint blocks) {
+    uint lvl = 0;
+    while ((blocks*BLOCK_SIZE << lvl) < SIZE) lvl++;
+    return lvl;
+}
+
+void set_busy_list(uint addr, uint blocks) {
+    uint lvl = level(blocks);
+    pln(lvl);
+}
+
+int allocate(uint size) {
+    size = clp2(size);
+    uint blocks = size/BLOCK_SIZE;
+    pln(blocks);
+    int addr = -1;
+    for(uint i = 0; i <= SIZE/BLOCK_SIZE; i += blocks) {
+        if (is_free(i, blocks)) {
+            addr = i;
+            set_busy_list(addr, blocks);
+            set_busy(i, blocks);
+            break;
+        }
+    }
+    return addr;
+}
+
+void print() {
+    cout << bitset<32>(BITMAP);
+}
+
+int main() {
+    allocate(3);
+    allocate(128);
+    print();
+    return 0;
+}
