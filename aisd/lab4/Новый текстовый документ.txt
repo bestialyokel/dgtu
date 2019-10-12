@@ -1,0 +1,44 @@
+let result = {inclusion: arrays.map(array=>Sort.inclusion(array,true)),
+	      swap:      arrays.map(array=>Sort.swap(array,true)),
+	      bubble:    arrays.map(array=>Sort.bubble(array,true)),
+	      quick:     arrays.map(array=>Sort.quick(array,true))
+	     }
+
+console.log('\033c');
+console.log('1 - inclusion');
+console.log('2 - swap');
+console.log('3 - bubble');
+console.log('4 - quick');
+console.log('5 - ret');
+
+rl.on('line', line=> {
+        console.log('\033c');
+        console.log('1 - inclusion');
+	console.log('2 - swap');
+	console.log('3 - bubble');
+	console.log('4 - quick');
+	console.log('5 - ret','\n\n\n');
+
+	switch(line) {
+		case '1':
+                        console.log('inclusion');
+			console.log(result.inclusion.map(x=>x.info));
+		break;
+		case '2':
+			console.log('swap');
+			console.log(result.swap.map(x=>x.info));
+		break;
+		case '3':
+			console.log('bubble');
+			console.log(result.bubble.map(x=>x.info));
+		break;
+                case '4':
+			console.log('quick');
+			console.log(result.quick.map(x=>x.info));
+		break;
+		case '5':
+			console.log('\033c');
+			rl.close()
+                break;
+ 	}
+})

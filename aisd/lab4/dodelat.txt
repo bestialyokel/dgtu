@@ -1,0 +1,5 @@
+2 случая (info = true/false)
+time: 0,
+iterations: 0,
+comparsions: 0,
+changes: 0
