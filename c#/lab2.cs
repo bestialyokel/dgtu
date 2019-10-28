@@ -64,7 +64,7 @@ class Electrical {
             return "Electrical";
         }
     public Electrical(uint volt) {
-        this.voltage = volt;
+        this.m_voltage = volt;
     }
 }
 
@@ -81,7 +81,7 @@ class Fridge : Electrical {
             return "Fridge";
         }
     public Fridge(uint voltage, uint capct) : base(voltage) {
-        this.capacity = capct;
+        this.m_capacity = capct;
     }
 
 }
@@ -130,7 +130,7 @@ class Socket {
         }
         void printStatus() {
             if (this.isFree) Console.WriteLine("not working");  
-            else Console.WriteLine($"i'am working with {this.inserted.name}");
+            else Console.WriteLine($"i'am working with {this.inserted}");
         }
         void plug(Electrical device) {
             if (this.inserted == null && this.voltage == device.voltage) this.inserted = device;
@@ -145,11 +145,31 @@ class Socket {
 
 }
 
-class Mechanical {}
+class Mechanical {
+    private
+        string m_name;
+        readonly string m_function;
+    public
+        string function {
+            get {
+                return this.m_function;
+            }
+        }
+        string name {
+            get {
+                return this.m_name;
+            }
+        }
+    public Mechanical(string name, string function) {
+        this.m_name = name;
+        this.m_function = function;
+    }
+
+}
 
 class lab2 {
     static void Main()  {  
-       Spoon a = new Spoon("name1", "steel");
-       Console.Write(a.getType());
+       Mechanical a = new Mechanical("abc", "works");
+       Console.Write(a.function);
     }
 }

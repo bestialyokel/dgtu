@@ -61,11 +61,10 @@ struct Stack {
 };
 
 int main() {
-    const int amount = 50;
+    const int amount = 20;
     Stack *s = new Stack(amount);
     s->printEven();
     cout << "------" << endl;
     s->printOdd();
     cout << "------" << endl;
-    s->print();
 }
