@@ -1,0 +1,121 @@
+<script type="text/x-template" id="entrance-template">
+<div v-if="this.data">
+    <div class="info-block">
+      <a class="card-body display nohover" data-toggle="collapse" href="#collapseEntrances">
+        <span class="card-title">Подъезд {{ data.entrance.ENTRANCE_NO }} </span>
+
+        <!-- <div class="float-right"><i class="fa fa-chevron-down"></i></div> -->
+      </a>
+      <div class="small-text">{{ data.building.address }}</div>
+      <div id="collapseEntrance" class="building-info collapse">
+        <ul class="list-group port-list p-3">
+          <li
+            v-on:click="selectEntrance(entrance, data.building)"
+            v-for="(entrance) in data.building.entrance"
+            v-bind:class="entranceClass(entrance)"
+            class="list-group-item port font-weight-bold p-0 m-0 port">
+            {{ entrance.ENTRANCE_NO }} <br>
+            <span v-show="entrance.FLAT_FROM_TO" class="font-weight-normal" style="font-size: 11px"> {{ entrance.FLAT_FROM_TO }} </span>
+          </li>
+        </ul>
+        <%# removed functionality
+        <div v-if="data.building.entrance" class="legend">
+          <a class="legend-title small-text display nohover" data-toggle="collapse" href="#collapseLegend">
+            <span>Легенда</span>
+            <div class="float-right"><i class="fa fa-chevron-down"></i></div>
+          </a>
+          <div class="collapse legend-body" id="collapseLegend">
+            <ul class="list-group">
+              <li class="list-group-item"><div class="port port-bad">0</div>есть блок факторм</li>
+            </ul>
+          </div>
+        </div>%>
+      </div>
+      <div v-show="loading.floorList" class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger w-100"></div>
+      </div>
+    </div>
+
+    <div class="info-block" v-show="data.entrance.INTERNET_BLOCK_TYPE">
+      <a class="card-body collapse collapsed show info-block-title display nohover" data-toggle="collapse" href="#collapseBlock" >
+        <span class="card-title"> Блок фактор </span>
+        <div class="float-right chevron"><i class="fa fa-chevron-up"></i></div>
+      </a>
+      <div v-if="data.entrance.INTERNET_BLOCK_TYPE" class="building-info collapse" id="collapseBlock">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            {{ data.entrance.INTERNET_BLOCK_TYPE }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="services">
+      <span class="font-weight-bold"> Тип услуги </span>
+      <div class="services-type">
+        <button @click="changeFilter('КТВ')"  class="btn" :class="{'selected-btn': filter['КТВ']}"> Телефон </button>				
+        <button @click="changeFilter('ШПД FTTB')" class="btn" :class="{'selected-btn': filter['ШПД FTTB']}"> ШПД </button>
+        <button @click="changeFilter('ЦТВ')" class="btn" :class="{'selected-btn': filter['ЦТВ']}"> ТВ </button>							
+        <button @click="changeFilter('all')" class="btn" :class="{'selected-btn': filter.all}"> ВСЕ ТИПЫ </button>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <a class="card-body collapse collapsed show info-block-title display nohover" data-toggle="collapse" href="#collapseDevices" >
+        <span class="card-title"> Устройства </span>
+        <div v-show="data.entrance.DEVICE_LIST" class="float-right chevron"><i class="fa fa-chevron-up"></i></div>
+      </a>
+      <div v-if="data.entrance.DEVICE_LIST" class="building-info collapse" id="collapseDevices">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" v-on:click="select(device)" v-for="(device) in data.entrance.DEVICE_LIST">
+            <div>
+              <h6 class="p-0 m-0 float-left">{{ device }}</h6>
+            </div>
+            <div v-if="filterDevices(device)" class="float-right"><i class="fas fa-chevron-right"></i></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div v-if="floorList">
+      <div class="info-block" v-for="(floor, index) in filteredFloorList" v-if="floor.FLATS.length > 0"> 					
+        <a class="card-body collapse collapsed show info-block-title display nohover d-flex" data-toggle="collapse" :href="'#collapseFlat' + index" >
+          <span class="card-title-complex d-flex justify-content-between"> <div> {{floor.number}} этаж </div>   <div class="text-black-50"> {{ floor.first }}-{{ floor.last }} </div> </span>
+          <div class=""><i class="fa fa-chevron-up chevron"></i></div>
+        </a>
+        <div class="building-info collapse" :id="'collapseFlat' + index">
+          <ul class="list-group list-group-flush" v-for="(flat) in floor.FLATS">
+            <li class="list-group-item" @click="selectFlat(flat.ACC_NUMBER[0])">
+              <div class="d-flex justify-content-between" v-if="flat.ACC_NUMBER">
+                <h6 class="align-self-center flat"> {{ +flat.FLAT_NUMBER }} </h6>
+                <div class="mr-auto p-3">
+                  <div v-if="flat.SERVICE">
+                    <img src="/f/i/icons/service_internet.svg" class="icon-24" v-show="flat.SERVICE.includes('ШПД FTTB')">
+                    <img src="/f/i/icons/ServiceMTSTV.svg" class="icon-24" v-show="flat.SERVICE.includes('ЦТВ')">
+                    <img src="/f/i/icons/icon_old_phone.svg" class="icon-24" v-show="flat.SERVICE.includes('КТВ')">
+                  </div>
+                </div>
+                <div class="align-self-center"><i class="fas fa-chevron-right"></i></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="pt-2" v-for="(rack) in floor" v-if="rack.NE_IN_RACK">
+          <div style="
+                background-color: #efefef;
+                border-radius: 4px;
+              ">
+            <div class="float-left m-2"><i class="fas fa-calculator"></i></div>
+            <div class="d-flex justify-content-between">
+              <div class="float-right">{{ rack.LOCATION }}</div>
+            </div>
+            <div>{{ rack.NE_IN_RACK }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</script>
+        </div>
+      </div>
+    </div>

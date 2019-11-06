@@ -1,0 +1,107 @@
+Vue.component('entrance-view', {
+  props: ['data'],
+  data: function () {
+    return {
+      loading: {floorList: false, rackList: false},
+      floorList: null,
+      rackList: [],
+
+      filter: {
+        'ÊÒÂ': false,
+        'ØÏÄ FTTB': false,		
+        'ÖÒÂ': false,
+        all: true,
+      },
+    }
+  },
+  template: '#entrance-template',
+  created: function () {
+    this.floorList = this.data.entrance.floor;
+    if (!this.floorList) this.getFloorList();
+    if (this.data.entrance.floor) this.floorList = this.data.entrance.floor;
+  },
+  //filter
+  computed: {
+    filterTypes: function() {
+      return Object.keys(this.filter)
+    },
+    filteredFloorList: function() {
+      if (this.filter['all']) return this.floorList;
+      var isFlatIncluded = this.isFlatIncluded;
+      return this.floorList.map(function(floor) {
+        floor = Object.assign({}, floor); 
+        floor.FLATS = floor.FLATS.filter(isFlatIncluded)
+        return floor;
+      })
+    }
+  },
+  methods: {
+    changeFilter: function(key) {
+      var f = this.filter; 
+      var fTypes = this.filterTypes;
+      if (key == 'all') {
+        fTypes.forEach(function(type) {
+          f[type] = false;
+        })
+        f['all'] = true;
+      } else {
+        f['all'] = false;
+        f[key] = !f[key];
+      }
+      var isEveryFalse = fTypes.every(function(x) {
+        return !f[x]
+      })
+      if (isEveryFalse) f['all'] = true;
+    },
+    isFlatIncluded: function(flat) {
+      var f = this.filter;
+      if (flat.RACK_ID != void(0)) return true;  
+      var fSelectedTypes = this.filterTypes.filter(function(type) { 
+        return f[type]
+      })
+      var isIncluded = fSelectedTypes.every(function(type) {
+        return flat.SERVICE.includes(type)
+      })
+      return isIncluded
+    },
+    //filter
+    selectFlat(account) {
+      app.clean();
+      app.search(account)
+    },
+    select: function (device) {
+      if (this.filterDevices(device))
+       app.jump(device);
+    },
+    filterDevices: function (device) {
+      return device.indexOf("ETH_") === 0
+    },
+    selectEntrance: function (entrance, data) {
+      this.$emit('change-screen', { screen: 'entrance', source: {building: data, entrance: entrance}, id: entrance.ENTRANCE_NAME}); //
+    },
+    toBuilding: function () {
+      app.jump(this.data.UZEL_NAME, true);
+    },
+    refresh: function () {
+      app.clean();
+      app.find(this.data.building.id);
+    },
+    entranceClass: function (entrance) {
+      if (entrance.INTERNET_BLOCK_TYPE) return 'p-0 port-bad';
+      return 'port-trunk free';
+    },
+    getFloorList: function ()  {
+      var self = this;
+      self.loading.floorList = true;
+      httpGet(buildUrl('site_flat_list', { siteid: this.data.entrance.SITE_ID })).then(function (data) {
+        self.data.building.entrance = data;
+        var updatedEntrance = data.find(function(entrance) {
+          return entrance.ENTRANCE_NO == self.data.entrance.ENTRANCE_NO;
+        })
+        self.floorList = updatedEntrance.floor;
+        self.data.entrance = updatedEntrance;
+        self.loading.floorList = false;
+      });
+    },
+  }
+});
