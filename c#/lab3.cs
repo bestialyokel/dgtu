@@ -125,10 +125,9 @@ class Set<T> : IEnumerable<T> {
     public static bool operator!=(Set<T> a, Set<T> b) {
         return !(a==b);
     }
-    public static Set<T> operator<<(Set<T> a, int b) {
-        Set<T> newSet = new Set<T>();
-        Console.WriteLine(b);
-        return newSet;
+    public virtual  Set<T> operator<<(Set<T> a, int b) {}
+    public override Set<T> operator<<(Set<T> a, Set<T> b) {
+        return new Set<T>();
     }
 }
 

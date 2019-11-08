@@ -1,0 +1,33 @@
+.photos_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: space-around;
+  width: 100%;
+}
+
+.photo {
+  text-align: center;
+  flex: 0 0 calc(19%);
+  box-shadow: 0 3px 3px -2px gray
+}
+
+@media (max-width: 1024px) {
+  .photo {
+    flex: 0 0 calc(24%);
+  }
+}
+
+@media (max-width: 764px) {
+  .photo {
+    flex: 0 0 calc(32%);
+  }
+}
+
+@media (max-width: 366px) {
+  .photo {
+    flex: 0 0 calc(100%);
+  }
+}
