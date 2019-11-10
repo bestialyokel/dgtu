@@ -1,6 +1,6 @@
 <template>
   <div id="apsp">
-    <DatePicker range/>
+    <DatePicker/>
   </div>
 </template>
 

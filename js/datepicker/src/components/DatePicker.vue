@@ -41,7 +41,6 @@
 <script>
 import Calendar from './Calendar.vue'
 import outside from '../directives/clickoutside.vue'
-// TODO: Кнопки s принять, вывод результата взаимодействие с this.selected, отладка range=false
 
 
 export default {
@@ -165,6 +164,11 @@ export default {
     }
     button:active {
         outline: 1px solid white;
+    }
+    button:disabled {
+    	outline: none;
+    	border: none;
+    	background: gray;
     }
     .submit {
         color: white;

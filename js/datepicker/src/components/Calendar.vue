@@ -191,6 +191,6 @@ export default {
         background: #357ebd !important;
     }
     .inrange {
-        background: #ebf4f8;
+        background: #abf4f8;
     }
 </style>
