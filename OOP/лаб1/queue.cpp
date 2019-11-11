@@ -48,14 +48,23 @@ template<typename T> struct Queue {
                 node = node->next;
             }
         }
+        void printT() {
+            Node<T> *node = this->head;
+            while(node) {
+                cout << node->value << endl;
+                node = node->prev;
+            }
+        }
         void removeHead() {
             if (this->head == NULL) return;
-            Node<T> *node = this->head->prev;
-            if (node == NULL) return;
-            node->next = NULL;
-            this->head = NULL;
-            delete this->head;
-            this->head = node;
+            if (this->head == this->tail) {
+                this->head = this->tail = NULL;
+                return;
+            }
+            Node<T> *node = this->head;
+            this->head = this->head->prev;
+            this->head->next = NULL;
+            delete node;
         }
 
         Queue() {
@@ -66,13 +75,17 @@ template<typename T> struct Queue {
 
 int main() {
     Queue<uint> *q = new Queue<uint>();
-    q->unshift(2);
+    q->removeHead();
+    q->removeHead();
+    q->unshift(1);
     q->unshift(3);
     q->removeHead();
     q->removeHead();
     q->removeHead();
     q->removeHead();
+    q->unshift(2);
     q->unshift(4);
     q->unshift(5);
     q->print();
+    q->printT();
 }
