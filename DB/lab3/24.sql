@@ -1,3 +1,5 @@
+
+
 SELECT Addr.AddrCountry,COUNT(Addr.IDAddress) FROM Addresses AS Addr
 INNER JOIN Persons AS PS on (PS.IDPersons=Addr.IDВладельца)
 INNER JOIN PersonT AS PT on (PS.IDPersons=PT.IngPerson)
@@ -7,5 +9,4 @@ GROUP BY Addr.AddrCountry;
 
 
 /*
-Описать работы inner join
 */

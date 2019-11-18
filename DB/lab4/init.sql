@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS Providers (
 
 CREATE TABLE IF NOT EXISTS Tariffs (
 	idTariff INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	name TEXT NOT NULL,
 	payment REAL CHECK(payment >= 0),
 	period INTEGER CHECK (period >= 0)
 );
