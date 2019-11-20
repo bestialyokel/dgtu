@@ -1,47 +1,51 @@
 #include <iostream>
 #include <string>
 
+
 using namespace std;
 
+string lc(string a) {
+    a = string(a);
+    for (int i = 0; i < name1.size(); i++) name1[i] = tolower(name1[i]);
+}
 
-struct Color {
+struct Node {
+    Node *next;
     int code;
     string name;
-    Color(int code, string name) {
+    Node(int code, string name) {
         this->code = code;
         this->name = name;
     }
+    
 };
 
-template<typename T> struct Node {
-    Node *next;
-    T *value;
-    Node<T>() {
-        this->value = NULL;
-        this->next = NULL;
-    }
-    Node<T>(T *value, Node *next = NULL, Node *prev = NULL) {
-        this->value = value;
-        this->next = next;
-    }
-};
-
-
-template<typename T> struct Sorted_List {
-    Node<T> *head;
-    void add(T *value) {
-        Node<T> *newNode = new Node<T>(value);
+struct Sorted_List {
+    Node *head;
+    void add(int code, string name) {
+        Node *newNode = new Node(code, name);
         if (this->head == NULL) {
-            this->head = new Node<T>(value);
+            this->head = newNode;
             return;
         }
-        Node<T> *p = this->head;
-        while(value->name > p->value->name && p->next != NULL) {
+        Node *p = this->head;
+        string name1(name);
+        for (int i = 0; i < name1.size(); i++) name1[i] = tolower(name1[i]);
+        while(p->next != NULL) {
+            string pname(p->name);
+            for (int i = 0; i < pname.size(); i++) pname[i] = tolower(pname[i]);
+            if (name1 < pname) break;
             p = p->next;
         }
-        if (p->next == NULL) p->next = newNode;
-        else {
-            Node<T> *q = p->next;
+        if (p->next == NULL) {
+            if (p)
+        }
+    
+        else if (p == this->head) {
+            newNode->next = this->head;
+            this->head = newNode;
+        } else {
+            Node *q = p->next;
             p->next = newNode;
             newNode->next = q;
         }
@@ -49,17 +53,21 @@ template<typename T> struct Sorted_List {
 };
 
 struct Menu {
-    Sorted_List<Color> *item;
-    Menu(Sorted_List<Color> *item) {
+    Sorted_List *item;
+    Menu(Sorted_List *item) {
         this->item = item;
         this->init();
     }
+
     void print() {
-        Node<Color> *p = this->item->head;
-        while(p != NULL) {
-            cout << p->value->name << "  " << p->value->code << endl;
+
+        Node *p = this->item->head;
+        cout << "-------------" << endl;
+        while (p != NULL) {
+            cout << p->code << " " << p->name << endl;
             p = p->next;
         }
+        cout << "-------------" << endl;
     }
     void add() {
         string name;
@@ -68,32 +76,33 @@ struct Menu {
         cin >> name;
         cout << "введите код" << endl;
         cin >> code;
-        this->item->add(new Color(code, name));
-        cout << "\033c";
+        this->item->add(code, name);
+        cout << "\033c" << endl;
     }
     void init() {
         cout << "1 - Добавить в список" << endl
              << "2 - вывести список" << endl;
-             switch(cin.get()) {
-                case 49:
-                    this->add();
-                    this->init();
-                    break;
-                case 50:
-                    this->print();
-                    this->init();
-                    break;
-                default:
-                    cout << "\033c" << "test";
-                    this->init();
-                    break;
+             string a;
+             cin >> a;
+             if (a == "1") {
+                 this->add();
+                 this->init();
+             } else if (a == "2") {
+                 this->print();
+                 this->init();
 
+             } else {
+                cout << "\033c" << "net takoi" << endl;
+                this->init();
              }
     }
 };
 
+
+
+
 int main() {
-    Sorted_List<Color> *a = new Sorted_List<Color>();
-    Menu b(a);
+    Sorted_List *a = new Sorted_List;
+    Menu m(a);
     return 0;
 }

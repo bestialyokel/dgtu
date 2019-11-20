@@ -42,9 +42,7 @@ int allocate(size_t size) {
     uint bmap = BITMAPS_LIST[level];
     for(uint i = 0; i < (1 << level); i++) {
         if (bmap & (1<<i) && isFree(i*(1 << level), (1 << level))) {
-            for(uint j = 0; j < (1 << level); j++) {
-                bitmap |= i*
-            }
+            fill_bitmap(i*(1 << level), (1 << level));
             return i*(1 << level);
         }
     }
