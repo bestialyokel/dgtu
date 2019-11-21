@@ -99,6 +99,10 @@ class Set<T> : IEnumerable<T> {
         this.collection.delete(value);
         this.size = this.collection.length;
     }
+    public Set() {}
+    public Set(T value) {
+        this.add(value);
+    }
     public static Set<T> operator-(Set<T> a, Set<T> b) {
         Set<T> newSet = new Set<T>();
         foreach(T value in a) if (!b.has(value)) newSet.add(value);
@@ -118,23 +122,21 @@ class Set<T> : IEnumerable<T> {
     }
     public static bool operator==(Set<T> a, Set<T> b) {
         if (a.size != b.size) return false;
-        Set<T> newSet = new Set<T>();
         foreach(T p in a) if (!b.has(p)) return false;
         return true;
     }
     public static bool operator!=(Set<T> a, Set<T> b) {
         return !(a==b);
     }
-    public virtual  Set<T> operator<<(Set<T> a, int b) {}
-    public override Set<T> operator<<(Set<T> a, Set<T> b) {
-        return new Set<T>();
-    }
+    /*public static Set<int> operator<<(Set<int> a, int b) {
+        a.add(b);
+        return a;
+    }*/
+    public static implicit operator Set<T>(T value) => new Set<T>(value);
 }
-
 
 class lab3 {
     static void Main() {
         Set<uint> s = new Set<uint>();
-        s << 3;
     }
 }

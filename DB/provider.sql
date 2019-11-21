@@ -105,7 +105,8 @@ CREATE TABLE public.contracts (
     idtariff integer,
     address text NOT NULL,
     type text NOT NULL,
-    conclusiondate date NOT NULL
+    conclusiondate date NOT NULL,
+    idprovider integer
 );
 
 
@@ -290,8 +291,10 @@ CREATE TABLE public.users (
     idprovider integer NOT NULL,
     login text,
     password text,
+    role character varying(1),
     CONSTRAINT users_login_check CHECK ((length(login) > 4)),
-    CONSTRAINT users_password_check CHECK ((length(password) > 5))
+    CONSTRAINT users_password_check CHECK ((length(password) > 5)),
+    CONSTRAINT users_role_check CHECK ((((role)::text = 't'::text) OR ((role)::text = 'r'::text) OR ((role)::text = 'c'::text)))
 );
 
 
@@ -448,10 +451,10 @@ COPY public.clients (idclient, surname, name, patronymic, phonenumber) FROM stdi
 -- Data for Name: contracts; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.contracts (idcontract, idclient, idtariff, address, type, conclusiondate) FROM stdin;
-1	1	1	Ростов-на-Дону, ул. Гагарина 1	Ф	2019-11-21
-2	2	1	Ростов-на-Дону, ул. Гагарина 2	Ф	2019-11-21
-3	3	1	Ростов-на-Дону, ул. Гагарина 2	Ю	2019-11-21
+COPY public.contracts (idcontract, idclient, idtariff, address, type, conclusiondate, idprovider) FROM stdin;
+1	1	1	Ростов-на-Дону, ул. Гагарина 1	Ф	2019-11-21	1
+2	2	1	Ростов-на-Дону, ул. Гагарина 2	Ф	2019-11-21	1
+3	3	1	Ростов-на-Дону, ул. Гагарина 2	Ю	2019-11-21	1
 \.
 
 
@@ -497,7 +500,7 @@ COPY public.tariffs (idtariff, name, payment, period) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.users (iduser, idprovider, login, password) FROM stdin;
+COPY public.users (iduser, idprovider, login, password, role) FROM stdin;
 \.
 
 
