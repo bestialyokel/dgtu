@@ -29,26 +29,13 @@ struct Sorted_List {
             return;
         }
         Node *p = this->head;
-        string name1(name);
-        for (int i = 0; i < name1.size(); i++) name1[i] = tolower(name1[i]);
+        string name1 = lc(name);
         while(p->next != NULL) {
-            string pname(p->name);
-            for (int i = 0; i < pname.size(); i++) pname[i] = tolower(pname[i]);
+            string pname = lc(p->name);
             if (name1 < pname) break;
             p = p->next;
         }
-        if (p->next == NULL) {
-            if (p)
-        }
-    
-        else if (p == this->head) {
-            newNode->next = this->head;
-            this->head = newNode;
-        } else {
-            Node *q = p->next;
-            p->next = newNode;
-            newNode->next = q;
-        }
+        
     }
 };
 
