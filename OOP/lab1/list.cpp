@@ -4,10 +4,7 @@
 
 using namespace std;
 
-string lc(string a) {
-    a = string(a);
-    for (int i = 0; i < name1.size(); i++) name1[i] = tolower(name1[i]);
-}
+bool cmp(string, string);
 
 struct Node {
     Node *next;
@@ -22,20 +19,34 @@ struct Node {
 
 struct Sorted_List {
     Node *head;
+    Node *tail;
     void add(int code, string name) {
-        Node *newNode = new Node(code, name);
         if (this->head == NULL) {
-            this->head = newNode;
+            this->head = new Node(code, name);
+            this->tail = this->head;
             return;
         }
+
         Node *p = this->head;
-        string name1 = lc(name);
-        while(p->next != NULL) {
-            string pname = lc(p->name);
-            if (name1 < pname) break;
+        Node *z = NULL;
+
+        while(p != NULL && cmp(name, p->name)) {
+            z = p;
             p = p->next;
         }
-        
+
+        Node *q = new Node(code, name);
+        if (p == this->head) {
+            q->next = this->head;
+            this->head = q;
+        } else if (p == NULL) {
+            this->tail->next = q;
+            this->tail = q;
+        } else {
+            Node *v = z->next;
+            q->next = v;
+            z->next = q;
+        }
     }
 };
 
@@ -87,9 +98,25 @@ struct Menu {
 
 
 
+bool cmp(string a, string b) {
+    for(int i = 0; i < a.size(); i++) a[i] = tolower(a[i]);
+    for(int i = 0; i < b.size(); i++) b[i] = tolower(b[i]);
+
+    string least = a.size() > b.size() ? b : a;
+
+    for(int i = 0; i < least.size(); i++) {
+        if (a[i] == b[i]) continue;
+        if (a[i] > b[i]) return true;
+        else return false;
+    }
+    return true;
+}
+
 
 int main() {
     Sorted_List *a = new Sorted_List;
-    Menu m(a);
+
+    Menu b(a);
+
     return 0;
 }

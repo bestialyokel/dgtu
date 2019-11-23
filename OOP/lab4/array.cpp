@@ -7,15 +7,15 @@ class Array {
     private:
         int *arr;
     public:
-        size_t length;
+        size_t length = 0;
         Array(){}
         void remove(size_t index) {
-
+            for (int i = index; i < this->length; i++) this->arr[i] = this->arr[i+1];
+            this->length--;
+            this->arr = (int *)realloc(this->arr, this->length * sizeof(int));
         }
         void push(int value) {
-            this->length++;
-            this->arr = (int *)realloc(this->arr, this->length * sizeof(int));
-            this->arr[this->length - 1] = value;
+            cout << (this->arr == NULL) << endl;
         }
         int& operator[](size_t index) {
             if (index < this->length) return this->arr[index];
@@ -28,6 +28,10 @@ class Array {
 };
 
 int main() {
-
+    Array a;
+    a.push(12);
+    for (int i = 0; i < a.length; i++) {
+        cout << a[i] << endl;
+    }
     return 0;
 }

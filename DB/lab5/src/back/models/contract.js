@@ -1,11 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-    let Contract = sequelize.define('Contract', {
-      idContract: DataTypes.UUID,
-      idClient: DataTypes.INTEGER,
-      idTariff: DataTypes.INTEGER,
+    let Contract = sequelize.define('contracts', {
+      idcontract: {
+        type:  DataTypes.UUID,
+        primaryKey: true
+      },
+      idclient: DataTypes.INTEGER,
+      idtariff: DataTypes.INTEGER,
       address: DataTypes.TEXT,
       type: DataTypes.TEXT,
-      idProvider: DataTypes.INTEGER
+      idprovider: DataTypes.INTEGER
+    }, {
+      timestamps: false
     });
     return Contract;
 };

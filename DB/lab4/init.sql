@@ -6,20 +6,25 @@ CREATE TABLE IF NOT EXISTS Providers (
 
 CREATE TABLE IF NOT EXISTS Tariffs (
 	idTariff SERIAL PRIMARY KEY NOT NULL,
+	idProvider INTEGER NOT NULL,
 	name TEXT NOT NULL,
 	payment REAL CHECK(payment >= 0),
-	period INTEGER CHECK (period >= 0)
+	period INTEGER CHECK (period >= 0),
+	FOREIGN KEY(idProvider) REFERENCES Providers(idProvider)
+);
+
+CREATE TABLE IF NOT EXISTS Tariffs_Dependencies (
+	idTariff INTEGER NOT NULL,
+	idService INTEGER NOT NULL,
+	FOREIGN KEY(idTariff) REFERENCES Tariffs(idTariff),
+	FOREIGN KEY(idService) REFERENCES Services(idService)
 );
 
 CREATE TABLE IF NOT EXISTS Services (
 	idService SERIAL PRIMARY KEY NOT NULL,
 	idProvider INTEGER NOT NULL,
-	idTariff INTEGER, 
-	payment REAL CHECK(payment >= 0),
 	name TEXT NOT NULL,
-	description TEXT,
-	FOREIGN KEY(idProvider) REFERENCES Providers(idProvider),
-	FOREIGN KEY(idTariff) REFERENCES Tariffs(idTariff)
+	FOREIGN KEY(idProvider) REFERENCES Providers(idProvider)
 );
 
 CREATE TABLE IF NOT EXISTS Clients (
@@ -40,6 +45,8 @@ CREATE TABLE IF NOT EXISTS Contracts (
 	FOREIGN KEY(idClient) REFERENCES Clients(idClient),
 	FOREIGN KEY(idTariff) REFERENCES Tariffs(idTariff)
 );
+INSERT INTO Clients VALUES (DEFAULT, 'Tezt', 'Abcd', 'val', '89003005050');
+
 
 CREATE TABLE IF NOT EXISTS Appeals (
 	idAppeal SERIAL PRIMARY KEY NOT NULL,
