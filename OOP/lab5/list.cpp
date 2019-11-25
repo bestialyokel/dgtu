@@ -1,32 +1,136 @@
 #include <iostream>
-#include "nodes/d_node.cpp"
+
 using namespace std;
 
-template<typename T>class List {
+class List {
     private:
-        Node<T> head;
+
+        class Node {
+            public:
+                int data;
+                Node *next;
+                Node *prev;
+                Node(int value, Node *next = NULL, Node *prev = NULL) {
+                    this->data = value;
+                    this->next = next;
+                    this->prev = prev;
+                }
+        };
+
     public:
+        Node *head;
+        Node *tail;
+        uint length = 0;
         List() {}
-        size_t length;
-        void insert(size_t index, T value) {
-            this->head = new Node<T>(value);
-            //while (index > 0 && (this->head.next != NULL))
+        ~List() {
+            Node *p;
+            while (this->head != NULL) {
+                p = this->head;
+                this->head = this->head->next;
+                delete p;
+            }
         }
-        void remove(size_t index = 0) {}
-        bool isEmpty() {
-            return (this->Head == NULL);
+        uint size() {
+            return this->length;
+        }
+        void insert(uint index, int value) {
+
+            Node *newNode = new Node(value);
+            this->length += 1;
+
+            //пустой
+            if (this->head == NULL) {
+                this->head = this->tail = newNode;
+                return;
+            }
+            // в начало
+            if (index == 0) {
+                newNode->next = this->head;
+                this->head->prev = newNode;
+                this->head = newNode;
+                return;
+            }
+            //в конец
+            if (index >= this->length - 1) {
+                newNode->prev = this->tail;
+                this->tail->next = newNode;
+                this->tail = newNode;
+                return;
+            }
+
+            Node *p = this->head;
+
+            while (index-- > 0) 
+                p = p->next; //index-=1;
+
+            newNode->next = p;
+            newNode->prev = p->prev;
+            p->prev->next = newNode;
+            if (p->next == NULL) p->prev = newNode;
+            else p->next->prev = newNode;
+        }
+        void remove(uint index) {
+
+            if (this->head == NULL) return;
+            if (index >= this->length) throw "i>size";
+            
+
+            this->length -= 1;
+            if (this->head == this->tail) {
+                delete this->head;
+                this->head = this->tail = NULL;
+                return;
+            }
+
+            if (index == 0) {
+                this->head = this->head->next;
+                delete this->head->prev;
+                this->head->prev = NULL;
+                return;
+            }
+
+            if (index == this->length) {
+                this->tail = this->tail->prev;
+                delete this->tail->next;
+                this->tail->next = NULL;
+                return;
+            }
+
+            Node *p = this->head;
+            while (index-- > 0)
+                p = p->next;
+            p->prev->next = p->next;
+            p->next->prev = p->prev;
+            delete p;
+        }
+        int getItem(uint index) const {
+            if (index >= this->length) throw "i>size";
+            Node *p = this->head;
+            while (index-- > 0)
+                p = p->next;
+            return p->data; 
         }
         void print() {
-            Node<T> ptr = head;
-            while (ptr != NULL) {
-                cout << ptr.value << endl;
-                ptr = ptr.next;
+            Node *p = this->head;
+            while (p != NULL) {
+                cout << p->data << endl;
+                p = p->next;
             }
         }
 };
 
 int main() {
-    List<int> a();
+    List a;
+    int i = 0;
+    a.insert(0, 1);
+    a.insert(0, 2);
+    a.insert(0, 3);
+    a.insert(0, 4);
+    a.insert(0, 5);
+    a.insert(0, 6);
+    //a.insert(1, 1488);
+    //a.remove(1);
+    a.remove(5);
     a.print();
     return 0;
 }
