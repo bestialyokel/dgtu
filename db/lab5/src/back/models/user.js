@@ -4,7 +4,13 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idprovider: DataTypes.INTEGER,
+      idprovider: {
+        type: DataTypes.UUID,
+        references: {
+            model: Provider,
+            key: 'idprovider'
+        }
+      },
       login: DataTypes.TEXT,
       password: DataTypes.TEXT,
       role: DataTypes.STRING(1)

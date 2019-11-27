@@ -4,7 +4,13 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idappeal: DataTypes.INTEGER,
+      idappeal: {
+        type: DataTypes.UUID,
+        references: {
+            model: Appeal,
+            key: 'idappeal'
+        }
+      },
       starttime: DataTypes.DATE,
       complexity: DataTypes.TEXT,
       status: DataTypes.TEXT,

@@ -4,7 +4,13 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idjob: DataTypes.INTEGER,
+      idjob: {
+        type: DataTypes.UUID,
+        references: {
+            model: Provider,
+            key: 'idprovider'
+        }
+      },
       name: DataTypes.TEXT,
       patronymic: DataTypes.TEXT,
       surname: DataTypes.TEXT,

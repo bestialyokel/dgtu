@@ -3,26 +3,16 @@ const process = require('process')
 const os = require('os')
 let EOL = os.EOL;
 
-let random = (min,max) => {
-  return Math.ceil((max - min) * Math.random() + min)
-}
 
-let randGraph = n => {
-  let graph = new Array(n).fill(new Array(n))
-  graph[0][0] = 0
-  graph[n-1][n-1] = 0
-  for (let i = 1; i <= n - 1; i++) {
-    graph[i][i] = 0
-    let a = new Array(n).fill(0);
-    for (let j = 0; j <= i - 1; j++) {
-      let value = (Math.random() > 0.3) ? random(10,50) : 0
-      a[j] = value
-      graph[j][i] = value
-    }
-    graph[i] = a
-  }
-  return graph
-}
+let graph = [
+  [1, 3],
+  [0, 2, 3, 4],
+  [1, 4, 5],
+  [0, 1, 4, 6],
+  [1, 2, 3, 5],
+  [2, 4, 6],
+  [3, 6]
+]
 
 
 class Prima {
@@ -74,7 +64,7 @@ class Prima {
   }
 }
 
-let graph = randGraph(1000)
+//let graph = randGraph(1000)
 
 new Prima(graph).result()
 

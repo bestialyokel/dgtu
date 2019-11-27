@@ -4,11 +4,29 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idclient: DataTypes.INTEGER,
-      idtariff: DataTypes.INTEGER,
+      idclient: {
+        type: DataTypes.UUID,
+        references: {
+            model: Client,
+            key: 'idclient'
+        }
+      },
+      idtariff: {
+        type: DataTypes.UUID,
+        references: {
+            model: Tariff,
+            key: 'idtariff'
+        }
+      },
       address: DataTypes.TEXT,
       type: DataTypes.TEXT,
-      idprovider: DataTypes.INTEGER
+      idprovider: {
+        type: DataTypes.UUID,
+        references: {
+            model: Provider,
+            key: 'idprovider'
+        }
+      }
     }, {
       timestamps: false
     });

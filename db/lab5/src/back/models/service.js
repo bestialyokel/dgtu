@@ -4,10 +4,14 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idtariff: DataTypes.INTEGER,
-      payment: DataTypes.REAL,
+      idprovider: {
+        type: DataTypes.UUID,
+        references: {
+            model: Provider,
+            key: 'idprovider'
+        }
+      },
       name: DataTypes.TEXT,
-      description: DataTypes.TEXT,
     }, {
       timestamps: false
     });

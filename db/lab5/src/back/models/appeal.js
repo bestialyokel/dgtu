@@ -4,7 +4,13 @@ module.exports = (sequelize, DataTypes) => {
         type:  DataTypes.UUID,
         primaryKey: true
       },
-      idcontract: DataTypes.INTEGER,
+      idcontract: {
+        type: DataTypes.UUID,
+        references: {
+            model: Contract,
+            key: 'idcontract'
+        }
+    },
       status: DataTypes.TEXT,
       appealdate: DataTypes.DATE,
       description: DataTypes.TEXT
