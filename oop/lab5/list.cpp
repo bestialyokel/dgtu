@@ -118,19 +118,3 @@ class List {
             }
         }
 };
-
-int main() {
-    List a;
-    int i = 0;
-    a.insert(0, 1);
-    a.insert(0, 2);
-    a.insert(0, 3);
-    a.insert(0, 4);
-    a.insert(0, 5);
-    a.insert(0, 6);
-    //a.insert(1, 1488);
-    //a.remove(1);
-    a.remove(5);
-    a.print();
-    return 0;
-}
