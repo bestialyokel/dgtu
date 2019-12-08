@@ -16,7 +16,7 @@ class Array {
                 this->length = 0;
                 return;
             }
-            for (int i = index; i < this->length; i++) this->arr[i] = this->arr[i+1];
+            for (int i = index; i < this->length - 1; i++) this->arr[i] = this->arr[i+1];
             this->length--;
             this->arr = (int *)realloc(this->arr, this->length * sizeof(int));
         }
@@ -38,6 +38,7 @@ class Array {
             return this->arr[index];
         }
         const int& operator[](size_t index) const {
+            if (index >= this->length) throw "out of range"
             return this->arr[index];
         }
 };

@@ -57,7 +57,9 @@ class List {
                 this->tail = newNode;
                 return;
             }
+            
 
+            //в середину
             Node *p = this->head;
 
             while (index-- > 0) 

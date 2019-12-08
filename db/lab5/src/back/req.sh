@@ -1,0 +1,1 @@
+curl -X GET 'http://localhost:8080/clients?key=fd7622bf94e10d0a237ede30fcd7accd&id=1'
