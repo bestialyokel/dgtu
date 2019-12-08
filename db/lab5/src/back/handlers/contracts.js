@@ -120,9 +120,8 @@ module.exports = async (req, res, next) => {
         res.json({
             success: true,
             message: 'contract deleted',
-            client: del.row[0].idclient
+            idclient: del.row[0].idclient
         })
         return
     }
-
 }

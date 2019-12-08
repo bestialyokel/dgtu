@@ -102,7 +102,6 @@ module.exports = async (req, res, next) => {
             })
             return
         }
-        await db.query('DELETE FROM Tariffsdeps WHERE idservice=$1', [id])
         res.status(200).json({
             success: true,
             message: 'service removed',

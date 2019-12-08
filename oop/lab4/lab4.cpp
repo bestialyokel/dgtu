@@ -3,23 +3,22 @@
 using namespace std;
 
 class Test {
-    friend void Z(const Test&);
     friend void fun(const Test&);
 
     protected:
         uint W;
+        void Z() {
+            cout << "Это закрытая ф-я класса Test" << endl;
+        }
     public:
         Test(uint number = 1) {
             this->W = number;
         }
 };
 
-void Z(const Test&) {
-    cout << "Это закрытая ф-я класса Test" << endl;
-}
 void fun(const Test &a) {
     cout << a.W << endl;
-    Z(a);
+    a.Z();
 }
 
 
