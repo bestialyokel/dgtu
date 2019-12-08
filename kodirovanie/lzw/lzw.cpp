@@ -24,7 +24,7 @@ void outputTxt(LZW out[], int Max) {
     txt.open("output.txt");
     for (int j = 0; j < Max; j++) {
         for (int i = 0; i < out[j].code.length(); i++) {
-            txt « out[j].code[i];
+            txt << out[j].code[i];
         }
     }
     txt.close();
@@ -72,7 +72,7 @@ void lzwCompres(string tempPtr) {
             result[countResult].code += w;
         }
         w = k;
-        cout « result[countResult].wk « " " « result[countResult].code « " " « result[countResult].pos « endl;
+        cout << result[countResult].wk << " " << result[countResult].code << " " << result[countResult].pos << endl;
         countResult++;
         tempWk.clear();
     }
@@ -91,9 +91,9 @@ void lzwDeCompres(string line) {
     Decomp[0].pos = ASCII + countAscii;
     Decomp[0].code = Decomp[0].wk;
 
-    cout « endl;
-    cout « endl;
-    cout « endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
 
     for (int i = 1; i < line.length(); i++) {
         countAscii++;
@@ -122,7 +122,7 @@ void lzwDeCompres(string line) {
             Decomp[countAscii].pos = ASCII + countAscii;
         }   
 
-        cout « Decomp[countAscii-1].wk « " " « Decomp[countAscii-1].code « " " « Decomp[countAscii-1].pos « endl;
+        cout << Decomp[countAscii-1].wk << " " << Decomp[countAscii-1].code << " " << Decomp[countAscii-1].pos << endl;
         number.clear();
     }
 }
@@ -134,7 +134,7 @@ void inputOut() {
 
     if (in.is_open()) {
         while (getline(in, ptr)) {
-            cout « ptr « endl;
+            cout << ptr << endl;
         }
     }
 
@@ -149,7 +149,7 @@ void inputTxt() {
 
     if (in.is_open()) {
         while (getline(in, ptr)) {
-            cout « ptr « endl;
+            cout << ptr << endl;
         }
     }
 
@@ -158,7 +158,7 @@ void inputTxt() {
     ofstream inm;
     inm.open("decoder.txt");
     for (int i = 0; i < ptr.length(); i++) {
-        inm « ptr[i];
+        inm << ptr[i];
     }
     inm.close();
     lzwCompres(ptr);
@@ -170,5 +170,5 @@ int main() {
     int c;
     inputTxt();
     inputOut();
-    cin » c;
+    cin >> c;
 }
