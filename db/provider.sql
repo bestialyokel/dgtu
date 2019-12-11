@@ -26,11 +26,8 @@ SET default_with_oids = false;
 
 CREATE TABLE public.appeals (
     idappeal integer NOT NULL,
-    idcontract integer NOT NULL,
-    status text NOT NULL,
-    appealdate date NOT NULL,
-    description text,
-    CONSTRAINT appeals_description_check CHECK ((length(description) > 20))
+    idcontract integer,
+    descr text
 );
 
 
@@ -64,10 +61,10 @@ ALTER SEQUENCE public.appeals_idappeal_seq OWNED BY public.appeals.idappeal;
 
 CREATE TABLE public.clients (
     idclient integer NOT NULL,
-    surname text NOT NULL,
-    name text NOT NULL,
-    patronymic text NOT NULL,
-    phonenumber text NOT NULL
+    name text,
+    surname text,
+    patronymic text,
+    phonenumber text
 );
 
 
@@ -101,11 +98,10 @@ ALTER SEQUENCE public.clients_idclient_seq OWNED BY public.clients.idclient;
 
 CREATE TABLE public.contracts (
     idcontract integer NOT NULL,
-    idclient integer NOT NULL,
+    idclient integer,
     idtariff integer,
-    address text NOT NULL,
-    type text NOT NULL,
-    conclusiondate date NOT NULL
+    address text,
+    type character varying(1)
 );
 
 
@@ -139,10 +135,8 @@ ALTER SEQUENCE public.contracts_idcontract_seq OWNED BY public.contracts.idcontr
 
 CREATE TABLE public.jobs (
     idjob integer NOT NULL,
-    idappeal integer NOT NULL,
-    starttime date NOT NULL,
-    complexity text NOT NULL,
-    status text NOT NULL
+    idappeal integer,
+    descr text
 );
 
 
@@ -171,22 +165,24 @@ ALTER SEQUENCE public.jobs_idjob_seq OWNED BY public.jobs.idjob;
 
 
 --
--- Name: providers; Type: TABLE; Schema: public; Owner: ddbachur
+-- Name: logins; Type: TABLE; Schema: public; Owner: ddbachur
 --
 
-CREATE TABLE public.providers (
-    idprovider integer NOT NULL,
-    name text NOT NULL
+CREATE TABLE public.logins (
+    idlogin integer NOT NULL,
+    iduser integer,
+    key text NOT NULL,
+    role character varying(1)
 );
 
 
-ALTER TABLE public.providers OWNER TO ddbachur;
+ALTER TABLE public.logins OWNER TO ddbachur;
 
 --
--- Name: providers_idprovider_seq; Type: SEQUENCE; Schema: public; Owner: ddbachur
+-- Name: logins_idlogin_seq; Type: SEQUENCE; Schema: public; Owner: ddbachur
 --
 
-CREATE SEQUENCE public.providers_idprovider_seq
+CREATE SEQUENCE public.logins_idlogin_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -195,13 +191,13 @@ CREATE SEQUENCE public.providers_idprovider_seq
     CACHE 1;
 
 
-ALTER TABLE public.providers_idprovider_seq OWNER TO ddbachur;
+ALTER TABLE public.logins_idlogin_seq OWNER TO ddbachur;
 
 --
--- Name: providers_idprovider_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ddbachur
+-- Name: logins_idlogin_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ddbachur
 --
 
-ALTER SEQUENCE public.providers_idprovider_seq OWNED BY public.providers.idprovider;
+ALTER SEQUENCE public.logins_idlogin_seq OWNED BY public.logins.idlogin;
 
 
 --
@@ -210,8 +206,7 @@ ALTER SEQUENCE public.providers_idprovider_seq OWNED BY public.providers.idprovi
 
 CREATE TABLE public.services (
     idservice integer NOT NULL,
-    idprovider integer NOT NULL,
-    name text NOT NULL
+    name text
 );
 
 
@@ -245,28 +240,13 @@ ALTER SEQUENCE public.services_idservice_seq OWNED BY public.services.idservice;
 
 CREATE TABLE public.tariffs (
     idtariff integer NOT NULL,
-    idprovider integer NOT NULL,
-    name text NOT NULL,
+    name text,
     payment real,
-    period integer,
-    CONSTRAINT tariffs_payment_check CHECK ((payment >= (0)::double precision)),
-    CONSTRAINT tariffs_period_check CHECK ((period >= 0))
+    period integer
 );
 
 
 ALTER TABLE public.tariffs OWNER TO ddbachur;
-
---
--- Name: tariffs_dependencies; Type: TABLE; Schema: public; Owner: ddbachur
---
-
-CREATE TABLE public.tariffs_dependencies (
-    idtariff integer NOT NULL,
-    idservice integer NOT NULL
-);
-
-
-ALTER TABLE public.tariffs_dependencies OWNER TO ddbachur;
 
 --
 -- Name: tariffs_idtariff_seq; Type: SEQUENCE; Schema: public; Owner: ddbachur
@@ -291,18 +271,66 @@ ALTER SEQUENCE public.tariffs_idtariff_seq OWNED BY public.tariffs.idtariff;
 
 
 --
+-- Name: tdeps; Type: TABLE; Schema: public; Owner: ddbachur
+--
+
+CREATE TABLE public.tdeps (
+    idservice integer,
+    idtariff integer
+);
+
+
+ALTER TABLE public.tdeps OWNER TO ddbachur;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: ddbachur
+--
+
+CREATE TABLE public.users (
+    iduser integer NOT NULL,
+    login text,
+    password text,
+    role character varying(1),
+    CONSTRAINT users_login_check CHECK ((length(login) > 5)),
+    CONSTRAINT users_login_check1 CHECK ((length(login) > 5))
+);
+
+
+ALTER TABLE public.users OWNER TO ddbachur;
+
+--
+-- Name: users_iduser_seq; Type: SEQUENCE; Schema: public; Owner: ddbachur
+--
+
+CREATE SEQUENCE public.users_iduser_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_iduser_seq OWNER TO ddbachur;
+
+--
+-- Name: users_iduser_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ddbachur
+--
+
+ALTER SEQUENCE public.users_iduser_seq OWNED BY public.users.iduser;
+
+
+--
 -- Name: workers; Type: TABLE; Schema: public; Owner: ddbachur
 --
 
 CREATE TABLE public.workers (
     idworker integer NOT NULL,
-    idprovider integer NOT NULL,
     idjob integer,
-    surname text NOT NULL,
-    name text NOT NULL,
-    patronymic text NOT NULL,
-    qualification text,
-    CONSTRAINT workers_qualification_check CHECK ((length(qualification) > 15))
+    name text,
+    surname text,
+    patronymic text,
+    qual text
 );
 
 
@@ -359,10 +387,10 @@ ALTER TABLE ONLY public.jobs ALTER COLUMN idjob SET DEFAULT nextval('public.jobs
 
 
 --
--- Name: providers idprovider; Type: DEFAULT; Schema: public; Owner: ddbachur
+-- Name: logins idlogin; Type: DEFAULT; Schema: public; Owner: ddbachur
 --
 
-ALTER TABLE ONLY public.providers ALTER COLUMN idprovider SET DEFAULT nextval('public.providers_idprovider_seq'::regclass);
+ALTER TABLE ONLY public.logins ALTER COLUMN idlogin SET DEFAULT nextval('public.logins_idlogin_seq'::regclass);
 
 
 --
@@ -380,6 +408,13 @@ ALTER TABLE ONLY public.tariffs ALTER COLUMN idtariff SET DEFAULT nextval('publi
 
 
 --
+-- Name: users iduser; Type: DEFAULT; Schema: public; Owner: ddbachur
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN iduser SET DEFAULT nextval('public.users_iduser_seq'::regclass);
+
+
+--
 -- Name: workers idworker; Type: DEFAULT; Schema: public; Owner: ddbachur
 --
 
@@ -390,9 +425,7 @@ ALTER TABLE ONLY public.workers ALTER COLUMN idworker SET DEFAULT nextval('publi
 -- Data for Name: appeals; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.appeals (idappeal, idcontract, status, appealdate, description) FROM stdin;
-2	2	c	2019-11-23	net interneta 20 simvolov .....
-1	1	c	2019-11-23	net interneta 20 simvolov .....
+COPY public.appeals (idappeal, idcontract, descr) FROM stdin;
 \.
 
 
@@ -400,9 +433,7 @@ COPY public.appeals (idappeal, idcontract, status, appealdate, description) FROM
 -- Data for Name: clients; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.clients (idclient, surname, name, patronymic, phonenumber) FROM stdin;
-1	Bachurin	Danila	Dmitrievich	89613308969
-2	Tezt	Abcd	val	89003005050
+COPY public.clients (idclient, name, surname, patronymic, phonenumber) FROM stdin;
 \.
 
 
@@ -410,9 +441,7 @@ COPY public.clients (idclient, surname, name, patronymic, phonenumber) FROM stdi
 -- Data for Name: contracts; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.contracts (idcontract, idclient, idtariff, address, type, conclusiondate) FROM stdin;
-1	1	1	rostov, pl. gagarina 1	f	2019-11-23
-2	2	1	rostov, pl. gagarina 2	f	2019-11-23
+COPY public.contracts (idcontract, idclient, idtariff, address, type) FROM stdin;
 \.
 
 
@@ -420,18 +449,18 @@ COPY public.contracts (idcontract, idclient, idtariff, address, type, conclusion
 -- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.jobs (idjob, idappeal, starttime, complexity, status) FROM stdin;
-1	1	2019-11-23	ochen slojno	c
-2	2	2019-11-23	lehko	c
+COPY public.jobs (idjob, idappeal, descr) FROM stdin;
 \.
 
 
 --
--- Data for Name: providers; Type: TABLE DATA; Schema: public; Owner: ddbachur
+-- Data for Name: logins; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.providers (idprovider, name) FROM stdin;
-1	rostelecom
+COPY public.logins (idlogin, iduser, key, role) FROM stdin;
+27	3	31a8ce514ba63f657b1605104118ca77	t
+28	4	bc19f0f6796aed1d2c95ae61051c0f8e	d
+29	5	fd7622bf94e10d0a237ede30fcd7accd	a
 \.
 
 
@@ -439,10 +468,7 @@ COPY public.providers (idprovider, name) FROM stdin;
 -- Data for Name: services; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.services (idservice, idprovider, name) FROM stdin;
-1	1	internet
-2	1	svyaz
-3	1	tv
+COPY public.services (idservice, name) FROM stdin;
 \.
 
 
@@ -450,19 +476,26 @@ COPY public.services (idservice, idprovider, name) FROM stdin;
 -- Data for Name: tariffs; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.tariffs (idtariff, idprovider, name, payment, period) FROM stdin;
-1	1	bazovi	499.98999	2592000
+COPY public.tariffs (idtariff, name, payment, period) FROM stdin;
 \.
 
 
 --
--- Data for Name: tariffs_dependencies; Type: TABLE DATA; Schema: public; Owner: ddbachur
+-- Data for Name: tdeps; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.tariffs_dependencies (idtariff, idservice) FROM stdin;
-1	1
-1	2
-1	3
+COPY public.tdeps (idservice, idtariff) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: ddbachur
+--
+
+COPY public.users (iduser, login, password, role) FROM stdin;
+3	tech123	tech123	t
+4	dev123	dev123	d
+5	acc123	acc123	a
 \.
 
 
@@ -470,8 +503,9 @@ COPY public.tariffs_dependencies (idtariff, idservice) FROM stdin;
 -- Data for Name: workers; Type: TABLE DATA; Schema: public; Owner: ddbachur
 --
 
-COPY public.workers (idworker, idprovider, idjob, surname, name, patronymic, qualification) FROM stdin;
-2	1	\N	Ivanovich	Ivan	Ivanov	montajnik horosho rabotaet 15 simvolov
+COPY public.workers (idworker, idjob, name, surname, patronymic, qual) FROM stdin;
+1	\N	work	wer	mont	\N
+2	\N	work1	wer1	mont1	\N
 \.
 
 
@@ -479,49 +513,56 @@ COPY public.workers (idworker, idprovider, idjob, surname, name, patronymic, qua
 -- Name: appeals_idappeal_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.appeals_idappeal_seq', 2, true);
+SELECT pg_catalog.setval('public.appeals_idappeal_seq', 7, true);
 
 
 --
 -- Name: clients_idclient_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.clients_idclient_seq', 2, true);
+SELECT pg_catalog.setval('public.clients_idclient_seq', 3, true);
 
 
 --
 -- Name: contracts_idcontract_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.contracts_idcontract_seq', 2, true);
+SELECT pg_catalog.setval('public.contracts_idcontract_seq', 4, true);
 
 
 --
 -- Name: jobs_idjob_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.jobs_idjob_seq', 2, true);
+SELECT pg_catalog.setval('public.jobs_idjob_seq', 5, true);
 
 
 --
--- Name: providers_idprovider_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
+-- Name: logins_idlogin_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.providers_idprovider_seq', 1, true);
+SELECT pg_catalog.setval('public.logins_idlogin_seq', 29, true);
 
 
 --
 -- Name: services_idservice_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.services_idservice_seq', 3, true);
+SELECT pg_catalog.setval('public.services_idservice_seq', 1, false);
 
 
 --
 -- Name: tariffs_idtariff_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
 --
 
-SELECT pg_catalog.setval('public.tariffs_idtariff_seq', 1, true);
+SELECT pg_catalog.setval('public.tariffs_idtariff_seq', 1, false);
+
+
+--
+-- Name: users_iduser_seq; Type: SEQUENCE SET; Schema: public; Owner: ddbachur
+--
+
+SELECT pg_catalog.setval('public.users_iduser_seq', 5, true);
 
 
 --
@@ -537,14 +578,6 @@ SELECT pg_catalog.setval('public.workers_idworker_seq', 2, true);
 
 ALTER TABLE ONLY public.appeals
     ADD CONSTRAINT appeals_pkey PRIMARY KEY (idappeal);
-
-
---
--- Name: clients clients_phonenumber_key; Type: CONSTRAINT; Schema: public; Owner: ddbachur
---
-
-ALTER TABLE ONLY public.clients
-    ADD CONSTRAINT clients_phonenumber_key UNIQUE (phonenumber);
 
 
 --
@@ -572,14 +605,6 @@ ALTER TABLE ONLY public.jobs
 
 
 --
--- Name: providers providers_pkey; Type: CONSTRAINT; Schema: public; Owner: ddbachur
---
-
-ALTER TABLE ONLY public.providers
-    ADD CONSTRAINT providers_pkey PRIMARY KEY (idprovider);
-
-
---
 -- Name: services services_pkey; Type: CONSTRAINT; Schema: public; Owner: ddbachur
 --
 
@@ -596,6 +621,22 @@ ALTER TABLE ONLY public.tariffs
 
 
 --
+-- Name: tdeps tdeps_idtariff_idservice_key; Type: CONSTRAINT; Schema: public; Owner: ddbachur
+--
+
+ALTER TABLE ONLY public.tdeps
+    ADD CONSTRAINT tdeps_idtariff_idservice_key UNIQUE (idtariff, idservice);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: ddbachur
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (iduser);
+
+
+--
 -- Name: workers workers_pkey; Type: CONSTRAINT; Schema: public; Owner: ddbachur
 --
 
@@ -608,7 +649,7 @@ ALTER TABLE ONLY public.workers
 --
 
 ALTER TABLE ONLY public.appeals
-    ADD CONSTRAINT appeals_idcontract_fkey FOREIGN KEY (idcontract) REFERENCES public.contracts(idcontract);
+    ADD CONSTRAINT appeals_idcontract_fkey FOREIGN KEY (idcontract) REFERENCES public.contracts(idcontract) ON DELETE CASCADE;
 
 
 --
@@ -616,7 +657,7 @@ ALTER TABLE ONLY public.appeals
 --
 
 ALTER TABLE ONLY public.contracts
-    ADD CONSTRAINT contracts_idclient_fkey FOREIGN KEY (idclient) REFERENCES public.clients(idclient);
+    ADD CONSTRAINT contracts_idclient_fkey FOREIGN KEY (idclient) REFERENCES public.clients(idclient) ON DELETE CASCADE;
 
 
 --
@@ -624,7 +665,7 @@ ALTER TABLE ONLY public.contracts
 --
 
 ALTER TABLE ONLY public.contracts
-    ADD CONSTRAINT contracts_idtariff_fkey FOREIGN KEY (idtariff) REFERENCES public.tariffs(idtariff);
+    ADD CONSTRAINT contracts_idtariff_fkey FOREIGN KEY (idtariff) REFERENCES public.tariffs(idtariff) ON DELETE SET NULL;
 
 
 --
@@ -632,39 +673,31 @@ ALTER TABLE ONLY public.contracts
 --
 
 ALTER TABLE ONLY public.jobs
-    ADD CONSTRAINT jobs_idappeal_fkey FOREIGN KEY (idappeal) REFERENCES public.appeals(idappeal);
+    ADD CONSTRAINT jobs_idappeal_fkey FOREIGN KEY (idappeal) REFERENCES public.appeals(idappeal) ON DELETE SET NULL;
 
 
 --
--- Name: services services_idprovider_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
+-- Name: logins logins_iduser_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
 --
 
-ALTER TABLE ONLY public.services
-    ADD CONSTRAINT services_idprovider_fkey FOREIGN KEY (idprovider) REFERENCES public.providers(idprovider);
-
-
---
--- Name: tariffs_dependencies tariffs_dependencies_idservice_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
---
-
-ALTER TABLE ONLY public.tariffs_dependencies
-    ADD CONSTRAINT tariffs_dependencies_idservice_fkey FOREIGN KEY (idservice) REFERENCES public.services(idservice);
+ALTER TABLE ONLY public.logins
+    ADD CONSTRAINT logins_iduser_fkey FOREIGN KEY (iduser) REFERENCES public.users(iduser);
 
 
 --
--- Name: tariffs_dependencies tariffs_dependencies_idtariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
+-- Name: tdeps tdeps_idservice_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
 --
 
-ALTER TABLE ONLY public.tariffs_dependencies
-    ADD CONSTRAINT tariffs_dependencies_idtariff_fkey FOREIGN KEY (idtariff) REFERENCES public.tariffs(idtariff);
+ALTER TABLE ONLY public.tdeps
+    ADD CONSTRAINT tdeps_idservice_fkey FOREIGN KEY (idservice) REFERENCES public.services(idservice) ON DELETE CASCADE;
 
 
 --
--- Name: tariffs tariffs_idprovider_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
+-- Name: tdeps tdeps_idtariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
 --
 
-ALTER TABLE ONLY public.tariffs
-    ADD CONSTRAINT tariffs_idprovider_fkey FOREIGN KEY (idprovider) REFERENCES public.providers(idprovider);
+ALTER TABLE ONLY public.tdeps
+    ADD CONSTRAINT tdeps_idtariff_fkey FOREIGN KEY (idtariff) REFERENCES public.tariffs(idtariff) ON DELETE CASCADE;
 
 
 --
@@ -672,15 +705,7 @@ ALTER TABLE ONLY public.tariffs
 --
 
 ALTER TABLE ONLY public.workers
-    ADD CONSTRAINT workers_idjob_fkey FOREIGN KEY (idjob) REFERENCES public.jobs(idjob);
-
-
---
--- Name: workers workers_idprovider_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ddbachur
---
-
-ALTER TABLE ONLY public.workers
-    ADD CONSTRAINT workers_idprovider_fkey FOREIGN KEY (idprovider) REFERENCES public.providers(idprovider);
+    ADD CONSTRAINT workers_idjob_fkey FOREIGN KEY (idjob) REFERENCES public.jobs(idjob) ON DELETE SET NULL;
 
 
 --
