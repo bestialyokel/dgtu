@@ -42,7 +42,7 @@ module.exports = async (req, res, next) => {
             res.status(200).json({
                 success: true,
                 message: 'contract and appeals available',
-                contract: contract0.row[0],
+                contract: contract0.rows[0],
                 fields: client.fields.map(x => x.name),
                 appeals: appeals.rows.map(x => x.idappeal)
             })
@@ -65,7 +65,7 @@ module.exports = async (req, res, next) => {
         let {idclient, idtariff, address, type} = req.query
 
         let create = await db.query('INSERT INTO Contracts VALUES \
-                                        (DEFAULT, $1, $2, $3, $4, NOW()) RETURNING idcontract',
+                                        (DEFAULT, $1, $2, $3, $4) RETURNING idcontract',
                                         [idclient, idtariff, address, type])
         if (create.rows.length == 0) {
             res.status(200).json({

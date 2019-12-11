@@ -40,7 +40,8 @@ module.exports = async (req, res, next) => {
             res.status(200).json({
                 success: true,
                 message: 'service available',
-                service: service.rows[0]
+                service: service.rows[0],
+                fields: service.fields.map(x => x.name)
             })
             return
         }
@@ -51,7 +52,7 @@ module.exports = async (req, res, next) => {
             success: true,
             message: 'services available',
             services: services,
-            fields: services.fields
+            fields: services.fields.map(x => x.name)
         })
         return
     }

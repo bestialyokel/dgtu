@@ -1,6 +1,8 @@
 const db = require('../db/db')
 const privileges = require('../privileges')
 
+//не трогать ради бога
+
 module.exports = async (req, res, next) => {
     const {key} = req.query
     let login = await db.query('SELECT * FROM Logins WHERE key=$1', [key])

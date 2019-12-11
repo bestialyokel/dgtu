@@ -3,6 +3,27 @@ const crypto = require('crypto')
 
 module.exports = async (req, res, next) => {
 
+    if (req.method == 'GET') {
+        const {key} = req.query
+
+        let get = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
+
+        get = get.rows[0]
+        if (get == null) {
+            res.json({
+                success: false,
+                message: 'key not valid'
+            })
+            return
+        }
+        delete key
+        res.json({
+            success: true,
+            iduser: get.iduser,
+            role: get.role
+        })
+    }
+    
     if (req.method == 'POST') {
         const {login, password} = req.query
         let query = `SELECT * FROM Users AS U WHERE U.login=$1 AND U.password=$2`
