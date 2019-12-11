@@ -157,7 +157,7 @@ int* takeMemory()
 	}
 	cout << endl;
 
-	cout << "Block adress: " << buff /*&ram[buff]*/ << endl;
+	cout << "Block adress: " << (buff*2 + 128) /*&ram[buff]*/ << endl;
 
 	return &ram[buff];
 }

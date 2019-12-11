@@ -7,12 +7,12 @@ class Cat {
 	char* name;
 	static int count;
 public:
-	Cat(const char* n="Êóçÿ") {
+	Cat(const char* n="ĞšÑƒĞ·Ñ") {
 		cout << endl;
-		cout << "Âõîä â êîíñòğóêòîğ êëàññà" << endl;
+		cout << "Ğ’Ñ…Ğ¾Ğ´ Ğ² ĞºĞ¾Ğ½ÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€ ĞºĞ»Ğ°ÑÑĞ°" << endl;
 		name = strdup(n);
 		count++;
-		cout << "Âûõîä èç êîíñòğóêòîğà êëàññà" << endl;
+		cout << "Ğ’Ñ‹Ñ…Ğ¾Ğ´ Ğ¸Ğ· ĞºĞ¾Ğ½ÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€Ğ° ĞºĞ»Ğ°ÑÑĞ°" << endl;
 		
 	}
 	static int out() {
@@ -20,30 +20,30 @@ public:
 	}
 
 	Cat(Cat &x) {
-		cout << "Âõîä â êîíñòğóêòîğ êîïèğîâàíèÿ êëàññà" << endl; 
+		cout << "Ğ’Ñ…Ğ¾Ğ´ Ğ² ĞºĞ¾Ğ½ÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€ ĞºĞ¾Ğ¿Ğ¸Ñ€Ğ¾Ğ²Ğ°Ğ½Ğ¸Ñ ĞºĞ»Ğ°ÑÑĞ°" << endl; 
 		name = strdup(x.name);
 		count++;
-		cout << "Âûõîä èç êîíñòğóêòîğà êîïèğîâàíèÿ êëàññà" << endl;
+		cout << "Ğ’Ñ‹Ñ…Ğ¾Ğ´ Ğ¸Ğ· ĞºĞ¾Ğ½ÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€Ğ° ĞºĞ¾Ğ¿Ğ¸Ñ€Ğ¾Ğ²Ğ°Ğ½Ğ¸Ñ ĞºĞ»Ğ°ÑÑĞ°" << endl;
 	}
 	~Cat() {
-		cout << "Âõîä â äåñòğóêòîğ êëàññà" << endl;
+		cout << "Ğ’Ñ…Ğ¾Ğ´ Ğ² Ğ´ĞµÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€ ĞºĞ»Ğ°ÑÑĞ°" << endl;
 		free(name);
 		count--;
 		system("pause");
-		cout << "Âûõîä èç äåñòğóêòîğà êëàññà" << endl;
+		cout << "Ğ’Ñ‹Ñ…Ğ¾Ğ´ Ğ¸Ğ· Ğ´ĞµÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€Ğ° ĞºĞ»Ğ°ÑÑĞ°" << endl;
 	}
 }; 
 int Cat::count;
 
 int main() {
 	setlocale(LC_ALL, "Russian");
-	cout << "Âõîä â ôóíêöèş main()" << endl; 
+	cout << "Ğ’Ñ…Ğ¾Ğ´ Ğ² Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ñ main()" << endl; 
 	Cat mas[3];
-	cout << "Ñîçäàíî îáúåêòîâ: " << mas->out() << endl;
+	cout << "Ğ¡Ğ¾Ğ·Ğ´Ğ°Ğ½Ğ¾ Ğ¾Ğ±ÑŠĞµĞºÑ‚Ğ¾Ğ²: " << mas->out() << endl;
 	Cat *obj = new Cat;
-	cout << "Ñîçäàíî îáúåêòîâ: " << obj->out() << endl;
+	cout << "Ğ¡Ğ¾Ğ·Ğ´Ğ°Ğ½Ğ¾ Ğ¾Ğ±ÑŠĞµĞºÑ‚Ğ¾Ğ²: " << obj->out() << endl;
 	delete obj;
-	cout << "Ñîçäàíî îáúåêòîâ: " << obj->out() << endl;
-	cout << "Âûõîä èç ôóíêöèè main()" << endl;
+	cout << "Ğ¡Ğ¾Ğ·Ğ´Ğ°Ğ½Ğ¾ Ğ¾Ğ±ÑŠĞµĞºÑ‚Ğ¾Ğ²: " << obj->out() << endl;
+	cout << "Ğ’Ñ‹Ñ…Ğ¾Ğ´ Ğ¸Ğ· Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸ main()" << endl;
 	system("pause");
 }

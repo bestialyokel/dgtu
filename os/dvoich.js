@@ -34,7 +34,7 @@ let isFree = (index, size) => {
     return true
 }
 
-let spreadTo = (level, from = 0, size = 1) => {
+let spreadTo = (level, from = 0) => {
 
     if (from == level) return
 
@@ -46,7 +46,21 @@ let spreadTo = (level, from = 0, size = 1) => {
             lists[from + 1][i*2] = lists[from + 1][i*2 + 1] = 1 //заполнение 
             break
         }
-    spreadTo(level, from + 1, size*2)
+    spreadTo(level, from + 1)
+}
+
+let spread = (level, from = level - 1) => {
+
+    console.log(level, from)
+    if (from = - 1) return
+    let list = lists[from]
+    for (let i = 0; i < list.length; i++) {
+        if (list[i] == 1) {
+            console.log(1);
+            break
+        }
+    }
+    spread(level, from - 1)
 }
 
 let alloc = (size) => {
@@ -65,6 +79,7 @@ let alloc = (size) => {
 }
 
 //spreadTo(6);
-spreadTo(5);
+spread(3)
+
 
 console.log(lists.map(x => x.join('')))

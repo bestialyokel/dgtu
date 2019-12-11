@@ -7,20 +7,20 @@ class Cat
 	friend void delClass(Cat &name);
 	Cat(const char* name)
 	{
-		cout << "Âõîä â êîíñòðóêòîð" << endl;
-		cout << "Âûõîä èç êîíñòðóêòîðà" << endl;
+		cout << "Ð’Ñ…Ð¾Ð´ Ð² ÐºÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€" << endl;
+		cout << "Ð’Ñ‹Ñ…Ð¾Ð´ Ð¸Ð· ÐºÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€Ð°" << endl;
 	};
 	Cat(Cat & name) {};
 
 	~Cat()
 	{
-		cout << "Âõîä â äåñòðóêòîð" << endl;
-		cout << "Âûõîä èç äåñòðóêòîðà" << endl;
+		cout << "Ð’Ñ…Ð¾Ð´ Ð² Ð´ÐµÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€" << endl;
+		cout << "Ð’Ñ‹Ñ…Ð¾Ð´ Ð¸Ð· Ð´ÐµÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€Ð°" << endl;
 	};
 
 };
 
-Cat *create(const char* name = "Êóçÿ")
+Cat *create(const char* name = "ÐšÑƒÐ·Ñ")
 {
 	return new Cat(name);
 };
