@@ -23,8 +23,32 @@ module.exports = async (req, res, next) => {
     }
 
     if (req.method == 'GET') {
+        let {id} = req.query
 
-        let tariffs = await db.query('SELECT * FROM Tariffs T, Tariffsdeps D, Services S WHERE T.idtariff=D.idtariff AND D.idservice=S.idservice')
+        if (id) {
+            let tariff = await db.query("SELECT * FROM Tariffs WHERE idtariff=$1", [id])
+
+            if (tariff.rows.length == 0) {
+                res.json({
+                    success: false,
+                    message: 'tariff not found'
+                })
+                return
+            }
+
+            let services = await db.query('SELECT * FROM Tariffsdeps WHERE idtariff=$1', [id])
+
+            res.json({
+                success: true,
+                message: 'tariff and services available',
+                tariff: tariff.rows[0],
+                fields: tariff.fields.map(x => x.name),
+                services: services.rows.map(x => x.idservice)
+            })
+            return
+        }
+
+        let tariffs = await db.query('SELECT * FROM Tariffs')
         res.status(200).json({
             success: true,
             message: 'tariffs available',
@@ -37,7 +61,7 @@ module.exports = async (req, res, next) => {
         const {name, payment, period, services} = req.query
         let createTariff = 'WITH tariff AS (INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3) RETURNING idtariff)'
         let idtariff = '(SELECT idtariff FROM tariff)';
-        let createDependencies = 'INSERT INTO Tariffsdeps VALUES ' + services.split(',').map((idservice,i) => `(${idtariff}, $${i+4})`) + 'RETURNING idtariff'
+        let createDependencies = 'INSERT INTO Tdeps VALUES ' + services.split(',').map((idservice,i) => `(${idtariff}, $${i+4})`) + 'RETURNING idtariff'
         let create = await db.query(createTariff+createDependencies, [name, payment, period, ...services.split(',')])
         res.status(200).json({
             success: true,
@@ -49,12 +73,20 @@ module.exports = async (req, res, next) => {
 
         const {id, name, payment, period, services} = req.query
 
-        let query = 'WITH tariff AS (UPDATE Tariffs SET name=$1, payment=$2, period=$3 WHERE idtariff=$4), \
-                    plug AS (INSERT INTO Tariffsdeps VALUES ' + 
+        let query = String()
+        let args = [name, payment, period, id]
+        if (services != null) {
+            query = 'WITH tariff AS (UPDATE Tariffs SET name=$1, payment=$2, period=$3 WHERE idtariff=$4), \
+                    plug AS (INSERT INTO Tdeps VALUES ' + 
                             services.split(',').map((x,i) => `($4, $${i+5})`) + ')' +
-                    'DELETE FROM Tariffsdeps WHERE idtariff=$4'
+                    'DELETE FROM Tdeps WHERE idtariff=$4'
 
-        let update = await db.query(query, [name, payment, period, id, ...services.split(',')])
+            args = [args, ...services.split(',')]
+        } else {
+            query = 'UPDATE Tariffs SET NAME=$1, payment=$2, period=$3 WHERE idtariff=$4'
+        }
+
+        let update = await db.query(query, args)
         res.status(200).json({
             success: true,
             message: 'tariff updated',
@@ -66,7 +98,7 @@ module.exports = async (req, res, next) => {
         const {id} = req.query
         
         let query = 'WITH plug AS (DELETE FROM Tariffs WHERE idtariff=$1) \
-                     DELETE FROM Tariffsdeps WHERE idtariff=$1'
+                     DELETE FROM Tdeps WHERE idtariff=$1'
         let del = await db.query(query, [id]);
         res.status(200).json({
             success: true,
