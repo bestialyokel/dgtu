@@ -13,13 +13,12 @@ void showdir(char path[255], size_t spath_len, char to[255]) {
     DIR *dir;
     struct dirent *entry;
 
-
+    printf("%s\n", path);
     //folder does not exist
     if (access(path, F_OK) == -1) return;
     //if (access(to, F_OK) == -1) return;
 
     dir = opendir(path);
-
 
     //file was opened
     if (dir == NULL) {
@@ -41,8 +40,8 @@ void showdir(char path[255], size_t spath_len, char to[255]) {
         
         
 
-        //printf("%s\n", path);
-        //printf("%s\n", newFilePath);
+        printf("%s\n", path);
+        printf("%s\n", newFilePath);
 
         pid_t pid = fork();
         int status;
@@ -68,7 +67,7 @@ void showdir(char path[255], size_t spath_len, char to[255]) {
 
         char nextPath[255] = {0};
         strcat(nextPath, path);
-        //strcat(nextPath, "/");
+        strcat(nextPath, "/"); // stranno no ..// rabotaet
         strcat(nextPath, entry->d_name);
 
 
