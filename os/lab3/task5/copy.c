@@ -67,9 +67,8 @@ void showdir(char path[255], size_t spath_len, char to[255]) {
 
         char nextPath[255] = {0};
         strcat(nextPath, path);
-        strcat(nextPath, "/"); // stranno no ..// rabotaet
+        strcat(nextPath, "/"); // stranno no rabotaet if (entry->d_type != 4) strcat(nextPath, "/");
         strcat(nextPath, entry->d_name);
-
 
         char nextTo[255] = {0};
         strcat(nextTo, to);

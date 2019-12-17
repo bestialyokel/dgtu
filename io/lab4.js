@@ -8,18 +8,21 @@ let s = [
 ]
 
 let ostov = (Graph) => {
+	//тут будет остовное дерево
     let span = Array(Graph.length);
+    
+    //тут будет то что осталось от графа, если убрать из него дерево
     let difference = Array(Graph.length);
 
-    let cycles = [];
 
 
-
+	//просто заполнение массивов массивами
     for (let i = 0; i < span.length; i++) {
         span[i] = []
         difference[i] = []
     }
-
+	
+	//функция которая строит остовное дерево
     let buildOST = (G, visited = [], cur = 0, prev = 0) => {
         if (visited.includes(cur)) {
             if (!span[cur].includes(prev) && !difference[cur].includes(prev))
@@ -33,7 +36,8 @@ let ostov = (Graph) => {
 
     buildOST (Graph);
     span[0].shift();
-
+    
+	//функция которая находит цикл
     let dfs = (G, visited = [], cur = 0, depth = 0) => {
         if (visited.includes(cur)) {
             visited.push(cur);
@@ -42,18 +46,23 @@ let ostov = (Graph) => {
             return;
         }
         visited.push(cur);
+        
         if (G[cur].length == 0) for (let i = 0; i < depth - 1; i++) visited.pop();
         G[cur].forEach(x => dfs(G, visited, x, depth + 1));
     }
     
+    
+    //для каждого ребра из разницы найти цикл вроде
     difference.forEach((x,i) => {
         x.forEach((y, j) => {
-            console.log('----')
 
             let b = [...span[i]];
             let c = span[i];
+            
             b.push(y);
+           
             b.sort();
+            
             span[i] = b;
             dfs(span);
             span[i] = c;
@@ -61,8 +70,6 @@ let ostov = (Graph) => {
 
         })
     })
-
-    return {span, difference};
 
 
 }
