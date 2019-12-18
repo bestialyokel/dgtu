@@ -7,3 +7,5 @@ node_modules
 
 !*.c
 !Makefile
+
+*.exe
