@@ -121,7 +121,7 @@ fn main() {
 
         let mut x_offset : usize = page_data_offset(ram, x);
 
-        if (x_offset > RAM_SIZE) {
+        if (x_offset >= RAM_SIZE) {
             LRUswap(ram, hdd, x);
         }
 
@@ -136,7 +136,7 @@ fn main() {
 
     }
 
-    fn printInfo(ram: &[u32], hdd: &[u32]) {
+    fn printInfo(ram: &mut [u32], hdd: &mut [u32], start : Instant) {
         for i in 0..PAGES {
             print!("{:?} - page, {:?} - offset, {:?} - timestamp\n", i
                     , ram[i * PAGE_INFO_SIZE + PAGE_OFFSET]
@@ -145,7 +145,7 @@ fn main() {
 
         print!("{:-<1$}\n", " ", 50);
 
-        for i in 0..7 {
+        /*for i in 0..7 {
             print!("\n");
             for j in 0..PAGE_SIZE {
                 print!("{}", ram[INFO_OFFSET + j + PAGE_SIZE*(i+1)])
@@ -157,6 +157,11 @@ fn main() {
             for j in 0..PAGE_SIZE {
                 print!("{}", hdd[j + PAGE_SIZE*(i+1)])
             }
+        }*/
+
+        for i in 0..PAGES {
+            read(ram, hdd, i as u32, start);
+            print!("\n");
         }
 
     }
@@ -171,9 +176,9 @@ fn main() {
     write(&mut ram, &mut hdd, 9, &mut [1,2,3], start);
     write(&mut ram, &mut hdd, 0, &mut [111,2,3], start);
     write(&mut ram, &mut hdd, 11, &mut [321,2,3], start);
-    read(&mut ram, &mut hdd, 11, start);
 
-    //printInfo(&ram, &hdd);
+
+    printInfo(&mut ram, &mut hdd, start);
 
 
     
