@@ -22,6 +22,7 @@ public:
 	Cat(Cat &x) {
 		cout << "Вход в конструктор копирования класса" << endl; 
 		name = strdup(x.name);
+		
 		count++;
 		cout << "Выход из конструктора копирования класса" << endl;
 	}

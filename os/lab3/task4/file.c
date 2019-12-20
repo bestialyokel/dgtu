@@ -16,7 +16,6 @@ void executeExistingOrWait(char folder[255]) {
     struct dirent *entry;
     int counter = 0;
 
-    //char *executable = (char*)malloc(0);
 
     dir = opendir(folder);
     entry = readdir(dir);
@@ -32,7 +31,6 @@ void executeExistingOrWait(char folder[255]) {
             counter += 1;
             
 
-            //do thangs
 
             //RUN && DELETE
             pid_t pid = fork();

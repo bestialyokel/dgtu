@@ -14,12 +14,14 @@ public interface IElectricSource {
 public interface IElectricAppliance {
     uint Voltage();
     uint MaxPower();
+    string type{get;set;}
 }
 
 //интерфейс электрического шнура  
 public interface IElectricWire {
     uint Voltage();
     uint MaxPower();
+    uint length{get; set;}
 }
 
 

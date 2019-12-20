@@ -12,9 +12,9 @@ class Student {
         uint group;
     
     public:
-        Student(char *name, 
-                char *surname, 
-                char *patronymic, 
+        Student(const char *name = "un", 
+                const char *surname = "un", 
+                const const char *patronymic = "un", 
                 uint byear = 0, 
                 uint group = 0) {
             cout << "->student()" << endl;
@@ -94,7 +94,7 @@ class Student {
 };
 
 
-Student *test(Student &s) {// Student &&& Student s
+Student &test(const Student s) {// Student &&& Student s
     return &s;
 }
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-class Node<T> {
+internal class Node<T> {
     public T value;
     public Node<T> next = null;
     public Node(T value) {
@@ -11,7 +11,7 @@ class Node<T> {
     }
 }
 
-class UniqueList<T> : IEnumerable<Node<T>> {
+internal class UniqueList<T> : IEnumerable<Node<T>> {
     Node<T> head;
     public uint length = 0;
     public IEnumerator<Node<T>> GetEnumerator() {

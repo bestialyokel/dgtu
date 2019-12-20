@@ -11,7 +11,8 @@ from struct import *
 # defining the maximum table size
 # opening the input file
 # reading the input file and storing the file data into data variable
-input_file, n = argv[1:]                
+input_file, n = argv[1:]  
+print(n)              
 maximum_table_size = pow(2,int(n))      
 file = open(input_file)                 
 data = file.read()                      
