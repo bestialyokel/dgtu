@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-//#include <functional>
+#include <functional>
 #include <string>
 
 #include "list.cpp"
@@ -12,15 +12,15 @@ class Menu {
     protected:
         vector<string> names;
         int addName(string name) {
-            names.insert(--names.end() - 1, name); // insert before Last (quit);
+            names.insert(names.end() - 1, name); // insert before Last (quit);
             return names.size() - 2;
         }
         Menu() {
             names.push_back("Quit");
         }
-        virtual void processMenuItem(int itemIndex) = 0;
+        virtual void processMenuItem(size_t itemIndex) = 0;
         void showMenu() {
-            cout << "\033c";
+            cout << endl;
             int counter = 0;
             for (auto &item : names) {
                 cout << endl << counter << " - " << item;
@@ -34,24 +34,43 @@ class Menu {
         }   
 };
 
-class ListMenu : protected Menu {
+class ListMenu /*QueueMenu*/ : protected Menu {
     List list;
-    //надо создать текстовый интерфейс, но впадлу
+    vector< std::function<void(void)> > actions;
+
     public:
         ListMenu() {
-            addName("a");
-            addName("a");
-            addName("a");
+            Menu::addName("print");
+            Menu::addName("inser");
+            Menu::addName("remove");
+            Menu::addName("get");
+
+            actions.push_back([this]() -> void {
+                //print
+                cout << "print" << endl;
+            });
+            actions.push_back([this]() -> void {
+                //insert
+                cout << "insert" << endl;
+            });
+            actions.push_back([this]() -> void {
+                //remove
+                cout << "remove" << endl;
+            });
+            actions.push_back([this]() -> void {
+                //get
+                cout << "get" << endl;
+            });
+
+            Menu::showMenu();
         }
-
-
+        void processMenuItem(size_t itemIndex) override {
+            actions[itemIndex]();
+        }
 };
 
-void a() {
-    cout << 1;
-}
 
 int main() {
-
+    ListMenu a;
 
 }
