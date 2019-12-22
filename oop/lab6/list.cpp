@@ -1,6 +1,13 @@
 #include <iostream>
 
+
+
+#ifndef LIST
+#define LIST
+
+
 using namespace std;
+
 
 class List {
     private:
@@ -8,8 +15,8 @@ class List {
         class Node {
             public:
                 int data;
-                Node *next;
-                Node *prev;
+                Node *next = 0;
+                Node *prev = 0;
                 Node(int value, Node *next = NULL, Node *prev = NULL) {
                     this->data = value;
                     this->next = next;
@@ -18,8 +25,8 @@ class List {
         };
 
     public:
-        Node *head;
-        Node *tail;
+        Node *head = 0;
+        Node *tail = 0;
         uint length = 0;
         List() {}
         ~List() {

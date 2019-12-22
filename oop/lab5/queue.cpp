@@ -1,5 +1,9 @@
 #include "./list.cpp"
 
+
+#ifndef QUEUE_AGGR
+#define QUEUE_AGR
+
 class Queue {
     private:
         List list;
@@ -20,3 +24,5 @@ class Queue {
             list.print();
         }
 }
+
+#endif
