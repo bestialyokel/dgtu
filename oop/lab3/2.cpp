@@ -1,39 +1,50 @@
-#include <cstdio>
 #include <iostream>
 using namespace std;
 
-class Cat
-{
-Cat(const char* name)
-{
-cout << "Вход в конструктор" << endl;
-cout << name << endl;
-cout << "Выход из конструктора" << endl;
-};
+class Singleton1 {
+	Singleton1() {}
+	~Singleton1() {}
 
-~Cat()
-{
-cout << "Вход в деструктор" << endl;
-cout << "Выход из деструктора" << endl;
-};
+	static Singleton1 *one;
 
 public:
-
-static Cat *create( const char* name="Кузя")
-{
-return new Cat(name);
-}
-
-static void delClass(Cat *name)
-{
-delete name;
-}
+	static Singleton1 *getX() {
+		cout << "get one" << endl;
+		if (!one)
+			Singleton1 *one = new Singleton1;
+		return one;
+	}
 };
-int main()
-{
-setlocale(LC_ALL, "RUS");
-Cat *Cat_Class = Cat::create();
-Cat::delClass(Cat_Class);
-system("pause");
-return 0;
+
+class Singleton2 {
+	Singleton2() {}
+	~Singleton2() {}
+
+	static Singleton2 *two;
+
+public:
+	static Singleton2 *createY() {
+		if (!two)
+			two = new Singleton2;
+		return two;
+	}
+
+	static void deleteY(Singleton2 *) {
+		delete two;
+		two = 0;
+	}
+};
+
+Singleton2 *Singleton2::two;
+Singleton1 *Singleton1::one = Singleton1::getX();
+
+
+int main() {
+	cout << "Main in" << endl;
+	cout << "4.2" << endl;
+	Singleton2 *Otwo = Singleton2::createY();
+	Singleton2 *Ttwo = Singleton2::createY();
+	cout << (Otwo == Ttwo) << endl;
+	Singleton2::deleteY(Ttwo);
+	
 }

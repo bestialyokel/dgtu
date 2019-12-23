@@ -30,14 +30,12 @@ public:
 		cout << "Вход в деструктор класса" << endl;
 		free(name);
 		count--;
-		system("pause");
 		cout << "Выход из деструктора класса" << endl;
 	}
 }; 
 int Cat::count;
 
 int main() {
-	setlocale(LC_ALL, "Russian");
 	cout << "Вход в функцию main()" << endl; 
 	Cat mas[3];
 	cout << "Создано объектов: " << mas->out() << endl;
@@ -46,5 +44,4 @@ int main() {
 	delete obj;
 	cout << "Создано объектов: " << obj->out() << endl;
 	cout << "Выход из функции main()" << endl;
-	system("pause");
 }

@@ -1,40 +1,39 @@
+#include <cstdio>
 #include <iostream>
 using namespace std;
 
 class Cat
 {
-	friend Cat *create(const char* name);
-	friend void delClass(Cat &name);
-	Cat(const char* name)
-	{
-		cout << "Вход в конструктор" << endl;
-		cout << "Выход из конструктора" << endl;
-	};
-	Cat(Cat & name) {};
-
-	~Cat()
-	{
-		cout << "Вход в деструктор" << endl;
-		cout << "Выход из деструктора" << endl;
-	};
-
-};
-
-Cat *create(const char* name = "Кузя")
+Cat(const char* name)
 {
-	return new Cat(name);
+cout << "Вход в конструктор" << endl;
+cout << name << endl;
+cout << "Выход из конструктора" << endl;
 };
 
-void delClass(Cat &name)
+~Cat()
 {
-	delete &name;
+cout << "Вход в деструктор" << endl;
+cout << "Выход из деструктора" << endl;
 };
 
+public:
+
+static Cat *create( const char* name="Кузя")
+{
+return new Cat(name);
+}
+
+static void delClass(Cat *name)
+{
+delete name;
+}
+};
 int main()
 {
-	setlocale(LC_ALL, "RUS");
-	Cat *CatClass = create();
-	delClass(*CatClass);
-	system("pause");
-	return 0;
+setlocale(LC_ALL, "RUS");
+Cat *Cat_Class = Cat::create();
+Cat::delClass(Cat_Class);
+system("pause");
+return 0;
 }
