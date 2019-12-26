@@ -1,0 +1,44 @@
+Password1234
+
+1,2,7,8) net user SIDOROV /ADD 
+			/PASSWORDCHG:YES 
+			/PASSWORDREQ:NO 
+			/EXPIRES:14.1.2020 
+			/TIMES:Пн,Вт,Ср,Чт,Пт,Сб,
+			11:00-19:00,11:00-18:00,11:00-19:00,10:30-18:30,16:30-22:00,10:00-14:00
+
+
+
+3,4,5) net accounts /MINPWAGE:45 /MAXPWAGE:45 /MINPWLEN:8 /UNIQUEPW:0
+
+9) gpedit.msc административные шаблоны/компоненты windows/удаленная оболочка windows/maxconcurrentusers поставить 4 
+
+10) 
+mkdir C:\Users\SIDOROV; 
+icacls C:\Users\SIDOROV /setowner SIDOROV;
+icacls C:\Users\SIDOROV /grant SIDOROV:F;
+	
+11) setting folder quotas on windows server 2012 R2 youtube (file servieces)
+ряльно хз
+
+12)net localgroup PD; net localgroup PD /add;
+
+первое вроде как проверка существует ли
+group не работает
+
+13)net localgroup PD SIDOROV /add
+net localgroup PD PETROV /add
+
+хз как 'включить если существует"
+
+14)mkdir C:\Users\PD
+icacls C:\Users\PD /setowner PD;
+icacls C:\Users\PD /grant PD:RX; read execute
+
+15)echo > C:\Users\PD\a.txt;
+
+icacls C:\Users\PD\a.txt /grant SIDOROV:(AD);
+
+
+
+
