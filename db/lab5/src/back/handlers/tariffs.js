@@ -75,6 +75,7 @@ module.exports = async (req, res, next) => {
 
         let query = String()
         let args = [name, payment, period, id]
+        
         if (services != null) {
             query = 'WITH tariff AS (UPDATE Tariffs SET name=$1, payment=$2, period=$3 WHERE idtariff=$4), \
                     plug AS (INSERT INTO Tdeps VALUES ' + 
@@ -96,10 +97,7 @@ module.exports = async (req, res, next) => {
     if (req.method == 'DELETE') {
 
         const {id} = req.query
-        
-        let query = 'WITH plug AS (DELETE FROM Tariffs WHERE idtariff=$1) \
-                     DELETE FROM Tdeps WHERE idtariff=$1'
-        let del = await db.query(query, [id]);
+        let del = await db.query('DELETE FROM Tariffs WHERE idtariff=$1', [id]);
         res.status(200).json({
             success: true,
             message: 'tariff deleted'
