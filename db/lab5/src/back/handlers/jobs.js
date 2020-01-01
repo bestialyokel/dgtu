@@ -1,4 +1,4 @@
-const db = require('../db/db')
+const db = require('../db/pool')
 const privileges = require('../privileges')
 
 module.exports = async (req, res, next) => {

@@ -1,8 +1,8 @@
 const credentials = require('./credentials.json')
 
-const { Client } = require('pg')
+const { Pool } = require('pg')
 
-const client = new Client({
+const pool = new Pool({
     user: credentials.username,
     host: credentials.host,
     database: credentials.dbname,
@@ -10,4 +10,4 @@ const client = new Client({
     port: credentials.port
 })
 
-module.exports = client;
+module.exports = pool;

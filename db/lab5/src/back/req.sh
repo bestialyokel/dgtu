@@ -1,1 +1,1 @@
-curl -X GET 'http://localhost:8080/jobs?key=fd7622bf94e10d0a237ede30fcd7accd'
+curl -X POST 'http://localhost:8080/login?login=acc123&password=acc123'
