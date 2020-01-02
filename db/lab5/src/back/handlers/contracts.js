@@ -49,10 +49,10 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let {name, surname, patronymic, phonenumber} = req.query
+        let {idtariff} = req.query
         let query = {
-            text: 'UPDATE Clients SET name=$1, surname=$2, patronymic=$3, phonenumber=$4 WHERE idclient=$5 RETURNING idclient',
-            values: [name, surname, patronymic, phonenumber, req.params.id]
+            text: 'UPDATE Contracts SET idtariff=$1 WHERE idcontract=$2 RETURNING idcontract',
+            values: [idtariff, req.params.id]
         }
         let put = await pool.query(query)
         if (put.rows.length == 0) {
@@ -64,7 +64,7 @@ router.put('/:id', async (req, res) => {
         }
         res.json({
             success: true,
-            id: put.rows[0].idclient
+            id: put.rows[0].idcontract
         })
     } finally {
         //pool.release()
@@ -73,10 +73,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/:id', async (req, res) => {
     try {
-        let {name, surname, patronymic, phonenumber} = req.query
+        let {idclient, idtariff, address, type} = req.query
         let query = {
-            text: 'INSERT INTO Clients VALUES (DEFAULT, $1, $2, $3, $4) RETURNING idclient',
-            values: [name, surname, patronymic, phonenumber]
+            text: 'INSERT INTO Contracts VALUES (DEFAULT, $1, $2, $3, $4) RETURNING idcontract',
+            values: [idclient, idtariff, address, type]
         }
         let post = await pool.query(query)
         if (post.rows.length == 0) {
@@ -88,7 +88,7 @@ router.post('/:id', async (req, res) => {
         }
         res.json({
             success: true,
-            id: post.rows[0].idclient
+            id: post.rows[0].idcontract
         })
     } finally {
         //pool.release()
@@ -98,7 +98,7 @@ router.post('/:id', async (req, res) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         let query = {
-            text: 'DELETE FROM Clients WHERE idclient=$1 RETURNING phonenumber',
+            text: 'DELETE FROM Contracts WHERE idcontract=$1 RETURNING idclient',
             values: [req.params.id]
         }
         let remove = await pool.query(query)
@@ -113,7 +113,7 @@ router.delete('/:id', async (req, res, next) => {
 
         res.json({
             success: true,
-            phonenumber: remove.rows[0].phonenumber
+            client: remove.rows[0].idclient
         })
 
     } finally {
