@@ -1,79 +1,83 @@
-const db = require('../db/db')
+const pool = require('../db/pool')
 const crypto = require('crypto')
+const {Router} = require('express')
 
-module.exports = async (req, res, next) => {
 
-    if (req.method == 'GET') {
-        const {key} = req.query
+const router = new Router()
 
-        let get = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
 
-        get = get.rows[0]
-        if (get == null) {
+router.get('/', async (req, res) => {
+    let {key} = req.query
+    try {
+        let query = {
+            text: 'SELECT iduser, role FROM Logins WHERE key=$1',
+            values: [key]
+        }
+        let check = await pool.query(query)
+        if (check.rows.length == 0) 
             res.json({
                 success: false,
-                message: 'key not valid'
+                msg: 'key not valid'
+            })
+        else 
+            res.json({
+                success: true,
+                iduser: check.rows[0].iduser,
+                role: check.rows[0].role
+            })
+    } finally {
+        //pool.release()
+    }
+
+})
+
+router.post('/', async (req, res) => {
+    let {login, password} = req.query
+    try {
+        let query = {
+            text: 'SELECT * FROM Users WHERE login=$1 AND password=$2',
+            values: [login, password]
+        }
+        let signin = await pool.query(query)
+        let user = signin.rows[0]
+        if (user == null) {
+            res.json({
+                success: false,
+                msg: 'not valid'
             })
             return
         }
-        delete key
+        let key = await crypto.randomBytes(16).toString('hex')
+        query = {
+            text: 'INSERT INTO Logins VALUES (DEFAULT, $1, $2, $3)',
+            values: [user.iduser, key, user.role]
+        }
+        await pool.query(query)
         res.json({
             success: true,
-            iduser: get.iduser,
-            role: get.role
-        })
-    }
-    
-    if (req.method == 'POST') {
-        const {login, password} = req.query
-        let query = `SELECT * FROM Users AS U WHERE U.login=$1 AND U.password=$2`
-        let user = await db.query(query, [login, password])
-        user = user.rows[0]
-        if (user == null) {
-            res.status(400).json({
-                success: false,
-                message: 'login and password combination are not valid'
-            })
-            return
-        }
-        delete login, password
-        const key = await crypto.randomBytes(16).toString('hex') 
-        query = 'INSERT INTO Logins VALUES (DEFAULT, $1, $2, $3)'
-        await db.query(query, [user.iduser, key, user.role])
-        res.status(201).json({
-            success: true,
-            message: 'logged in',
             key: key,
-            login: user.login,
             role: user.role
         })
-        return
+    } finally {
+        //pool.release()
     }
-    if (req.method == 'DELETE') {
-        const {key} = req.query
-        let query = 'DELETE FROM Logins WHERE key=$1'
-        let result = await db.query(query, [key])
-        delete key
-        if (result.rowCount = 0) {
+})
 
-            res.status(400).json({
-                success: false,
-                message: 'not logged in'
-            })
-
-        } else {
-            
-            res.status(200).json({
-                success: true,
-                message: 'logged out'
-            })
-
+router.delete('/', async (req, res) => {
+    let {key} = req.query
+    try {
+        let query = {
+            text: 'DELETE FROM Logins WHERE key=$1 RETURNING iduser',
+            values: [key]
         }
-        return
+        let signout = await pool.query(query)
+        res.json({
+            success: true,
+            iduser: signout.rows[0] == null ? null : signout.rows[0].iduser
+        })
+    } finally {
+        //pool.release()
     }
+})
 
-    res.status(400).json({
-        success: false,
-        message: 'use POST or DELETE'
-    })
-}
+module.exports = router

@@ -1,113 +1,123 @@
-const db = require('../db/db')
-const privileges = require('../privileges')
+const pool = require('../db/pool')
+const {Router} = require('express')
 
 
+const router = new Router()
 
-module.exports = async (req, res, next) => {
-    const {key} = req.query
-    let login = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
-    login = login.rows[0]
-    if (login == null) {
-        res.status(401).json({
-            success: false,
-            message: 'not logged in'
-        })
-        return
-    }
-    delete key
 
-    if (!privileges['tariffs'][req.method].includes(login.role)) {
-        res.status(403).json({
-            success: false,
-            message: 'not privileged'
-        })
-        return
-    }
-
-    if (req.method == 'GET') {
-        let {id} = req.query
-
-        if (id) {
-            let service = await db.query('SELECT * FROM Services WHERE idservice=$1', [id])
-
-            if (service.rows.length == 0) {
-                res.status(200).json({
-                    success: false,
-                    message: 'service not found'
-                })
-                return
-            }
-            res.status(200).json({
-                success: true,
-                message: 'service available',
-                service: service.rows[0],
-                fields: service.fields.map(x => x.name)
-            })
-            return
+router.get('/', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT idservice FROM Services',
         }
-
-        let services = await db.query('SELECT * FROM Services')
-        services = services.rows
-        res.status(200).json({
+        let get = await pool.query(query)
+        res.json({
             success: true,
-            message: 'services available',
-            services: services,
-            fields: services.fields.map(x => x.name)
+            services: get.rows
         })
-        return
-    }
-    if (req.method == 'POST') {
 
-        const {name} = req.query
-        let insert = await db.query('INSERT INTO Services VALUES (DEFAULT, $1) RETURNING idservice', [name])
-        if (insert.rowCount == 0) {
-            res.status(500).json({
+    } finally {
+        //pool.release()
+    }
+})
+
+router.get('/:id', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT * FROM Services WHERE idservice=$1',
+            values: [req.params.id]
+        }
+        let get = await pool.query(query)
+
+        if (get.rows.length == 0) {
+            res.json({
                 success: false,
-                message: 'does not exist'
+                msg: 'not found'
             })
             return
         }
-        res.status(200).json({
-            success: true,
-            message: 'service created',
-            idservice: insert.rows[0].idservice
-        })
-        return
-    }
-    if (req.method == 'PUT') {
 
-        const {id, name} = req.query
-        let update = await db.query('UPDATE Services SET s_name=$1 WHERE idservice=$2 RETURNING idservice', [name, id])
-        if (update.rowCount == 0) {
-            res.status(500).json({
-                success: false,
-                message: 'does not exist'
-            })
-            return
-        }
-        res.status(200).json({
+        res.json({
             success: true,
-            message: 'service updated',
-            idservice: update.row[0].idservice
+            service: get.rows[0]
         })
-        return
-    }
-    if (req.method == 'DELETE') {
 
-        const {id} = req.query
-        let del = await db.query('DELETE FROM Services WHERE idservice=$1 RETURNING idservice', [id])
-        if (del.rowCount == 0) {
-            res.status(500).json({
+    } finally {
+        //pool.release()
+    }
+})
+
+router.put('/:id', async (req, res) => {
+    try {
+        let {name} = req.query //add description
+        let query = {
+            text: 'UPDATE Services SET name=$1 WHERE idservice=$2 RETURNING idservice',
+            values: [name, req.params.id]
+        }
+        let put = await pool.query(query)
+        if (put.rows.length == 0) {
+            res.json({
                 success: false,
-                message: 'does not exist'
+                msg: 'not found'
             })
             return
         }
-        res.status(200).json({
+        res.json({
             success: true,
-            message: 'service removed',
-            name: update.row[0].name
+            id: put.rows[0].idservice
         })
-        return
+    } finally {
+        //pool.release()
     }
-}
+})
+
+router.post('/:id', async (req, res) => {
+    try {
+        let {name} = req.query
+        let query = {
+            text: 'INSERT INTO Services VALUES (DEFAULT, $1) RETURNING idservice',
+            values: [name]
+        }
+        let post = await pool.query(query)
+        if (post.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: post.rows[0].idservice
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let query = {
+            text: 'DELETE FROM Services WHERE idservice=$1 RETURNING name',
+            values: [req.params.id]
+        }
+        let remove = await pool.query(query)
+
+        if (remove.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+
+        res.json({
+            success: true
+        })
+
+    } finally {
+        //pool.release()
+    }
+})
+
+module.exports = router

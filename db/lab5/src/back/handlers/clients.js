@@ -1,119 +1,124 @@
-const db = require('../db/db')
-const privileges = require('../privileges')
-
-//не трогать ради бога
-
-module.exports = async (req, res, next) => {
-    const {key} = req.query
-    let login = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
-    login = login.rows[0]
-    if (login == null) {
-        res.status(401).json({
-            success: false,
-            message: 'not logged in'
-        })
-        return
-    }
-    delete key
+const pool = require('../db/pool')
+const {Router} = require('express')
 
 
-    if (!privileges['clients'][req.method].includes(login.role)) {
-        res.status(403).json({
-            success: false,
-            message: 'not privileged'
-        })
-        return
-    }
+const router = new Router()
 
-    if (req.method == 'GET') {
-        const {id} = req.query;
 
-        if (id) {
-            let client = await db.query('SELECT * FROM Clients Cl\
-                                            WHERE Cl.idclient=$1', [id])
-            if (client.rows.length == 0) {
-                res.status(200).json({
-                    success: false,
-                    message: 'client not found',
-                })
-                return
-            }
-            
-            let contracts = await db.query('SELECT * FROM Contracts WHERE idcontract=$1', [client.rows[0].idclient])
-            res.status(200).json({
-                success: true,
-                message: 'client and contracts available',
-                client: client.rows[0],
-                fields: client.fields.map(x => x.name),
-                contracts: contracts.rows.map(x => x.idcontract)
-            })
-            return
+router.get('/', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT idclient FROM Clients',
         }
-
-        let clients = await db.query('SELECT * FROM Clients');
-        res.status(200).json({
+        let get = await pool.query(query)
+        res.json({
             success: true,
-            message: 'clients availabe',
-            clients: clients.rows,
-            fields: clients.fields.map(x => x.name)
-        })
-        return                                    
-    }
-    if (req.method == 'POST') {
-        const {name, surname, patronymic, phonenumber} = req.query
-
-        let create = await db.query('INSERT INTO Clients VALUES (DEFAULT, $1, $2, $3, $4) RETURNING idclient', 
-                                    [name, surname, patronymic, phonenumber]);
-
-        res.status(200).json({
-            success: true,
-            message: 'client created',
-            idclient: create.rows[0].idclient
+            clients: get.rows
         })
 
-        return
+    } finally {
+        //pool.release()
     }
-    if (req.method == 'PUT') {
-        const {id, name, surname, patronymic, phonenumber} = req.query
+})
 
-        let update = await db.query('UPDATE Clients SET name=$1, surname=$2, patronymic=$3, phonenumber=$4 \
-                                        WHERE idclient=$5 RETURNING idclient',
-                                        [name, surname, patronymic, phonenumber, id])
+router.get('/:id', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT * FROM Clients WHERE idclient=$1',
+            values: [req.params.id]
+        }
+        let get = await pool.query(query)
 
-        if (update.rows.length == 0) {
-            res.status(200).json({
+        if (get.rows.length == 0) {
+            res.json({
                 success: false,
-                message: 'client does not exist'
+                msg: 'not found'
             })
             return
         }
 
-        res.status(200).json({
+        res.json({
             success: true,
-            message: 'client was updated',
-            idclient: update.rows[0].idclient
+            client: get.rows[0]
         })
-        return
+
+    } finally {
+        //pool.release()
     }
-    if (req.method == 'DELETE') {
-        let {id} = req.query
+})
 
-        let del = await db.query('DELETE FROM Clients WHERE idclient=$1 RETURNING idclient', [id])
-
-        if (del.rows.length == 0) {
-            res.status(200).json({
+router.put('/:id', async (req, res) => {
+    try {
+        let {name, surname, patronymic, phonenumber} = req.query
+        let query = {
+            text: 'UPDATE Clients SET name=$1, surname=$2, patronymic=$3, phonenumber=$4 WHERE idclient=$5 RETURNING idclient',
+            values: [name, surname, patronymic, phonenumber, req.params.id]
+        }
+        let put = await pool.query(query)
+        if (put.rows.length == 0) {
+            res.json({
                 success: false,
-                message: 'client not found',
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: put.rows[0].idclient
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.post('/:id', async (req, res) => {
+    try {
+        let {name, surname, patronymic, phonenumber} = req.query
+        let query = {
+            text: 'INSERT INTO Clients VALUES (DEFAULT, $1, $2, $3, $4) RETURNING idclient',
+            values: [name, surname, patronymic, phonenumber]
+        }
+        let post = await pool.query(query)
+        if (post.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: post.rows[0].idclient
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let query = {
+            text: 'DELETE FROM Clients WHERE idclient=$1 RETURNING phonenumber',
+            values: [req.params.id]
+        }
+        let remove = await pool.query(query)
+
+        if (remove.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
             })
             return
         }
 
-        res.status(200).json({
+        res.json({
             success: true,
-            message: 'user was deleted'
+            phonenumber: remove.rows[0].phonenumber
         })
-        return
 
+    } finally {
+        //pool.release()
     }
+})
 
-}
+module.exports = router
