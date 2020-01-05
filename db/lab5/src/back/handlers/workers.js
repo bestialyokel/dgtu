@@ -1,56 +1,124 @@
-const db = require('../db/db')
-const privileges = require('../privileges')
+const pool = require('../db/pool')
+const {Router} = require('express')
 
-module.exports = async (req, res, next) => {
-    const {key} = req.query
-    let login = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
-    login = login.rows[0]
-    if (login == null) {
-        res.status(401).json({
-            success: false,
-            message: 'not logged in'
+
+const router = new Router()
+
+
+router.get('/', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT idworker FROM Workers',
+        }
+        let get = await pool.query(query)
+        res.json({
+            success: true,
+            contracts: get.rows
         })
-        return
+
+    } finally {
+        //pool.release()
     }
-    delete key
+})
 
-    if (!privileges['contracts'][req.method].includes(login.role)) {
-        res.status(403).json({
-            success: false,
-            message: 'not privileged'
-        })
-        return
-    }
+router.get('/:id', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT * FROM Workers WHERE idworker=$1',
+            values: [req.params.id]
+        }
+        let get = await pool.query(query)
 
-    if (req.method == 'GET') {
-        let {id} = req.query
-
-        if (id) {
-            let worker = await db.query("SELECT * FROM Workers WHERE idworker=$1", [id])
-
-            if (worker.rows.length == 0) {
-                res.json({
-                    success: false,
-                    message: 'worker not found'
-                })
-                return
-            }
-
-
+        if (get.rows.length == 0) {
             res.json({
-                success: true,
-                message: 'worker and job available',
-                worker: tariff.rows[0],
-                fields: tariff.fields.map(x => x.name),
-                services: services.rows.map(x => x.idservice)
+                success: false,
+                msg: 'not found'
             })
             return
         }
 
+        res.json({
+            success: true,
+            worker: get.rows[0]
+        })
 
+    } finally {
+        //pool.release()
     }
-    if (req.method == 'POST') {}
-    if (req.method == 'PUT') {}
-    if (req.method == 'DELETE') {}
+})
 
-}
+router.put('/:id', async (req, res) => {
+    try {
+        let {idjob, name, surname, patronymic, qual} = req.query
+        let query = {
+            text: 'UPDATE Workers SET idjob=$1, name=$2, surname=$3, patronymic=$4, qual=$5 WHERE idworker=$6 RETURNING idworker',
+            values: [idjob, name, surname, patronymic, qual, req.params.id]
+        }
+        let put = await pool.query(query)
+        if (put.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: put.rows[0].idworker
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.post('/', async (req, res) => {
+    try {
+        let {idjob, name, surname, patronymic, qual} = req.query
+        let query = {
+            text: 'INSERT INTO Workers VALUES (DEFAULT, $1, $2, $3, $4, $5) RETURNING idworker',
+            values: [idjob, name, surname, patronymic, qual]
+        }
+        let post = await pool.query(query)
+        if (post.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: post.rows[0].idworker
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let query = {
+            text: 'DELETE FROM Workers WHERE idcontract=$1 RETURNING idworker',
+            values: [req.params.id]
+        }
+        let remove = await pool.query(query)
+
+        if (remove.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+
+        res.json({
+            success: true,
+            client: remove.rows[0].idworker
+        })
+
+    } finally {
+        //pool.release()
+    }
+})
+
+module.exports = router

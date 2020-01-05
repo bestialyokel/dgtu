@@ -1,95 +1,124 @@
-const db = require('../db/pool')
-const privileges = require('../privileges')
+const pool = require('../db/pool')
+const {Router} = require('express')
 
-module.exports = async (req, res, next) => {
-    const {key} = req.query
-    let login = await db.query('SELECT * FROM Logins WHERE key=$1', [key])
-    login = login.rows[0]
-    if (login == null) {
-        res.status(401).json({
-            success: false,
-            message: 'not logged in'
+
+const router = new Router()
+
+
+router.get('/', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT idjob FROM Jobs',
+        }
+        let get = await pool.query(query)
+        res.json({
+            success: true,
+            jobs: get.rows
         })
-        return
+
+    } finally {
+        //pool.release()
     }
-    delete key
+})
 
-    if (!privileges['contracts'][req.method].includes(login.role)) {
-        res.status(403).json({
-            success: false,
-            message: 'not privileged'
-        })
-        return
-    }
+router.get('/:id', async (req, res) => {
+    try {
+        let query = {
+            text: 'SELECT * FROM Jobs WHERE idjob=$1',
+            values: [req.params.id]
+        }
+        let get = await pool.query(query)
 
-    if (req.method == 'GET') {
-        let {id} = req.query
-
-        if (id) {
-            let job = await db.query("SELECT * FROM Jobs WHERE idjob=$1", [id])
-
-            let workers = await db.query('SELECT idworker from Workers WHERE idjob=$1', [id])
-
-            if (job.rows.length == 0) {
-                res.json({
-                    success: false,
-                    message: 'job not found'
-                })
-                return
-            }
-
-
+        if (get.rows.length == 0) {
             res.json({
-                success: true,
-                message: 'tariff and services available',
-                job: job.rows[0],
-                workers: workers.rows,
-                fields: job.fields.map(x => x.name)
+                success: false,
+                msg: 'not found'
             })
             return
         }
 
-        let jobs = await db.query('SELECT * FROM Jobs')
-        res.status(200).json({
+        res.json({
             success: true,
-            message: 'tariffs available',
-            jobs: jobs.rows,
-            fields: jobs.fields.map(x=>x.name)
-        });
+            job: get.rows[0]
+        })
+
+    } finally {
+        //pool.release()
     }
+})
 
-    if (req.method == 'POST') {
-        let {descr, idappeal, status} = req.query
+router.put('/:id', async (req, res) => {
+    try {
+        let {descr, status} = req.query
+        let query = {
+            text: 'UPDATE Jobs SET descr=$1, status=$2 WHERE idjob=$3 RETURNING idjob',
+            values: [descr, status, req.params.id]
+        }
+        let put = await pool.query(query)
+        if (put.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: put.rows[0].idjob
+        })
+    } finally {
+        //pool.release()
+    }
+})
 
-        let create = await db.query('INSERT INTO Jobs VALUES (DEFAULT, $1, $2, $3 RETURNING idjob',
-                                    [idappeal, descr, status]      
-        )
+router.post('/', async (req, res) => {
+    try {
+        let {idappeal, descr, status} = req.query
+        let query = {
+            text: 'INSERT INTO Jobs VALUES (DEFAULT, $1, $2, $3) RETURNING idjob',
+            values: [idappeal, descr, status]
+        }
+        let post = await pool.query(query)
+        if (post.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
+        res.json({
+            success: true,
+            id: post.rows[0].idjob
+        })
+    } finally {
+        //pool.release()
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let query = {
+            text: 'DELETE FROM Jobs WHERE idjob=$1 RETURNING idappeal',
+            values: [req.params.id]
+        }
+        let remove = await pool.query(query)
+
+        if (remove.rows.length == 0) {
+            res.json({
+                success: false,
+                msg: 'not found'
+            })
+            return
+        }
 
         res.json({
             success: true,
-            message: 'job created',
-            idjob: create.rows[0].idjob
-        })
-    }
-    if (req.method == 'PUT') {
-        const {id, status} = req.query
-        let update = await db.query('UPDATE Jobs SET status=$1 WHERE idjob=$2', [status, id])
-
-        res.json({
-            success: true,
-            message: 'job updated',
-            idjob: id
+            appeal: remove.rows[0].idappeal
         })
 
+    } finally {
+        //pool.release()
     }
-    if (req.method == 'DELETE') {
-        const {id} = req.query
-        let del = await db.query('DELETE FROM Jobs WHERE idjob=$1', [id])
+})
 
-        res.json({
-            success: true,
-            message: 'job deleted'
-        })
-    }
-
-}
+module.exports = router

@@ -1,1 +1,1 @@
-curl -X POST 'http://localhost:8080/login?login=acc123&password=acc123'
+curl -X DELETE 'http://localhost:8080/clients/6?key=45b6233b16f86c713c144c8ea9965cab'

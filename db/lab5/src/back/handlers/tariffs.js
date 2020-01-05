@@ -97,7 +97,7 @@ router.put('/:id', async (req, res) => {
     }
 })
 
-router.post('/:id', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         let {name, payment, period, services} = req.query
         let query = {

@@ -1,5 +1,7 @@
 const pool = require('./db/pool')
 
+//пока хз как сделать лучше :(
+
 //t - technical, d - development, a - account mngmt.
 const policyObj = {
     workers: {
@@ -45,6 +47,7 @@ const policyObj = {
         'DELETE': ['t']
     }
 }
+
 
 module.exports = async (req, res, next) => {
     try {
