@@ -8,8 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 
+//mycomponents
 
-const useStyles = makeStyles({
+
+
+/*const useStyles = makeStyles({
     app: {
         width: '100%',
         margin: 'auto auto',
@@ -17,53 +20,31 @@ const useStyles = makeStyles({
         textAlign: 'center',
         height: '100%'
     }
-})
+})*/
+
+const Tabs_Titles = ['Clients', 'Contracts', 'Appeals', 'Services', 'Tariffs', 'Jobs', 'Workers']
 
 const App = () => {
-    const classes = useStyles();
+    //const classes = useStyles();
     const [key, setKey] = useState(getCookie('key'))
 
-    const [isLoading, setLoading] = useState(true)
-    const [isLogged, setLogged] = useState(false)
-
-    const testGet = async () => {
-        fetch('https://2ip.ru', {
-            // mode: 'no-cors',
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-            },
-        }).then(response => {
-            if (response.ok) {
-                response.json().then(json => {
-                console.log(json);
-                });
-            }
-            });
-    }
-
-    useEffect( () => {
-        testGet()
-    }, [])
-
-
+    const [state, setState] = useState('loading')
 
 
     const [tabIndex, setTabIndex] = useState(0)
     const handleChange = (event, value) => setTabIndex(value)
 
+    const TabView = null
 
 
     return (
         <div /*className={classes.app}*/>
             <AppBar position="static">
                 <Tabs value={tabIndex} onChange={handleChange} aria-label="simple tabs example">
-                    <Tab label="Clients" />
-                    <Tab label="Item Two"/>
-                    <Tab label="Item Three"/>
+                    {Tabs_Titles.map((x, i) => (<Tab key={i} label={x}/>))}
                 </Tabs>
             </AppBar>
-            123
+            
         </div>
     )
 
