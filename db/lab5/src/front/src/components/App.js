@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box';
 
 
 //mycomponents
-
+import Clients from './tables/clients'
 
 
 /*const useStyles = makeStyles({
@@ -22,9 +22,16 @@ import Box from '@material-ui/core/Box';
     }
 })*/
 
-const Tabs_Titles = ['Clients', 'Contracts', 'Appeals', 'Services', 'Tariffs', 'Jobs', 'Workers']
+const _Tabs = [
+    {title: 'clients', component: Clients}, 
+    {title: 'a', component: Clients}, 
+    {title: 'a', component: Clients},
+    {title: 'a', component: Clients},    
+    {title: 'a', component: Clients},
+    {title: 'a', component: Clients},
+]
 
-const App = () => {
+const App = (props) => {
     //const classes = useStyles();
     const [key, setKey] = useState(getCookie('key'))
 
@@ -34,17 +41,17 @@ const App = () => {
     const [tabIndex, setTabIndex] = useState(0)
     const handleChange = (event, value) => setTabIndex(value)
 
-    const TabView = null
+    const TabView = _Tabs[tabIndex].component
 
 
     return (
         <div /*className={classes.app}*/>
             <AppBar position="static">
                 <Tabs value={tabIndex} onChange={handleChange} aria-label="simple tabs example">
-                    {Tabs_Titles.map((x, i) => (<Tab key={i} label={x}/>))}
+                    {_Tabs.map((x, i) => (<Tab key={i} label={x.title}/>))}
                 </Tabs>
             </AppBar>
-            
+            <TabView/>  
         </div>
     )
 
