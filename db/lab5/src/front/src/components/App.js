@@ -8,19 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 
+
 //mycomponents
 import Clients from './tables/clients'
 
 
-/*const useStyles = makeStyles({
-    app: {
-        width: '100%',
-        margin: 'auto auto',
-        verticalAlign: 'middle',
-        textAlign: 'center',
-        height: '100%'
-    }
-})*/
 
 const _Tabs = [
     {title: 'clients', component: Clients}, 
@@ -43,7 +35,7 @@ const App = (props) => {
 
     const TabView = _Tabs[tabIndex].component
 
-
+    console.log(Clients)
     return (
         <div /*className={classes.app}*/>
             <AppBar position="static">

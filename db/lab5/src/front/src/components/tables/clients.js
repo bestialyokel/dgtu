@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 
-import MaterialTable from 'material-table';
+import Table from '../Table';
 
 const Clients = (props) => {
     const [isLoading, setLoading] = useState(true)
@@ -23,7 +23,7 @@ const Clients = (props) => {
 
 
     return (
-        <MaterialTable
+        <Table
             title="Clients"
             columns={state.columns}
             data={state.data}
