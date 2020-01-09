@@ -4,6 +4,16 @@ import Table from '../Table';
 
 const Clients = (props) => {
     const [isLoading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetch()
+            .then()
+            .then()
+    }, [])
+
+    if (isLoading) 
+        return (<p>...</p>)
+
     const [state, setState] = useState({
         columns: [
             {title: 'ID клиента', field: 'idclient'},
@@ -20,7 +30,7 @@ const Clients = (props) => {
         onRowUpdate: () => {},
         onRowDelete: () => {}
     }
-
+    
 
     return (
         <Table
