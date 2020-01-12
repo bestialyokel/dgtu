@@ -1,6 +1,8 @@
 #include "./node.cpp"
 #include "./mynodewrapper.cpp"
-#include <iostream>
+
+#include <cstddef>
+//#include <iostream>
 
 #ifndef LIST
 #define LIST
@@ -38,7 +40,7 @@ template<typename T> class List {
             return MyNodeWrappe(this->m_back);
         }
 
-        void remove(MyNodeWrapper wrappedNode) {
+        void remove(MyNodeWrapper<T> wrappedNode) {
             this->remove(wrappedNode->node);
         }
 

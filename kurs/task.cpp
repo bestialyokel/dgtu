@@ -1,4 +1,9 @@
-#include ",/list.cpp"
+#include "./list.cpp"
+
+#include <iostream>
+#include <cstddef>
+
+using namespace std;
 
 #ifndef TASK
 #define TASK
@@ -9,8 +14,8 @@ template< size_t SIZE, size_t EACH, bool LOG_INFO> class Task {
     public:
     Task() {
         if (SIZE == 0) throw "bad size";
-        if (LOG_INFO)
-        for (int i = 0; i < SIZE; i++) list.push_back(i);
+        if (EACH == 0) throw "bad each";
+        for (int i = 0; i < SIZE; i++) this->list.push_back(i);
     }
     size_t last_index() {
         
@@ -21,8 +26,8 @@ template< size_t SIZE, size_t EACH, bool LOG_INFO> class Task {
             for (int i = 0; i < EACH; i++) begin = begin++;
             list.remove(begin);
         } 
-
+        return *begin;
     }
-}
+};
 
 #endif

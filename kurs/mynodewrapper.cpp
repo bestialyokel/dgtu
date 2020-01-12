@@ -1,24 +1,26 @@
 
 #include "./node.cpp"
 
+
+
 #ifndef MNW
 #define MNW
 
 template<typename T> class MyNodeWrapper {
-    friend class List;
+    //friend class List<T>;
     private:
-        Node<T> *node = NULL;
+        Node<T> *node = 0;
     public: 
         MyNodeWrapper(Node<T> *node) : node(node) {}
         T *operator*() {
             return node->value;
         }
-        MyNodeWrapper operator++() {
+        MyNodeWrapper<T> operator++() {
             return MyNodeWrapper(node->next);
         }
-        MyNodeWrapper operator--() {
+        MyNodeWrapper<T> operator--() {
             return MyNodeWrapper(node->prev);
         }
-}
+};
 
 #endif
