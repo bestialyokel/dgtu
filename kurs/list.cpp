@@ -1,6 +1,9 @@
-#include "./node.h"
+#include "./node.cpp"
+#include "./mynodewrapper.cpp"
 #include <iostream>
 
+#ifndef LIST
+#define LIST
 
 template<typename T> class List {
     private:
@@ -19,20 +22,29 @@ template<typename T> class List {
 
     public:
         List() {}
-        ~List() {}
-        bool isEmpty() const {
-            return !(this->m_front == NULL);
+        ~List() {
+            Node<T> *ptr;
+            while (this->m_front != NULL) {
+                ptr = this->m_front;
+                this->m_front = this->m_front->next;
+                delete ptr;
+            }
         }
+
+        MyNodeWrapper begin() {
+            return MyNodeWrapper(this->m_front);
+        }
+        MyNodeWrapper end() {
+            return MyNodeWrappe(this->m_back);
+        }
+
+        void remove(MyNodeWrapper wrappedNode) {
+            this->remove(wrappedNode->node);
+        }
+
         size_t size() const {
             return this->length;
         }
-        T front() const {
-            return this->m_front->value;
-        }
-        T back() const {
-            return this->m_back->value;
-        }
-
         void insert(size_t index , T value) {
             
             this->length += 1;
@@ -82,12 +94,14 @@ template<typename T> class List {
                 new_ptr->prev = prev_ptr;
             }
         }
-        inline void push_front(T value) {
-            this->insert(0, value);
-        }
+        
         inline void push_back(T value) {
             this->insert(this->size(), value);
         }
+        /*inline void push_front(T value) {
+            this->insert(0, value);
+        }*/
+        /*
         void remove(size_t index) {
             if (index >= this->length) throw "out of range";
             
@@ -97,15 +111,15 @@ template<typename T> class List {
 
         }
         void remove();
+        */
 
 
+        /*
         void print() {
 
             std::cout << this->m_front->value << std::endl;
 
             if (this->m_front == this->m_back) return;
-
-            
 
             Node<T> *p = this->m_front->next;
             
@@ -114,27 +128,16 @@ template<typename T> class List {
                 p = p->next;
             }
         }
+        */
+        /*bool isEmpty() const {
+            return !(this->m_front == NULL);
+        }*/
+        /*T front() const {
+            return this->m_front->value;
+        }
+        T back() const {
+            return this->m_back->value;
+        }*/
 };
       
-
-
-int main() {
-    List<int> a;
-    a.insert(0, 2);
-    a.insert(0, 3);
-    a.insert(0, 4);
-    a.insert(0, 5);
-    a.insert(0, 6);
-    a.insert(0, 7);
-    a.insert(0, 8);
-
-    a.insert(8, 1488);
-
-    a.remove(8);
-
-    //std::cout << a.size() << std::endl;
-    a.print();
-
-
-    return 0;
-}
+#endif

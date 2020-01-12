@@ -1,6 +1,6 @@
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef NODE
+#define NODE
 
 template<typename T> class Node {
     public:
@@ -8,6 +8,10 @@ template<typename T> class Node {
         Node *next;
         Node *prev;
         Node(T value) : value(value) {}
+        Node(Node<T> *node) {
+            this = node;
+        }
+        ~Node() {}
 };
 
 #endif
