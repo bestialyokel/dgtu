@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
         let get = await pool.query(query)
         res.json({
             success: true,
-            contracts: get.rows
+            appeals: get.rows
         })
 
     } finally {
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
 
         res.json({
             success: true,
-            contract: get.rows[0]
+            appeal: get.rows[0]
         })
 
     } finally {
@@ -49,10 +49,10 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let {text} = req.query //add status
+        let {descr} = req.query //add status
         let query = {
             text: 'UPDATE Appeals SET descr=$1 WHERE idappeal=$2 RETURNING idappeal',
-            values: [text, req.params.id]
+            values: [descr, req.params.id]
         }
         let put = await pool.query(query)
         if (put.rows.length == 0) {

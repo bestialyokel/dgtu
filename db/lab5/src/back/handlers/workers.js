@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
         let get = await pool.query(query)
         res.json({
             success: true,
-            contracts: get.rows
+            workers: get.rows
         })
 
     } finally {
@@ -50,6 +50,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         let {idjob, name, surname, patronymic, qual} = req.query
+        if (isNaN(idjob)) idjob = null
         let query = {
             text: 'UPDATE Workers SET idjob=$1, name=$2, surname=$3, patronymic=$4, qual=$5 WHERE idworker=$6 RETURNING idworker',
             values: [idjob, name, surname, patronymic, qual, req.params.id]
@@ -98,7 +99,7 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         let query = {
-            text: 'DELETE FROM Workers WHERE idcontract=$1 RETURNING idworker',
+            text: 'DELETE FROM Workers WHERE idworker=$1 RETURNING idworker',
             values: [req.params.id]
         }
         let remove = await pool.query(query)

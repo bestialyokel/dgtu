@@ -1,1 +1,1 @@
-curl -X DELETE 'http://localhost:8080/clients/6?key=45b6233b16f86c713c144c8ea9965cab'
+curl -X GET 'http://localhost:8080/clients?key=45b6233b16f86c713c144c8ea9965cab'

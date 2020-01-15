@@ -60,7 +60,7 @@ router.put('/:id', async (req, res) => {
         let {name, payment, period, services} = req.query //add description
         let query = {
             text: 'UPDATE Tariffs SET name=$1, payment=$2, period=$3 WHERE idtariff=$4 RETURNING idtariff',
-            values: [name, payment, period, services, req.params.id]
+            values: [name, payment, period, req.params.id]
         }
         let put = await pool.query(query)
         if (put.rows.length == 0) {
@@ -79,11 +79,12 @@ router.put('/:id', async (req, res) => {
         await pool.query(query)
 
         services = services.split(',')
+        services = services.some(x => !isNaN(x)) ? services : []
 
         services.forEach(x => {
             let query = {
                 text: 'INSERT INTO Tdeps VALUES ($1, $2)',
-                values: [req.params.id, x]
+                values: [x, put.rows[0].idtariff]
             }
             pool.query(query) //await
         })
@@ -101,7 +102,7 @@ router.post('/', async (req, res) => {
     try {
         let {name, payment, period, services} = req.query
         let query = {
-            text: 'INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3) RETURNING idservice',
+            text: 'INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3) RETURNING idtariff',
             values: [name, payment, period]
         }
         let post = await pool.query(query)
@@ -114,11 +115,13 @@ router.post('/', async (req, res) => {
         }
 
         services = services.split(',')
+        services = services.some(x => !isNaN(x)) ? services : []
+
 
         services.forEach(x => {
             let query = {
                 text: 'INSERT INTO Tdeps VALUES ($1, $2)',
-                values: [post.rows[0].idtariff, x]
+                values: [x, post.rows[0].idtariff]
             }
             pool.query(query) //await
         })
