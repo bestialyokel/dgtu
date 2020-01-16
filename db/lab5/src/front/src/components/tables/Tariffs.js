@@ -35,7 +35,6 @@ const Tariffs = (props) => {
                     method: 'GET'
                 })
                 const json = await req.json()
-                console.log(json.services)
                 setState(oldState => {
                     return {
                         ...oldState,

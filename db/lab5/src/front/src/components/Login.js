@@ -20,7 +20,7 @@ const LoginTab = (props) => {
     })
 
 
-    const checkLogin = async () => {
+    const tryLogin = async () => {
         let url = new URL('login', 'http://localhost:8080')
         url.search = new URLSearchParams({
             login: fields.login,
@@ -30,11 +30,17 @@ const LoginTab = (props) => {
             method: 'POST'
         })
         const json = await req.json()
-        setLoading(true)
         document.cookie = `key=${json.key}`
-        setKey(json.key)
-        
+        if (json.key) {
+            setLoading(true)
+            setKey(json.key)
+        } else 
+            setFields({
+                login: '',
+                password: ''
+            })
     }
+           
 
 
     return (
@@ -45,7 +51,7 @@ const LoginTab = (props) => {
                         <Face />
                     </Grid>
                     <Grid item md={true} sm={true} xs={true}>
-                        <TextField onChange={event => setFields({login: event.target.value, password: fields.password}) } id="username" label="Username" type="email" fullWidth autoFocus required />
+                        <TextField value={fields.login} onChange={event => setFields({login: event.target.value, password: fields.password}) } id="username" label="Username" type="email" fullWidth autoFocus required />
                     </Grid>
                 </Grid>
                 <Grid container spacing={8} alignItems="flex-end">
@@ -53,11 +59,11 @@ const LoginTab = (props) => {
                         <Fingerprint />
                     </Grid>
                     <Grid item md={true} sm={true} xs={true}>
-                        <TextField onChange={event => setFields({password: event.target.value, login: fields.login} )} id="username" label="Password" type="password" fullWidth required />
+                        <TextField value={fields.password} onChange={event => setFields({password: event.target.value, login: fields.login} )} id="username" label="Password" type="password" fullWidth required />
                     </Grid>
                 </Grid>
                 <Grid container justify="center" style={{ marginTop: '10px' }}>
-                    <Button onClick={checkLogin} variant="outlined" color="primary" style={{ textTransform: "none" }}>Login</Button>
+                    <Button onClick={tryLogin} variant="outlined" color="primary" style={{ textTransform: "none" }}>Login</Button>
                 </Grid>
             </div>
         </Paper>
