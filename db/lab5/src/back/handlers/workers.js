@@ -50,7 +50,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         let {idjob, name, surname, patronymic, qual} = req.query
-        if (isNaN(idjob)) idjob = null
+        if (idjob == 0 || isNaN(idjob)) idjob = null
         let query = {
             text: 'UPDATE Workers SET idjob=$1, name=$2, surname=$3, patronymic=$4, qual=$5 WHERE idworker=$6 RETURNING idworker',
             values: [idjob, name, surname, patronymic, qual, req.params.id]
