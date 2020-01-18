@@ -1,5 +1,4 @@
 
-import List from "./deps/list"
 import Task from "./deps/task"
 
 
