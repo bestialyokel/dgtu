@@ -1,11 +1,11 @@
-//global router deps.
+
 const {Router} = require('express')
 
-//policies
-const policyHandler = require('./policyHandler')
+
+const policyHandler = require('./policy/policyHandler')
 
 
-//routes handlers
+
 const loginHandler = require('./handlers/login')
 const clientsHandler = require('./handlers/clients')
 const contractsHandler = require('./handlers/contracts')
@@ -18,7 +18,7 @@ const workersHandler = require('./handlers/workers')
 
 const router = new Router()
 
-//access checking
+
 router.use(policyHandler)
 
 

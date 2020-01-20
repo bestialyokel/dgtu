@@ -14,8 +14,16 @@ let getOne = async (id) => {
         text: 'SELECT * FROM Tariffs WHERE id_tariff=$1',
         values: [id]
     }
-    let req = await pool.query(query)
-    return req.rows[0]
+    let tariffReq = await pool.query(query)
+    query = {
+        text:' SELECT id_service FROM TSPairs WHERE id_tariff=$1',
+        values: [id]
+    }
+    let servicesReq = await pool.query(query)
+    return {
+        tariff: tariffReq.rows[0],
+        services: servicesReq.rows[0]
+    }
 }
 
 let updateOne = async ({id, name, description, period, payment, services}) => {

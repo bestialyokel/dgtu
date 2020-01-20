@@ -1,5 +1,5 @@
-const pool = require('../db/pool')
 const {Router} = require('express')
+const Tariff = require('../interfaces/Tariff')
 
 
 const router = new Router()
@@ -7,157 +7,65 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
     try {
-        let query = {
-            text: 'SELECT idtariff FROM Tariffs',
-        }
-        let get = await pool.query(query)
+        let tariffs = await Tariff.getAll()
         res.json({
             success: true,
-            tariffs: get.rows
+            tariffs: tariffs.map(x => x.id_tariff)
         })
+    } catch(error) {
 
-    } finally {
-        //pool.release()
     }
 })
 
 router.get('/:id', async (req, res) => {
     try {
-        let query = {
-            text: 'SELECT * FROM Tariffs WHERE idtariff=$1',
-            values: [req.params.id]
-        }
-        let get = await pool.query(query)
-
-        if (get.rows.length == 0) {
-            res.json({
-                success: false,
-                msg: 'not found'
-            })
-            return
-        }
-
-        query = {
-            text: 'SELECT idservice FROM Tdeps WHERE idtariff=$1',
-            values: [get.rows[0].idtariff]
-        }
-
-        let services = await pool.query(query)
-
+        let tariff = await Tariff.getOne(req.params.id)
         res.json({
             success: true,
-            tariff: get.rows[0],
-            services: services.rows
+            tariff
         })
+    } catch(error) {
 
-    } finally {
-        //pool.release()
     }
 })
 
 router.put('/:id', async (req, res) => {
     try {
-        let {name, payment, period, services} = req.query //add description
-        let query = {
-            text: 'UPDATE Tariffs SET name=$1, payment=$2, period=$3 WHERE idtariff=$4 RETURNING idtariff',
-            values: [name, payment, period, req.params.id]
-        }
-        let put = await pool.query(query)
-        if (put.rows.length == 0) {
-            res.json({
-                success: false,
-                msg: 'not found'
-            })
-            return
-        }
-
-        query = {
-            text: 'DELETE FROM Tdeps WHERE idtariff=$1',
-            values: [req.params.id]
-        }
-
-        await pool.query(query)
-
-        services = services.split(',')
-        services = services.some(x => !isNaN(x)) ? services : []
-
-        services.forEach(x => {
-            let query = {
-                text: 'INSERT INTO Tdeps VALUES ($1, $2)',
-                values: [x, put.rows[0].idtariff]
-            }
-            pool.query(query) //await
+        let tariff = await Tariff.updateOne({
+            id: req.params.id,
+            ...req.query
         })
-
         res.json({
             success: true,
-            id: put.rows[0].idservice
+            id: tariff.id_tariff
         })
-    } finally {
-        //pool.release()
+    } catch(error) {
+
     }
 })
 
 router.post('/', async (req, res) => {
     try {
-        let {name, payment, period, services} = req.query
-        let query = {
-            text: 'INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3) RETURNING idtariff',
-            values: [name, payment, period]
-        }
-        let post = await pool.query(query)
-        if (post.rows.length == 0) {
-            res.json({
-                success: false,
-                msg: 'not found'
-            })
-            return
-        }
-
-        services = services.split(',')
-        services = services.some(x => !isNaN(x)) ? services : []
-
-
-        services.forEach(x => {
-            let query = {
-                text: 'INSERT INTO Tdeps VALUES ($1, $2)',
-                values: [x, post.rows[0].idtariff]
-            }
-            pool.query(query) //await
-        })
-
+        let tariff = await Tariff.addOne(...req.query)
         res.json({
             success: true,
-            id: post.rows[0].idservice
+            id: tariff.id_tariff
         })
-    } finally {
-        //pool.release()
+    } catch (error) {
+        
     }
 })
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req, res) => {
     try {
-        let query = {
-            text: 'DELETE FROM Tariffs WHERE idtariff=$1 RETURNING name',
-            values: [req.params.id]
-        }
-        let remove = await pool.query(query)
-
-        if (remove.rows.length == 0) {
-            res.json({
-                success: false,
-                msg: 'not found'
-            })
-            return
-        }
-
+        let tariff = await Tariff.deleteOne(req.params.id)
         res.json({
             success: true,
-            name: remove.rows[0].name
+            name: tariff.name
         })
 
-    } finally {
-        //pool.release()
+    } catch(error) {
+
     }
 })
 

@@ -1,82 +1,80 @@
-const pool = require('../db/pool')
-const crypto = require('crypto')
 const {Router} = require('express')
+const crypto = require('crypto')
+const User = require('../interfaces/User')
+const Login = require('../interfaces/Login')
 
 
 const router = new Router()
 
 
 router.get('/', async (req, res) => {
-    let {key} = req.query
     try {
-        let query = {
-            text: 'SELECT iduser, role FROM Logins WHERE key=$1',
-            values: [key]
-        }
-        let check = await pool.query(query)
-        if (check.rows.length == 0) 
+        let {key} = req.query
+        let login = await Login.getLogin(key)
+        if (login == null) {
             res.json({
                 success: false,
                 msg: 'key not valid'
             })
-        else 
-            res.json({
-                success: true,
-                iduser: check.rows[0].iduser,
-                role: check.rows[0].role
-            })
-    } finally {
-        //pool.release()
+            return
+        }
+        let user = await User.getUser(login.login)
+        res.json({
+            success: true,
+            user
+        })
+    } catch(error) {
+        res.json({
+            success: false
+        })
     }
-
 })
 
 router.post('/', async (req, res) => {
-    let {login, password} = req.query
     try {
-        let query = {
-            text: 'SELECT * FROM Users WHERE login=$1 AND password=$2',
-            values: [login, password]
-        }
-        let signin = await pool.query(query)
-        let user = signin.rows[0]
-        if (user == null) {
+        let {login, password} = req.query
+        let user = await User.getUser(login)
+        if (user == null || user.password != password) {
             res.json({
                 success: false,
-                msg: 'not valid'
+                msg: 'wrong login+password'
             })
             return
         }
-        let key = await crypto.randomBytes(16).toString('hex')
-        query = {
-            text: 'INSERT INTO Logins VALUES (DEFAULT, $1, $2, $3)',
-            values: [user.iduser, key, user.role]
-        }
-        await pool.query(query)
+        let key = await crypto.randomBytes(8).toString('hex')
+        let loginReq = await Login.addLogin({
+            login: user.login,
+            key
+        })
         res.json({
             success: true,
-            key: key,
-            role: user.role
+            key: loginReq.key
         })
-    } finally {
-        //pool.release()
+        
+        
+    } catch(error) {
+        console.log(error)
+        res.json({
+            success: false
+        })
     }
 })
 
 router.delete('/', async (req, res) => {
-    let {key} = req.query
     try {
-        let query = {
-            text: 'DELETE FROM Logins WHERE key=$1 RETURNING iduser',
-            values: [key]
-        }
-        let signout = await pool.query(query)
+        let {key} = req.query
+        let logout = Login.deleteLogin(key)
+        let login = logout.login
         res.json({
-            success: true,
-            iduser: signout.rows[0] == null ? null : signout.rows[0].iduser
+            success: !!login,
+            login
         })
-    } finally {
-        //pool.release()
+        
+    } catch(error) {
+        res.json({
+            success: false
+        })
+    
     }
 })
 
