@@ -1,5 +1,12 @@
+* {
+	--magnum-orange: orange;
+	--magnum-black: black;
+	--magnum-main-background: white;
+}
+
 body { 
 	margin: 0; 
 	padding: 0; 
-	box-sizing: border-box; 
+	box-sizing: border-box;
+	background-color: var(--magnum-main-background);
 }
