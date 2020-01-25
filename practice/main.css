@@ -4,9 +4,12 @@
 	--magnum-main-background: white;
 }
 
+
+
 body { 
 	margin: 0; 
 	padding: 0; 
 	box-sizing: border-box;
 	background-color: var(--magnum-main-background);
+	font-size: 12px;
 }
