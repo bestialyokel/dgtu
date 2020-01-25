@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS Clients CASCADE;
 DROP TABLE IF EXISTS Contracts CASCADE;
 DROP TABLE IF EXISTS Appeals CASCADE;
@@ -8,6 +9,8 @@ DROP TABLE IF EXISTS TSPairs CASCADE;
 DROP TABLE IF EXISTS Workers CASCADE;
 DROP TABLE IF EXISTS Users CASCADE;
 DROP TABLE IF EXISTS Logins CASCADE;
+*/
+
 
 
 /*
@@ -23,6 +26,8 @@ DROP TABLE IF EXISTS Logins CASCADE;
 *
 *
 */
+
+/*
 
 CREATE TABLE IF NOT EXISTS Services (
     id_service SERIAL PRIMARY KEY,
@@ -110,6 +115,10 @@ CREATE TABLE IF NOT EXISTS Logins (
     FOREIGN KEY (login) REFERENCES Users(login) ON DELETE CASCADE
 )
 
+
+*/
+
+
 /*
 *
 *
@@ -123,3 +132,86 @@ CREATE TABLE IF NOT EXISTS Logins (
 *
 *
 */
+
+DROP TABLE IF EXISTS Clients_tmp CASCADE;
+DROP TABLE IF EXISTS Contracts_tmp CASCADE;
+DROP TABLE IF EXISTS Appeals_tmp CASCADE;
+DROP TABLE IF EXISTS Jobs_tmp CASCADE;
+DROP TABLE IF EXISTS Workers_tmp CASCADE;
+DROP TABLE IF EXISTS Services_tmp CASCADE;
+DROP TABLE IF EXISTS Tariffs_tmp CASCADE;
+DROP TABLE IF EXISTS TSPairs_tmp CASCADE;
+
+
+/*
+*
+*
+*   Services
+*   
+*
+*/
+
+CREATE TABLE IF NOT EXISTS Services_tmp (
+    id_service SERIAL,
+    name varchar(30),
+    description varchar(50) DEFAULT '' NOT NULL,
+    create_date timestamp DEFAULT NOW(),
+    override_date timestamp DEFAULT NULL,
+    PRIMARY KEY(id_service, override_date)
+);
+
+CREATE UNIQUE INDEX Services ON Clients_tmp(id_service, override_date)
+    WHERE (override_date = NULL);
+
+/*
+*
+*
+*   Tariffs
+*   
+*
+*/
+
+CREATE TABLE IF NOT EXISTS Tariffs_tmp (
+    id_tariff SERIAL,
+    name varchar(30),
+    payment REAL CHECK(payment >= 0),
+	period INTEGER CHECK (period >= 0),
+    create_date timestamp DEFAULT NOW(),
+    override_date timestamp DEFAULT NULL,
+    PRIMARY KEY(id_tariff, override_date)
+
+);
+
+CREATE UNIQUE INDEX Services ON Clients_tmp(id_service, override_date)
+    WHERE (override_date = NULL);
+
+
+/*
+*
+*
+*   TSPairs
+*   
+*
+*/
+
+CREATE TABLE IF NOT EXISTS TSPairs_tmp (
+    id_tariff INTEGER NOT NULL,
+    id_service INTEGER NOT NULL,
+    UNIQUE(id_tariff, id_service),
+    FOREIGN KEY(id_tariff) REFERENCES Tariffs_tmp(id_tariff) ON DELETE CASCADE,
+    FOREIGN KEY(id_service) REFERENCES Services_tmp(id_service) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS Clients_tmp (
+    id_client SERIAL,
+    name varchar(30),
+    surname varchar(30),
+    patronymic varchar(30),
+    phone_number varchar(30),
+    create_date timestamp DEFAULT NOW(),
+    override_date timestamp DEFAULT NULL
+);
+
+CREATE UNIQUE INDEX Clients ON Clients_tmp(id_client, override_date)
+    WHERE (override_date = NULL);
