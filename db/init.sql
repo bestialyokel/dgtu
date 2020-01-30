@@ -133,6 +133,20 @@ CREATE TABLE IF NOT EXISTS Logins (
 *
 */
 
+
+/*
+*
+* ternary operator 
+*
+*/
+create or replace function ternary(bool, anyelement, anyelement) 
+returns anyelement language sql immutable as $$
+select case when $1 then $2 else $3 end
+$$;
+
+
+
+
 DROP TABLE IF EXISTS Clients_tmp CASCADE;
 DROP TABLE IF EXISTS Contracts_tmp CASCADE;
 DROP TABLE IF EXISTS Appeals_tmp CASCADE;
@@ -156,12 +170,37 @@ CREATE TABLE IF NOT EXISTS Services_tmp (
     name varchar(30),
     description varchar(50) DEFAULT '' NOT NULL,
     create_date timestamp DEFAULT NOW(),
-    override_date timestamp DEFAULT NULL,
-    PRIMARY KEY(id_service, override_date)
+    actual boolean DEFAULT TRUE
 );
 
-CREATE UNIQUE INDEX Services ON Clients_tmp(id_service, override_date)
-    WHERE (override_date = NULL);
+CREATE UNIQUE INDEX Services_unique_index ON Services_tmp(id_service, actual) WHERE actual = TRUE;
+
+CREATE VIEW Services AS 
+    SELECT id_service, name, description FROM Services_tmp WHERE actual = TRUE;
+
+
+DROP FUNCTION services_handler CASCADE;
+
+CREATE FUNCTION services_handler() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO Services_tmp VALUES (DEFAULT, NEW.name, NEW.description, DEFAULT, DEFAULT);
+        /*raise notice '[%]', NEW;*/
+    ELSIF TG_OP = 'UPDATE' THEN
+        UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service;
+        INSERT INTO Services_tmp VALUES (OLD.id_service, 
+                                        ternary(NEW.name IS NULL, OLD.name, NEW.name), 
+                                        ternary(NEW.description IS NULL, OLD.description, NEW.description), DEFAULT, DEFAULT);
+        /*raise notice '[%]', NEW;*/
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service;
+        /*raise notice '[%]', OLD;*/
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+ 
+CREATE TRIGGER Services_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();
 
 /*
 *
@@ -171,35 +210,20 @@ CREATE UNIQUE INDEX Services ON Clients_tmp(id_service, override_date)
 *
 */
 
+
+/*  
+
 CREATE TABLE IF NOT EXISTS Tariffs_tmp (
     id_tariff SERIAL,
     name varchar(30),
-    payment REAL CHECK(payment >= 0),
-	period INTEGER CHECK (period >= 0),
-    create_date timestamp DEFAULT NOW(),
-    override_date timestamp DEFAULT NULL,
-    PRIMARY KEY(id_tariff, override_date)
-
-);
-
-CREATE UNIQUE INDEX Services ON Clients_tmp(id_service, override_date)
-    WHERE (override_date = NULL);
-
-
-/*
-*
-*
-*   TSPairs
-*   
-*
-*/
 
 CREATE TABLE IF NOT EXISTS TSPairs_tmp (
     id_tariff INTEGER NOT NULL,
     id_service INTEGER NOT NULL,
-    UNIQUE(id_tariff, id_service),
+    create_date timestamp DEFAULT NOW(),
+    override_date timestamp DEFAULT NULL,
     FOREIGN KEY(id_tariff) REFERENCES Tariffs_tmp(id_tariff) ON DELETE CASCADE,
-    FOREIGN KEY(id_service) REFERENCES Services_tmp(id_service) ON DELETE CASCADE
+    FOREIGN KEY(id_service) REFERENCES Services_tmp(id_service) ON DELETE CASCADE,
 );
 
 
@@ -215,3 +239,6 @@ CREATE TABLE IF NOT EXISTS Clients_tmp (
 
 CREATE UNIQUE INDEX Clients ON Clients_tmp(id_client, override_date)
     WHERE (override_date = NULL);
+
+
+*/
