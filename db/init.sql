@@ -188,14 +188,16 @@ CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
         IF TG_OP = 'INSERT' THEN
             INSERT INTO Services_tmp VALUES (DEFAULT, NEW.name, NEW.description, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'UPDATE' THEN
-            UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service;
+            UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service AND actual=TRUE;
             INSERT INTO Services_tmp VALUES (OLD.id_service, 
                                             ternary(NEW.name IS NULL, OLD.name, NEW.name), 
                                             ternary(NEW.description IS NULL, OLD.description, NEW.description), 
                                             DEFAULT, 
                                             DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
-            UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service;
+            UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service AND actual=TRUE;
+            INSERT INTO Services_tmp VALUES (OLD.id_service, OLD.NAME, OLD.description, DEFAULT, FALSE);
+            DELETE FROM TSPairs WHERE id_service = OLD.id_service;
         END IF;
         RETURN NULL;
     END;
@@ -238,7 +240,7 @@ CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
         IF TG_OP = 'INSERT' THEN
             INSERT INTO Tariffs_tmp VALUES (DEFAULT, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'UPDATE' THEN
-            UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff;
+            UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff AND actual=TRUE;
             INSERT INTO Tariffs_tmp VALUES (OLD.id_tariff, 
                                             ternary(NEW.name IS NULL, OLD.name, NEW.name), 
                                             ternary(NEW.payment IS NULL, OLD.payment, NEW.payment),
@@ -246,14 +248,15 @@ CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
                                             DEFAULT, 
                                             DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
-            UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff;
-            UPDATE TSPairs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff;
+            UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff AND actual=TRUE;
+            INSERT INTO Tariffs_tmp VALUES (OLD.id_tariff, OLD.name, OLD.payment, OLD.period, DEFAULT, FALSE);
+            DELETE FROM TSPairs WHERE id_tariff = OLD.id_tariff;
         END IF;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
  
-CREATE TRIGGER Tariffs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE tariffs_handler();
+CREATE TRIGGER Tariffs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Tariffs FOR EACH ROW EXECUTE PROCEDURE tariffs_handler();
 
 /*
 *
@@ -283,18 +286,19 @@ CREATE TABLE IF NOT EXISTS TSPairs_tmp (
 CREATE VIEW TSPairs AS SELECT (id_tariff, id_service) FROM TSPairs_tmp WHERE actual = TRUE;
 
 
-CREATE OR REPLACE FUNCTION TSPairs_handler() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION tspairs_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
             INSERT INTO TSPairs VALUES (DEFAULT, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
-            UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff;
+            UPDATE TSPairs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff AND id_service=OLD.id_service AND actual=TRUE;
+            INSERT INTO TSPairs_tmp VALUES (OLD.id_tariff, OLD.id_service, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
  
-CREATE TRIGGER Tariffs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE tariffs_handler();
+CREATE TRIGGER TSPairs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON TSPairs FOR EACH ROW EXECUTE PROCEDURE tspairs_handler();
 
 
 /*
@@ -305,7 +309,22 @@ CREATE TRIGGER Tariffs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services
 *
 */
 
-/*  
+
+/*
+*
+*
+*   BEGIN Clients
+*   
+*
+*/ 
+
+CREATE TABLE IF NOT EXISTS Clients_tmp (
+    id_client SERIAL PRIMARY KEY,
+    name varchar(30),
+    surname varchar(30),
+    patronymic varchar(30),
+    phone_number varchar(30)
+);
 
 CREATE TABLE IF NOT EXISTS Tariffs_tmp (
     id_tariff SERIAL,
