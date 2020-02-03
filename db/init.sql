@@ -197,7 +197,7 @@ CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Services_tmp SET actual=FALSE WHERE id_service=OLD.id_service AND actual=TRUE;
             INSERT INTO Services_tmp VALUES (OLD.id_service, OLD.NAME, OLD.description, DEFAULT, FALSE);
-            DELETE FROM TSPairs WHERE id_service = OLD.id_service;
+            DELETE FROM TSPairs WHERE id_service = OLD.id_service; /*  cascade delete */
         END IF;
         RETURN NULL;
     END;
@@ -250,7 +250,7 @@ CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Tariffs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff AND actual=TRUE;
             INSERT INTO Tariffs_tmp VALUES (OLD.id_tariff, OLD.name, OLD.payment, OLD.period, DEFAULT, FALSE);
-            DELETE FROM TSPairs WHERE id_tariff = OLD.id_tariff;
+            DELETE FROM TSPairs WHERE id_tariff = OLD.id_tariff; /*  cascade delete */
         END IF;
         RETURN NULL;
     END;
@@ -289,7 +289,7 @@ CREATE VIEW TSPairs AS SELECT (id_tariff, id_service) FROM TSPairs_tmp WHERE act
 CREATE OR REPLACE FUNCTION tspairs_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO TSPairs VALUES (DEFAULT, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
+            INSERT INTO TSPairs_tmp VALUES (DEFAULT, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE TSPairs_tmp SET actual=FALSE WHERE id_tariff=OLD.id_tariff AND id_service=OLD.id_service AND actual=TRUE;
             INSERT INTO TSPairs_tmp VALUES (OLD.id_tariff, OLD.id_service, DEFAULT, FALSE);
@@ -323,35 +323,99 @@ CREATE TABLE IF NOT EXISTS Clients_tmp (
     name varchar(30),
     surname varchar(30),
     patronymic varchar(30),
-    phone_number varchar(30)
-);
-
-CREATE TABLE IF NOT EXISTS Tariffs_tmp (
-    id_tariff SERIAL,
-    name varchar(30),
-
-CREATE TABLE IF NOT EXISTS TSPairs_tmp (
-    id_tariff INTEGER NOT NULL,
-    id_service INTEGER NOT NULL,
+    phone_number varchar(30),
     create_date timestamp DEFAULT NOW(),
-    override_date timestamp DEFAULT NULL,
-    FOREIGN KEY(id_tariff) REFERENCES Tariffs_tmp(id_tariff) ON DELETE CASCADE,
-    FOREIGN KEY(id_service) REFERENCES Services_tmp(id_service) ON DELETE CASCADE,
+    actual boolean DEFAULT TRUE
 );
 
+
+
+CREATE VIEW Clients AS SELECT (id_client, name, surname, patronymic, phone_number) FROM Clients_tmp WHERE actual = TRUE;
+
+
+CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
+    BEGIN
+        IF TG_OP = 'INSERT' THEN
+            INSERT INTO Clients_tmp VALUES (DEFAULT, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+        ELSIF TG_OP = 'UPDATE'
+            UPDATE Clients_tmp SET actual=FALSE WHERE id_client=OLD.id_client AND actual=FALSE;
+            INSERT INTO Clients_tmp VALUES (OLD.id_client, 
+                                            ternary(NEW.name IS NULL, OLD.name, NEW.name), 
+                                            ternary(NEW.surname IS NULL, OLD.surname, NEW.surname),
+                                            ternary(NEW.patronymic IS NULL, OLD.patronymic, NEW.patronymic),
+                                            ternary(NEW.phone_number IS NULL, OLD.phone_number, NEW.phone_number),  
+                                            DEFAULT, 
+                                            DEFAULT);
+        ELSIF TG_OP = 'DELETE' THEN
+            UPDATE Clients_tmp SET actual=FALSE WHERE id_client=OLD.id_client AND actual=FALSE;
+            INSERT INTO Clients_tmp VALUES (DEFAULT, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, FALSE);
+            DELETE FROM Contracts WHERE id_client=OLD.id_client; /*  cascade delete */
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+ 
+CREATE TRIGGER Clients_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Clients FOR EACH ROW EXECUTE PROCEDURE clients_handler();
+
+/*
+*
+*
+*   END Clients
+*   
+*
+*/ 
+
+/*
+*
+*
+*   BEGIN Contracts
+*   
+*
+*/ 
 
 CREATE TABLE IF NOT EXISTS Clients_tmp (
-    id_client SERIAL,
+    id_client SERIAL PRIMARY KEY,
     name varchar(30),
     surname varchar(30),
     patronymic varchar(30),
     phone_number varchar(30),
     create_date timestamp DEFAULT NOW(),
-    override_date timestamp DEFAULT NULL
+    actual boolean DEFAULT TRUE
 );
 
-CREATE UNIQUE INDEX Clients ON Clients_tmp(id_client, override_date)
-    WHERE (override_date = NULL);
 
 
-*/
+CREATE VIEW Clients AS SELECT (id_client, name, surname, patronymic, phone_number) FROM Clients_tmp WHERE actual = TRUE;
+
+
+CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
+    BEGIN
+        IF TG_OP = 'INSERT' THEN
+            INSERT INTO Clients_tmp VALUES (DEFAULT, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+        ELSIF TG_OP = 'UPDATE'
+            UPDATE Clients_tmp SET actual=FALSE WHERE id_client=OLD.id_client AND actual=FALSE;
+            INSERT INTO Clients_tmp VALUES (OLD.id_client, 
+                                            ternary(NEW.name IS NULL, OLD.name, NEW.name), 
+                                            ternary(NEW.surname IS NULL, OLD.surname, NEW.surname),
+                                            ternary(NEW.patronymic IS NULL, OLD.patronymic, NEW.patronymic),
+                                            ternary(NEW.phone_number IS NULL, OLD.phone_number, NEW.phone_number),  
+                                            DEFAULT, 
+                                            DEFAULT);
+        ELSIF TG_OP = 'DELETE' THEN
+            UPDATE Clients_tmp SET actual=FALSE WHERE id_client=OLD.id_client AND actual=FALSE;
+            INSERT INTO Clients_tmp VALUES (DEFAULT, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, FALSE);
+            DELETE FROM Contracts WHERE id_client=OLD.id_client; /*  cascade delete */
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+ 
+CREATE TRIGGER TSPairs_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON TSPairs FOR EACH ROW EXECUTE PROCEDURE tspairs_handler();
+
+/*
+*
+*
+*   END Contracts
+*   
+*
+*/ 
