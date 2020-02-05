@@ -241,3 +241,57 @@ CREATE TABLE IF NOT EXISTS Logins (
 /*
     Можно добавить транзакции для User - X чтобы он обрабатывал запросы на откаты...
 */
+
+/*
+*
+* Индексы, надо разобраться как и зачем.
+*
+*/
+
+CREATE UNIQUE INDEX Services_actual_index ON Services_tmp(id_service, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Tariffs_actual_index ON Tariffs_tmp(id_tariff, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX TSPairs_actual_index ON TSPairs_tmp(id_service, id_tariff, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Clients_actual_index ON Clients_tmp(id_client, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Contracts_actual_index ON Contracts_tmp(id_contract, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Appeals_actual_index ON Appeals_tmp(id_appeal, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Jobs_actual_index ON Jobs_tmp(id_job, actual) WHERE actual = TRUE;
+CREATE UNIQUE INDEX Workers_actual_index ON Workers_tmp(id_worker, actual) WHERE actual = TRUE;
+
+
+/*
+*
+* Основная логика логгирования изменений. ВСе изменения будут в tmp, в таблицах без tmp актуальная.
+*
+*/
+
+
+CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
+    BEGIN
+        IF TG_OP = 'INSERT' THEN
+            INSERT INTO Services VALUES (DEFAULT, NEW.name, NEW.description); 
+            INSERT INTO Services_tmp VALUES (DEFAULT, NEW.name, NEW.description, DEFAULT, DEFAULT);
+        ELSIF TG_OP = 'UPDATE' THEN
+            UPDATE Services SET 
+                name = ternary(NEW.name IS NULL, OLD.name, NEW.name),
+                description = ternary(NEW.description IS NULL, OLD.description, NEW.description)
+                WHERE id_service = OLD.id_service;
+            UPDATE Services_tmp SET 
+                actual = FALSE 
+                WHERE id_service = OLD.id_service AND actual = TRUE;
+            INSERT INTO Services_tmp VALUES (OLD.id_service, 
+                                            ternary(NEW.name IS NULL, OLD.name, NEW.name), 
+                                            ternary(NEW.description IS NULL, OLD.description, NEW.description), 
+                                            DEFAULT, 
+                                            DEFAULT);
+        ELSIF TG_OP = 'DELETE' THEN
+            DELETE FROM Services WHERE id_service = OLD.id_service;
+            UPDATE Services_tmp SET
+                actual = FALSE
+                WHERE id_service = OLD.id_service AND actual = TRUE;
+            INSERT INTO Services_tmp VALUES (OLD.id_service, OLD.NAME, OLD.description, DEFAULT, FALSE);
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+ 
+CREATE TRIGGER Services_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();
