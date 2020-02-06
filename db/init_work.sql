@@ -293,7 +293,7 @@ CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Services_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();
+CREATE TRIGGER Services_trigger AFTER INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();
 
 
 CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
@@ -517,3 +517,10 @@ CREATE OR REPLACE FUNCTION workers_handler() RETURNS TRIGGER AS $$
     END;
 $$ LANGUAGE plpgsql;
 CREATE TRIGGER Workers_trigger INSTEAD OF INSERT OR UPDATE OR DELETE ON Workers FOR EACH ROW EXECUTE PROCEDURE workers_handler();
+
+/*
+*
+*
+* TODO: поменять все триггеры на AFTER вместо INSTEAD OF, узнать можно ли сделать универсальный триггер с вставкой NEW, OLD
+*
+*/
