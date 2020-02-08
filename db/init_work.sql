@@ -1,6 +1,6 @@
 /*
 *
-* MADE WITH GUIDE : http://www.varlena.com/GeneralBits/122.php
+*  ROLLBACKS* MADE WITH GUIDE : http://www.varlena.com/GeneralBits/122.php
 *
 */
 
@@ -432,6 +432,8 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER Workers_trigger AFTER INSERT OR UPDATE OR DELETE ON Workers FOR EACH ROW EXECUTE PROCEDURE workers_handler();
 
 \i fill.sql
+
+CREATE OR REPLACE FUNCTION
 
 /*TG_TABLE_SCHEMA
 *
