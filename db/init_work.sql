@@ -109,14 +109,14 @@ CREATE TABLE IF NOT EXISTS Tariffs_tmp (
 /* TSPairs */
 
 CREATE TABLE IF NOT EXISTS TSPairs (
-    id_tariff SERIAL NOT NULL REFERENCES Tariffs ON DELETE CASCADE,
-    id_service SERIAL NOT NULL REFERENCES Services ON DELETE CASCADE,
+    id_tariff INTEGER NOT NULL REFERENCES Tariffs ON DELETE CASCADE,
+    id_service INTEGER NOT NULL REFERENCES Services ON DELETE CASCADE,
     UNIQUE(id_tariff, id_service)
 );
 
 CREATE TABLE IF NOT EXISTS TSPairs_tmp (
-    id_tariff SERIAL NOT NULL,
-    id_service SERIAL NOT NULL,
+    id_tariff INTEGER NOT NULL,
+    id_service INTEGER NOT NULL,
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
 );
@@ -147,16 +147,16 @@ CREATE TABLE IF NOT EXISTS Clients_tmp (
 
 CREATE TABLE IF NOT EXISTS Contracts (
     id_contract SERIAL PRIMARY KEY,
-    id_client SERIAL NOT NULL REFERENCES Clients ON DELETE CASCADE,
-    id_tariff SERIAL REFERENCES Tariffs ON DELETE SET NULL,
+    id_client INTEGER NOT NULL REFERENCES Clients ON DELETE CASCADE,
+    id_tariff INTEGER REFERENCES Tariffs ON DELETE SET NULL,
     address varchar(50),
     contract_type Contract_Type
 );
 
 CREATE TABLE IF NOT EXISTS Contracts_tmp (
     id_contract SERIAL,
-    id_client SERIAL NOT NULL,
-    id_tariff SERIAL,
+    id_client INTEGER NOT NULL,
+    id_tariff INTEGER,
     address varchar(50),
     contract_type Contract_Type,
     create_date timestamp DEFAULT NOW(),
@@ -168,14 +168,14 @@ CREATE TABLE IF NOT EXISTS Contracts_tmp (
 
 CREATE TABLE IF NOT EXISTS Appeals (
     id_appeal SERIAL PRIMARY KEY,
-    id_contract SERIAL NOT NULL REFERENCES Contracts ON DELETE CASCADE,
+    id_contract INTEGER NOT NULL REFERENCES Contracts ON DELETE CASCADE,
     description text,
     status Processing_Status
 );
 
 CREATE TABLE IF NOT EXISTS Appeals_tmp (
     id_appeal SERIAL,
-    id_contract SERIAL NOT NULL,
+    id_contract INTEGER NOT NULL,
     description text,
     status Processing_Status,
     create_date timestamp DEFAULT NOW(),
@@ -187,14 +187,14 @@ CREATE TABLE IF NOT EXISTS Appeals_tmp (
 
 CREATE TABLE IF NOT EXISTS Jobs (
     id_job SERIAL PRIMARY KEY,
-    id_appeal SERIAL REFERENCES Appeals ON DELETE SET NULL,
+    id_appeal INTEGER REFERENCES Appeals ON DELETE SET NULL,
     description text,
     status Processing_Status
 );
 
 CREATE TABLE IF NOT EXISTS Jobs_tmp (
     id_job SERIAL,
-    id_appeal SERIAL NOT NULL,
+    id_appeal INTEGER,
     description text,
     status Processing_Status,
     create_date timestamp DEFAULT NOW(),
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS Jobs_tmp (
 
 CREATE TABLE IF NOT EXISTS Workers (
     id_worker SERIAL PRIMARY KEY,
-    id_job SERIAL REFERENCES Jobs ON DELETE SET NULL,
+    id_job INTEGER REFERENCES Jobs ON DELETE SET NULL,
     name varchar(30),
     surname varchar(30),
     patronymic varchar(30),
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS Workers (
 
 CREATE TABLE IF NOT EXISTS Workers_tmp (
     id_worker SERIAL,
-    id_job SERIAL,
+    id_job INTEGER,
     name varchar(30),
     surname varchar(30),
     patronymic varchar(30),
@@ -286,7 +286,7 @@ CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Services_tmp SET actual = FALSE
                 WHERE id_service = OLD.id_service AND actual = TRUE;
-            INSERT INTO Services_tmp(id_service, name, description, create_date, actual) VALUES (NEW.id_service, NEW.name, NEW.description, DEFAULT, FALSE);
+            INSERT INTO Services_tmp(id_service, name, description, create_date, actual) VALUES (OLD.id_service, OLD.name, OLD.description, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -301,11 +301,11 @@ CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Tariffs_tmp SET actual = FALSE 
                 WHERE id_tariff = OLD.id_tariff AND actual = TRUE;
-            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, actual) VALUES (NEW.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
+            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, actual) VALUES (OLD.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Tariffs_tmp SET actual = FALSE
                 WHERE id_tariff = OLD.id_tariff AND actual = TRUE;
-            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, actual) VALUES (NEW.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, FALSE);
+            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, actual) VALUES (OLD.id_tariff, OLD.name, OLD.payment, OLD.period, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -320,11 +320,11 @@ CREATE OR REPLACE FUNCTION tspairs_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE TSPairs_tmp SET actual = FALSE 
                 WHERE id_tariff = OLD.id_tariff AND id_service = OLD.id_service AND actual = TRUE;
-            INSERT INTO TSPairs_tmp(id_tariff, id_service, create_date, actual) VALUES (NEW.id_tariff, NEW.id_service, DEFAULT, DEFAULT);
+            INSERT INTO TSPairs_tmp(id_tariff, id_service, create_date, actual) VALUES (OLD.id_tariff, NEW.id_service, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE TSPairs_tmp SET actual = FALSE
                 WHERE id_tariff = OLD.id_tariff AND id_service = OLD.id_service AND actual = TRUE;
-            INSERT INTO TSPairs_tmp(id_tariff, id_service, create_date, actual) VALUES (NEW.id_tariff, NEW.id_service, DEFAULT, FALSE);
+            INSERT INTO TSPairs_tmp(id_tariff, id_service, create_date, actual) VALUES (OLD.id_tariff, OLD.id_service, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -339,11 +339,11 @@ CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Clients_tmp SET actual = FALSE 
                 WHERE id_client = OLD.id_client AND actual = TRUE;
-            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, actual) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, actual) VALUES (OLD.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Clients_tmp SET actual = FALSE
                 WHERE id_client = OLD.id_client AND actual = TRUE;
-            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, actual) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, FALSE);
+            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, actual) VALUES (OLD.id_client, OLD.name, OLD.surname, OLD.patronymic, OLD.phone_number, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -358,11 +358,11 @@ CREATE OR REPLACE FUNCTION contracts_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Contracts_tmp SET actual = FALSE 
                 WHERE id_contract = OLD.id_contract AND actual = TRUE;
-            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, actual) VALUES (NEW.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, DEFAULT);
+            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, actual) VALUES (OLD.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Contracts_tmp SET actual = FALSE
                 WHERE id_contract = OLD.id_contract AND actual = TRUE;
-            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, actual) VALUES (NEW.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, FALSE);
+            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, actual) VALUES (OLD.id_contract, OLD.id_client, OLD.id_tariff, OLD.address, OLD.contract_type, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -373,15 +373,15 @@ CREATE TRIGGER Contracts_trigger AFTER INSERT OR UPDATE OR DELETE ON Contracts F
 CREATE OR REPLACE FUNCTION appeals_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (NEW.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Appeals_tmp SET actual = FALSE 
                 WHERE id_appeal = OLD.id_appeal AND actual = TRUE;
-            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (OLD.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Appeals_tmp SET actual = FALSE
                 WHERE id_appeal = OLD.id_appeal AND actual = TRUE;
-            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, DEFAULT);
+            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, actual) VALUES (OLD.id_appeal, OLD.id_contract, OLD.description, OLD.status, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -395,11 +395,11 @@ CREATE OR REPLACE FUNCTION jobs_handler() RETURNS TRIGGER AS $$
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Jobs_tmp SET actual = FALSE 
                 WHERE id_job = OLD.id_job AND actual = TRUE;
-            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
+            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (OLD.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Jobs_tmp SET actual = FALSE
                 WHERE id_job = OLD.id_job AND actual = TRUE;
-            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
+            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (OLD.id_job, OLD.id_appeal, OLD.description, OLD.status, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
@@ -410,24 +410,26 @@ CREATE TRIGGER Jobs_trigger AFTER INSERT OR UPDATE OR DELETE ON Jobs FOR EACH RO
 CREATE OR REPLACE FUNCTION workers_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Workers_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
+            INSERT INTO Workers_tmp(id_worker, id_job, name, surname, patronymic, skills, create_date, actual) VALUES (NEW.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Workers_tmp SET actual = FALSE 
                 WHERE id_worker = OLD.id_worker AND actual = TRUE;
-            INSERT INTO Workers_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
+            INSERT INTO Workers_tmp(id_worker, id_job, name, surname, patronymic, skills, create_date, actual) VALUES (OLD.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, DEFAULT);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Workers_tmp SET actual = FALSE
                 WHERE id_job = OLD.id_job AND actual = TRUE;
-            INSERT INTO Workers_tmp(id_job, id_appeal, description, status, create_date, actual) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, DEFAULT);
+            INSERT INTO Workers_tmp(id_worker, id_job, name, surname, patronymic, skills, create_date, actual) VALUES (OLD.id_worker, OLD.id_job, OLD.name, OLD.surname, OLD.patronymic, OLD.skills, DEFAULT, FALSE);
         END IF;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
 CREATE TRIGGER Workers_trigger AFTER INSERT OR UPDATE OR DELETE ON Workers FOR EACH ROW EXECUTE PROCEDURE workers_handler();
 
+\i fill.sql
+
 /*TG_TABLE_SCHEMA
 *
 *
-* TODO: сдеалать роллбеки для каждой таблицы.
+* TODO: сдеалать роллбеки для каждой таблицы.g
 *
 */
