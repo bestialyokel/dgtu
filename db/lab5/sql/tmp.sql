@@ -1,108 +1,9 @@
-/*
-*
-*  Temp* MADE WITH GUIDE : http://www.varlena.com/GeneralBits/122.php
-*
-*/
-
--- КОПИПАСТ MONSTER14288
-
-/*
-*
-* BEGIN CLR
-*
-*/
-
-DROP TABLE IF EXISTS Clients_tmp   CASCADE;
-DROP TABLE IF EXISTS Contracts_tmp CASCADE;
-DROP TABLE IF EXISTS Appeals_tmp   CASCADE;
-DROP TABLE IF EXISTS Jobs_tmp      CASCADE;
-DROP TABLE IF EXISTS Workers_tmp   CASCADE;
-DROP TABLE IF EXISTS Services_tmp  CASCADE;
-DROP TABLE IF EXISTS Tariffs_tmp   CASCADE;
-DROP TABLE IF EXISTS TSPairs_tmp   CASCADE; 
-
-DROP TABLE IF EXISTS Clients   CASCADE;
-DROP TABLE IF EXISTS Contracts CASCADE;
-DROP TABLE IF EXISTS Appeals   CASCADE;
-DROP TABLE IF EXISTS Jobs      CASCADE;
-DROP TABLE IF EXISTS Workers   CASCADE;
-DROP TABLE IF EXISTS Services  CASCADE;
-DROP TABLE IF EXISTS Tariffs   CASCADE;
-DROP TABLE IF EXISTS TSPairs   CASCADE;
-DROP TABLE IF EXISTS Users     CASCADE;
-DROP TABLE IF EXISTS Logins    CASCADE;
-
-
-/*
-*
-* END CLR
-*
-*/
-
-
-/*
-*
-* BEGIN Tools & enum types
-*
-*/
-
-DROP TYPE IF EXISTS Contract_Type;
-CREATE TYPE Contract_Type AS ENUM ('ф', 'ю');
-
-DROP TYPE IF EXISTS Processing_Status;
-CREATE TYPE Processing_Status AS ENUM ('o', 'c', 'p'); /* open closed processing */
-
-DROP TYPE IF EXISTS User_Role;
-CREATE TYPE User_Role AS ENUM ('d', 't', 'a', 'x'); /* d - dev, t - tech, a - acc, x - admin */
-
-create or replace function ternary(bool, anyelement, anyelement) 
-returns anyelement language sql immutable as $$
-select case when $1 then $2 else $3 end
-$$;
-
-
-
-/*
-*
-* END Tools
-*
-*/
-
-/*
-*
-* IFDEF DATA 
-* сегмент с объявлением сущностей, представляющих данные. 
-* к каждой из них создаётся *_tmp 
-* для дальнейшей реализации темпоральной модели 
-* через навешивание триггерных ф-ий
-* Избыточно *****
-*
-*/
-
-
-/* Services */
-
-CREATE TABLE IF NOT EXISTS Services (
-    id_service SERIAL PRIMARY KEY,
-    name varchar(30),
-    description varchar(50) DEFAULT '' NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS Services_tmp (
     id_service SERIAL,
     name varchar(30),
     description varchar(50) DEFAULT '' NOT NULL,
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
-);
-
-/* Tariffs */
-
-CREATE TABLE IF NOT EXISTS Tariffs (
-    id_tariff SERIAL PRIMARY KEY,
-    name varchar(30),
-    payment REAL CHECK(payment >= 0),
-	period INTEGER CHECK (period >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS Tariffs_tmp (
@@ -114,30 +15,11 @@ CREATE TABLE IF NOT EXISTS Tariffs_tmp (
     actual boolean DEFAULT TRUE
 );
 
-/* TSPairs */
-
-CREATE TABLE IF NOT EXISTS TSPairs (
-    id_tariff INTEGER NOT NULL REFERENCES Tariffs ON DELETE CASCADE,
-    id_service INTEGER NOT NULL REFERENCES Services ON DELETE CASCADE,
-    UNIQUE(id_tariff, id_service)
-);
-
 CREATE TABLE IF NOT EXISTS TSPairs_tmp (
     id_tariff INTEGER NOT NULL,
     id_service INTEGER NOT NULL,
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
-);
-
-
-/* Clients */
-
-CREATE TABLE IF NOT EXISTS Clients (
-    id_client SERIAL PRIMARY KEY,
-    name varchar(30),
-    surname varchar(30),
-    patronymic varchar(30),
-    phone_number varchar(30)
 );
 
 CREATE TABLE IF NOT EXISTS Clients_tmp (
@@ -150,17 +32,6 @@ CREATE TABLE IF NOT EXISTS Clients_tmp (
     actual boolean DEFAULT TRUE
 );
 
-
-/* Contracts */
-
-CREATE TABLE IF NOT EXISTS Contracts (
-    id_contract SERIAL PRIMARY KEY,
-    id_client INTEGER NOT NULL REFERENCES Clients ON DELETE CASCADE,
-    id_tariff INTEGER REFERENCES Tariffs ON DELETE SET NULL,
-    address varchar(50),
-    contract_type Contract_Type
-);
-
 CREATE TABLE IF NOT EXISTS Contracts_tmp (
     id_contract SERIAL,
     id_client INTEGER NOT NULL,
@@ -169,16 +40,6 @@ CREATE TABLE IF NOT EXISTS Contracts_tmp (
     contract_type Contract_Type,
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
-);
-
-
-/* Appeals */
-
-CREATE TABLE IF NOT EXISTS Appeals (
-    id_appeal SERIAL PRIMARY KEY,
-    id_contract INTEGER NOT NULL REFERENCES Contracts ON DELETE CASCADE,
-    description text,
-    status Processing_Status
 );
 
 CREATE TABLE IF NOT EXISTS Appeals_tmp (
@@ -190,16 +51,6 @@ CREATE TABLE IF NOT EXISTS Appeals_tmp (
     actual boolean DEFAULT TRUE
 );
 
-
-/* Jobs */
-
-CREATE TABLE IF NOT EXISTS Jobs (
-    id_job SERIAL PRIMARY KEY,
-    id_appeal INTEGER REFERENCES Appeals ON DELETE SET NULL,
-    description text,
-    status Processing_Status
-);
-
 CREATE TABLE IF NOT EXISTS Jobs_tmp (
     id_job SERIAL,
     id_appeal INTEGER,
@@ -207,18 +58,6 @@ CREATE TABLE IF NOT EXISTS Jobs_tmp (
     status Processing_Status,
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
-);
-
-
-/* Workers */
-
-CREATE TABLE IF NOT EXISTS Workers (
-    id_worker SERIAL PRIMARY KEY,
-    id_job INTEGER REFERENCES Jobs ON DELETE SET NULL,
-    name varchar(30),
-    surname varchar(30),
-    patronymic varchar(30),
-    skills varchar(50)
 );
 
 CREATE TABLE IF NOT EXISTS Workers_tmp (
@@ -231,57 +70,6 @@ CREATE TABLE IF NOT EXISTS Workers_tmp (
     create_date timestamp DEFAULT NOW(),
     actual boolean DEFAULT TRUE
 );
-
-/*
-*
-* ENDIF 
-*
-*/
-
-
-/*
-*
-* Функциональные сущности
-*
-*/
-
-CREATE TABLE IF NOT EXISTS Users (
-    login varchar(20) PRIMARY KEY,
-    password varchar(30),
-    role User_Role
-);
-
-CREATE TABLE IF NOT EXISTS Logins (
-    key varchar(32) PRIMARY KEY,
-    login varchar(20) NOT NULL REFERENCES Users ON DELETE CASCADE
-);
-
-/*
-    Можно добавить транзакции для User - X чтобы он обрабатывал запросы на откаты...
-*/
-
-/*
-*
-* Индексы, надо разобраться как и зачем.
-*
-*/
-
-CREATE UNIQUE INDEX Services_actual_index ON Services_tmp(id_service, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Tariffs_actual_index ON Tariffs_tmp(id_tariff, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX TSPairs_actual_index ON TSPairs_tmp(id_service, id_tariff, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Clients_actual_index ON Clients_tmp(id_client, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Contracts_actual_index ON Contracts_tmp(id_contract, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Appeals_actual_index ON Appeals_tmp(id_appeal, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Jobs_actual_index ON Jobs_tmp(id_job, actual) WHERE actual = TRUE;
-CREATE UNIQUE INDEX Workers_actual_index ON Workers_tmp(id_worker, actual) WHERE actual = TRUE;
-
-
-/*
-*
-* Основная логика логгирования изменений. ВСе изменения будут в tmp, в таблицах без tmp актуальная.
-*
-*/
-
 
 CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
     BEGIN
@@ -299,7 +87,6 @@ CREATE OR REPLACE FUNCTION services_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Services_trigger AFTER INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();
 
 
 CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
@@ -318,7 +105,6 @@ CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Tariffs_trigger AFTER INSERT OR UPDATE OR DELETE ON Tariffs FOR EACH ROW EXECUTE PROCEDURE tariffs_handler();
 
 
 CREATE OR REPLACE FUNCTION tspairs_handler() RETURNS TRIGGER AS $$
@@ -337,7 +123,6 @@ CREATE OR REPLACE FUNCTION tspairs_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER TSPairs_trigger AFTER INSERT OR UPDATE OR DELETE ON TSPairs FOR EACH ROW EXECUTE PROCEDURE tspairs_handler();
 
 
 CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
@@ -356,7 +141,6 @@ CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Clients_trigger AFTER INSERT OR UPDATE OR DELETE ON Clients FOR EACH ROW EXECUTE PROCEDURE clients_handler();
 
 
 CREATE OR REPLACE FUNCTION contracts_handler() RETURNS TRIGGER AS $$
@@ -375,7 +159,6 @@ CREATE OR REPLACE FUNCTION contracts_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Contracts_trigger AFTER INSERT OR UPDATE OR DELETE ON Contracts FOR EACH ROW EXECUTE PROCEDURE contracts_handler();
 
 
 CREATE OR REPLACE FUNCTION appeals_handler() RETURNS TRIGGER AS $$
@@ -394,7 +177,7 @@ CREATE OR REPLACE FUNCTION appeals_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Appeals_trigger AFTER INSERT OR UPDATE OR DELETE ON Appeals FOR EACH ROW EXECUTE PROCEDURE appeals_handler();
+
 
 CREATE OR REPLACE FUNCTION jobs_handler() RETURNS TRIGGER AS $$
     BEGIN
@@ -412,7 +195,6 @@ CREATE OR REPLACE FUNCTION jobs_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
-CREATE TRIGGER Jobs_trigger AFTER INSERT OR UPDATE OR DELETE ON Jobs FOR EACH ROW EXECUTE PROCEDURE jobs_handler();
 
 
 CREATE OR REPLACE FUNCTION workers_handler() RETURNS TRIGGER AS $$
@@ -431,72 +213,12 @@ CREATE OR REPLACE FUNCTION workers_handler() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql; 
+
 CREATE TRIGGER Workers_trigger AFTER INSERT OR UPDATE OR DELETE ON Workers FOR EACH ROW EXECUTE PROCEDURE workers_handler();
-
-\i fill.sql
-
-/*TG_TABLE_SCHEMA
-*
-*
-* TODO: сдеалать роллбеки для каждой таблицы.g
-* хз работает ли
-*/
-
-CREATE OR REPLACE PROCEDURE ROLLBACK_SERVICE(id integer, to_date timestamp) AS $$
-    DECLARE
-        _service_rec RECORD;
-        updated_id integer;
-    BEGIN
-        SELECT INTO _service_rec * 
-            FROM Services_tmp as STmp
-            WHERE STmp.id_service = id AND STmp.create_date <= to_date
-            ORDER BY create_date DESC
-            LIMIT 1;
-        -- not created yet?
-        IF _service_rec IS NULL THEN 
-            DELETE FROM Services WHERE id_service = id;
-            RETURN;
-        END IF;
-        -- try update
-        UPDATE Services SET 
-            name = _service_rec.name, 
-            description = _service_rec.description
-        WHERE id_service = _service_rec.id_service RETURNING id_service;
-        -- if wasnt updated -> insert???
-        IF NOT FOUND THEN
-            INSERT INTO Services(id_service, name, description) VALUES (_service_rec.id_service, _service_rec.name, _service_rec.description);
-        END IF;
-    END;
-$$ LANGUAGE plpgsql;
-
-
-
-CREATE OR REPLACE PROCEDURE ROLLBACK_TARIFF(id integer, to_date timestamp) AS $$
-    DECLARE
-        _tariff_rec RECORD;
-    BEGIN
-        SELECT INTO _tariff_rec * 
-            FROM Tariffs_tmp as TTmp
-            WHERE TTmp.id_tariff = id AND TTmp.create_date <= to_date
-            ORDER BY create_date DESC
-            LIMIT 1;
-        -- not created yet?
-        IF _tariff_rec IS NULL THEN 
-            DELETE FROM Tariffs WHERE id_tariff = id;
-            RETURN;
-        END IF;
-        -- update & save updated_id
-        UPDATE Tariffs SET 
-            name = _tariff_rec.name, 
-            payment = _tariff_rec.period,
-            period = _tariff_rec.period
-        WHERE id_tariff = _tariff_rec.id_tariff RETURNING id_tariff;
-
-        -- if wasnt updated???
-        IF NOT FOUND THEN
-            INSERT INTO Tariffs(id_tariff, payment, patronymic) VALUES (_tariff_rec.id_tariff, _tariff_rec.payment, _tariff_rec.patronymic);
-        END IF;
-    END;
-$$ LANGUAGE plpgsql;
-
--- подумать над откатами еще(каскадно?) 
+CREATE TRIGGER Jobs_trigger AFTER INSERT OR UPDATE OR DELETE ON Jobs FOR EACH ROW EXECUTE PROCEDURE jobs_handler();
+CREATE TRIGGER Appeals_trigger AFTER INSERT OR UPDATE OR DELETE ON Appeals FOR EACH ROW EXECUTE PROCEDURE appeals_handler();
+CREATE TRIGGER Contracts_trigger AFTER INSERT OR UPDATE OR DELETE ON Contracts FOR EACH ROW EXECUTE PROCEDURE contracts_handler();
+CREATE TRIGGER Clients_trigger AFTER INSERT OR UPDATE OR DELETE ON Clients FOR EACH ROW EXECUTE PROCEDURE clients_handler();
+CREATE TRIGGER TSPairs_trigger AFTER INSERT OR UPDATE OR DELETE ON TSPairs FOR EACH ROW EXECUTE PROCEDURE tspairs_handler();
+CREATE TRIGGER Tariffs_trigger AFTER INSERT OR UPDATE OR DELETE ON Tariffs FOR EACH ROW EXECUTE PROCEDURE tariffs_handler();
+CREATE TRIGGER Services_trigger AFTER INSERT OR UPDATE OR DELETE ON Services FOR EACH ROW EXECUTE PROCEDURE services_handler();

@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS Clients (
-	idClient SERIAL PRIMARY KEY NOT NULL,
-	surname TEXT NOT NULL,
-	name TEXT NOT NULL,
-	patronymic TEXT NOT NULL,
-	phoneNumber TEXT NOT NULL UNIQUE
-);

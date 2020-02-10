@@ -5,8 +5,8 @@ let getAll = async () => {
         text: 'SELECT id_service FROM Services',
         values: []
     }
-    let req = await pool.query(query)
-    return req.rows
+    let { rows } = await pool.query(query)
+    return rows
 }
 
 let getOne = async (id) => {
@@ -14,8 +14,8 @@ let getOne = async (id) => {
         text: 'SELECT * FROM Services WHERE id_service=$1',
         values: [id]
     }
-    let req = await pool.query(query)
-    return req.rows[0]
+    let { rows } = await pool.query(query)
+    return rows
 }
 
 let updateOne = async ({id, name, description}) => {
@@ -23,8 +23,8 @@ let updateOne = async ({id, name, description}) => {
         text: 'UPDATE Services SET name=$1, description=$2 WHERE id_service=$3 RETURNING id_service',
         values: [name, description, id]
     }
-    let req = await pool.query(query)
-    return req.rows[0]
+    let { rows } = await pool.query(query)
+    return rows
 }
 
 let addOne = async ({name, description}) => {
@@ -32,8 +32,8 @@ let addOne = async ({name, description}) => {
         text: 'INSERT INTO Services VALUES (DEFAULT, $1, $2) RETURNING id_service',
         values: [name, description]
     }
-    let req = await pool.query(query)
-    return req.rows[0]
+    let { rows } = await pool.query(query)
+    return rows
 }
 
 let deleteOne = async (id) => {
@@ -41,8 +41,22 @@ let deleteOne = async (id) => {
         text: 'DELETE FROM Services WHERE id_service=$1 RETURNING name',
         values: [id]
     }
-    let req = await pool.query(query)
-    return req.rows[0]
+    let { rows } = await pool.query(query)
+    return rows
+}
+
+let getHistoryByID = async (id) => {
+    let query = {
+        text: 'SELECT * FROM Services_tmp WHERE id_service=$1',
+        values: [id]
+    }
+    let {rows} = await pool.query(query)
+    return rows
+
+}
+
+let rollBackOne = async (id, toDate) => {
+
 }
 
 const Service = {
