@@ -3,7 +3,7 @@
         "GET": ["A"],
         "POST": ["A"],
         "PUT": ["A"],
-        "DELETE": ["A"],
+        "DELETE": ["A"]
     },
     "contracts": {
         "GET": ["A"],
