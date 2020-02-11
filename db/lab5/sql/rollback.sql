@@ -195,6 +195,11 @@ $$ LANGUAGE plpgsql;
 
 /*
 
+актуальные услуги для тарифа.
+
+SELECT id_tariff, id_serice FROM TSPairs_tmp AS TSPTmp, Services AS S
+WHERE TSPTmp.id_tariff= AND TSPTmp.id_service = S.id_service;
+
 WORKER? TSPAIR?
 
 CREATE OR REPLACE PROCEDURE ROLLBACK_JOB(id integer, to_date timestamp) AS $$
