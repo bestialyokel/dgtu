@@ -72,12 +72,23 @@ let deleteOne = async (id) => {
     return req.rows[0]
 }
 
+let rollBackOne = async (id, toDate) => {
+    // call & get result
+    let query = {
+        text: 'SELECT * FROM ROLLBACK_TARIFF($1,$2)',
+        values: [id, toDate]
+    }
+    let req = await pool.query(query)
+    return req.rows 
+}
+
 const Tariff = {
     getAll,
     getOne,
     updateOne,
     addOne,
     deleteOne,
+    rollBackOne,
 }
 
 module.exports = Tariff

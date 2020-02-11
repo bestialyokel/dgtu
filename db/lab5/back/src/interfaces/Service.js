@@ -56,7 +56,13 @@ let getHistoryByID = async (id) => {
 }
 
 let rollBackOne = async (id, toDate) => {
-
+    // call & get result
+    let query = {
+        text: 'SELECT * FROM ROLLBACK_SERVICE($1,$2)',
+        values: [id, toDate]
+    }
+    let req = await pool.query(query)
+    return req.rows 
 }
 
 const Service = {
@@ -65,6 +71,7 @@ const Service = {
     updateOne,
     addOne,
     deleteOne,
+    rollBackOne,
 }
 
 module.exports = Service
