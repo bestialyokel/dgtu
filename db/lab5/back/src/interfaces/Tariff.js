@@ -72,14 +72,78 @@ let deleteOne = async (id) => {
     return req.rows[0]
 }
 
-let rollBackOne = async (id, toDate) => {
-    // call & get result
+
+let getHistoryByID = async (id) => {
     let query = {
-        text: 'SELECT * FROM ROLLBACK_TARIFF($1,$2)',
+        text: 'SELECT * FROM Services_tmp WHERE id_service=$1',
+        values: [id]
+    }
+    let {rows} = await pool.query(query)
+    query = {
+        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSTmp.create_date) \
+                FROM TSPairs_tmp AS TSPTmp, Services AS S \
+                WHERE TSPTmp.id_tariff = $1 AND TSPTmp.id_service=S.id_service AND create_date <= $2 \
+                GROUP BY TSTmp.id_tariff, TSTmp.id_service',
+        values: []
+    }
+    rows.map(async (x) => {
+        let services = await pool.query(query.text, [id, x.create_date])
+        services = services.rows.map(x => (
+            {
+                id_tariff: x.id_tariff, 
+                id_service: x.id_service
+            }
+        ))
+        return {...x, services: services}
+    })
+    return rows
+
+}
+
+
+let rollBackOne = async (id, toDate) => {
+    let query = {
+        text: 'SELECT id_tariff, name, payment, period \
+                FROM Tariffs_tmp \
+                WHERE id_tariff = $1 AND create_date <= $2 \
+                ORDER BY create_date DESC \
+                LIMIT 1',
+        values: [id, toDate] 
+    }
+    let record = await pool.query(query)
+    if (record.rowCount == 0) {
+        await pool.query('DELETE FROM Tariffs WHERE id_tariff=$1', [id])
+        return
+    }
+    let service = record.rows[0]
+    query = {
+        text: 'UPDATE Services SET \
+                    name = $1, \
+                    description = $2 \
+                WHERE id_service = $3 RETURNING id_service',
+        values: [service.name, service.description, id]
+    }
+    let update = await pool.query(query)
+    if (update.rowCount == 0) {
+        query = {
+            text: 'INSERT INTO Services(id_service, name, description) VALUES ($1,$2,$3)',
+            values: [id, service.name, service.description]
+        }
+        await pool.query(query)
+    }
+    query = {
+        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSTmp.create_date) \
+                FROM TSPairs_tmp AS TSPTmp, Services AS S \
+                WHERE TSPTmp.id_tariff = $1 AND TSPTmp.id_service=S.id_service AND create_date <= $2 \
+                GROUP BY TSTmp.id_tariff, TSTmp.id_service',
         values: [id, toDate]
     }
-    let req = await pool.query(query)
-    return req.rows 
+    let tspairs = await pool.query(query)
+    await pool.query('DELETE FROM TSpairs WHERE id_tariff=$1', [id])
+    tspairs.forEach(pair => {
+        pool.query('INSERT INTO TSPairs VALUES ($1,$2)', [id, x.id_service])
+    })
+    return
 }
 
 const Tariff = {
