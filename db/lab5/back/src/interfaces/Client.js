@@ -78,12 +78,12 @@ let rollBackOne = async (id, toDate) => {
                     patronymic = $3 \
                     phone_number = $4 \
                 WHERE id_client = $5 RETURNING id_client',
-        values: [client.name, client.surname, client.patronymic, client.phone_number]
+        values: [client.name, client.surname, client.patronymic, client.phone_number, id]
     }
     let update = await pool.query(query)
     if (update.rowCount == 0) {
         query = {
-            text: 'INSERT INTO Services(id_service, name, description) VALUES ($1,$2,$3)',
+            text: 'INSERT INTO Clients(id_client, name, surname, patronymic, phone_number) VALUES ($1,$2,$3,$4,$5)',
             values: [service.name, service.description, id]
         }
         await pool.query(query)
