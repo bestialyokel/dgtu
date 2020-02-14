@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Collections.Generic;
 
 class DebugPrintAttribute : Attribute {
-    public string m_format;
+    public string format;
     public DebugPrintAttribute(string format = "{0}") {
-        this.m_format = format;
+        this.format = format;
     }
 }
 
@@ -60,7 +60,7 @@ class RefLab {
             DebugPrintAttribute DPA = 
                 (DebugPrintAttribute) MI.GetCustomAttribute(typeof(DebugPrintAttribute));
             if (DPA == null) continue;
-            Console.WriteLine(DPA.m_format, MI.GetValue(obj), MI.Name, MI.ReflectedType);
+            Console.WriteLine(DPA.format, MI.GetValue(obj), MI.Name, MI.ReflectedType);
         }
     }
 }
