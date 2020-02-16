@@ -47,12 +47,11 @@ let deleteOne = async (id) => {
 
 let getHistoryByID = async (id) => {
     let query = {
-        text: 'SELECT id_service, name, description, create_date FROM Services_tmp WHERE id_service=$1',
+        text: 'SELECT * FROM Services_tmp WHERE id_service=$1',
         values: [id]
     }
     let {rows} = await pool.query(query)
     return rows
-
 }
 
 let rollBackOne = async (id, toDate) => {
