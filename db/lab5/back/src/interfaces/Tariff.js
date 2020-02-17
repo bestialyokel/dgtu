@@ -20,10 +20,9 @@ let getOne = async (id) => {
         values: [id]
     }
     let servicesReq = await pool.query(query)
-    return {
-        tariff: tariffReq.rows[0],
-        services: servicesReq.rows[0]
-    }
+    return {...tariffReq.rows[0], 
+            services: servicesReq.rows[0]
+        }
 }
 
 let updateOne = async ({id, name, description, period, payment, services}) => {
@@ -79,25 +78,27 @@ let getHistoryByID = async (id) => {
         values: [id]
     }
     let {rows} = await pool.query(query)
+    // существующие услуги на каждом коммите* в тарифе
     query = {
-        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSTmp.create_date) \
+        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSPTmp.create_date) \
                 FROM TSPairs_tmp AS TSPTmp, Services AS S \
                 WHERE TSPTmp.id_tariff = $1 AND TSPTmp.id_service=S.id_service AND create_date <= $2 \
-                GROUP BY TSTmp.id_tariff, TSTmp.id_service',
+                GROUP BY TSPTmp.id_tariff, TSPTmp.id_service',
         values: []
     }
-    rows.map(async (x) => {
-        let services = await pool.query(query.text, [id, x.create_date])
-        services = services.rows.map(x => (
-            {
-                id_tariff: x.id_tariff, 
-                id_service: x.id_service
-            }
+    rows = await Promise.all(rows.map(
+        async (x) => {
+            let servicesReq = await pool.query(query.text, [id, x.create_date])
+            let services = servicesReq.rows.map(x => (
+                {
+                    id_tariff: x.id_tariff, 
+                    id_service: x.id_service
+                }
         ))
         return {...x, services: services}
-    })
+        }
+    ))
     return rows
-
 }
 
 
@@ -115,27 +116,28 @@ let rollBackOne = async (id, toDate) => {
         await pool.query('DELETE FROM Tariffs WHERE id_tariff=$1', [id])
         return
     }
-    let service = record.rows[0]
+    let tariff = record.rows[0]
     query = {
-        text: 'UPDATE Services SET \
+        text: 'UPDATE Tariffs SET \
                     name = $1, \
-                    description = $2 \
-                WHERE id_service = $3 RETURNING id_service',
-        values: [service.name, service.description, id]
+                    payment = $2 \
+                    period = $3 \
+                WHERE id_tariff = $4 RETURNING id_tariff',
+        values: [tariff.name, tariff.payment, tariff.period, id]
     }
     let update = await pool.query(query)
     if (update.rowCount == 0) {
         query = {
-            text: 'INSERT INTO Services(id_service, name, description) VALUES ($1,$2,$3)',
-            values: [id, service.name, service.description]
+            text: 'INSERT INTO Tariffs(id_tariff, name, payment, period) VALUES ($1,$2,$3,$4)',
+            values: [id, tariff.name, tariff.payment, tariff.period]
         }
         await pool.query(query)
     }
     query = {
-        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSTmp.create_date) \
+        text: 'SELECT TSPTmp.id_tariff, TSPTmp.id_service, MAX(TSPTmp.create_date) \
                 FROM TSPairs_tmp AS TSPTmp, Services AS S \
                 WHERE TSPTmp.id_tariff = $1 AND TSPTmp.id_service=S.id_service AND create_date <= $2 \
-                GROUP BY TSTmp.id_tariff, TSTmp.id_service',
+                GROUP BY TSPTmp.id_tariff, TSPTmp.id_service',
         values: [id, toDate]
     }
     let tspairs = await pool.query(query)
@@ -152,6 +154,7 @@ const Tariff = {
     updateOne,
     addOne,
     deleteOne,
+    getHistoryByID,
     rollBackOne,
 }
 

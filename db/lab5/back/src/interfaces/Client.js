@@ -52,6 +52,11 @@ let getHistoryByID = async (id) => {
         values: [id]
     }
     let {rows} = await pool.query(query)
+    query = {
+        text: 'SELECT id_contract, MAX(create_date) \
+                FROM Contracts_tmp \
+                WHERE id_client = $1 and create_date <= $2'
+    }
     return rows
 }
 
