@@ -46,14 +46,39 @@ let deleteOne = async (id) => {
 }
 
 
+let getHistoryByID = async (id) => {
+    let sql = 'SELECT * FROM Clients_tmp WHERE id_client=$1'
+    let {rows} = await pool.query(sql, [id])
+    return rows
+}
+
+
 let rollBackOne = async (id, toDate) => {
-    // call & get result
-    let query = {
-        text: 'SELECT * FROM ROLLBACK_CLIENT($1,$2)',
-        values: [id, toDate]
+    let sql = 'SELECT id_contract, name, payment, period \
+                FROM Contracts_tmp \
+                WHERE id_contract = $1 AND create_date <= $2 \
+                ORDER BY create_date DESC \
+                LIMIT 1'
+    let record = await pool.query(sql, [id, toDate])
+    if (record.rowCount == 0) {
+        await pool.query('DELETE FROM Contracts WHERE id_contract=$1', [id])
+        return record.rows[0]
     }
-    let req = await pool.query(query)
-    return req.rows 
+    let contract = record.rows[0]
+    sql =  'UPDATE Contracts SET \
+                    name = $1, \
+                    payment = $2 \
+                    period = $3 \
+                WHERE id_contract = $4 RETURNING id_contract'
+    let update = await pool.query(query)
+    if (update.rowCount == 0) {
+        query = {
+            text: 'INSERT INTO Contracts(id_contract, name, payment, period) VALUES ($1,$2,$3,$4)',
+            values: [contract.name, contract.description, id]
+        }
+        await pool.query(query)
+    }
+    return record.rows[0]
 }
 
 const Contract = {

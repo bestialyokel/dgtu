@@ -55,36 +55,27 @@ let getHistoryByID = async (id) => {
 }
 
 let rollBackOne = async (id, toDate) => {
-    let query = {
-        text: 'SELECT id_service, name, description \
+    let sql = 'SELECT id_service, name, description \
                 FROM Services_tmp \
                 WHERE id_service = $1 AND create_date <= $2 \
                 ORDER BY create_date DESC \
-                LIMIT 1',
-        values: [id, toDate] 
-    }
-    let record = await pool.query(query)
+                LIMIT 1'
+    let record = await pool.query(sql, [id, toDate] )
     if (record.rowCount == 0) {
         await pool.query('DELETE FROM Services WHERE id_service=$1', [id])
-        return
+        return record.rows[0]
     }
     let service = record.rows[0]
-    query = {
-        text: 'UPDATE Services SET \
-                    name = $1, \
-                    description = $2 \
-                WHERE id_service = $3 RETURNING id_service',
-        values: [service.name, service.description, id]
-    }
-    let update = await pool.query(query)
+    sql = 'UPDATE Services SET \
+            name = $1, \
+            description = $2 \
+            WHERE id_service = $3 RETURNING id_service'
+    let update = await pool.query(sql, [service.name, service.description, id])
     if (update.rowCount == 0) {
-        query = {
-            text: 'INSERT INTO Services(id_service, name, description) VALUES ($1,$2,$3)',
-            values: [id, service.name, service.description]
-        }
-        await pool.query(query)
+        sql = 'INSERT INTO Services(id_service, name, description) VALUES ($1,$2,$3)'
+        await pool.query(sql, [id, service.name, service.description])
     }
-    return
+    return record.rows[0]
 }
 
 const Service = {
