@@ -5,13 +5,12 @@ var word = function (alphabet, index) {
     var len = alphabet.length
     while (index > 0) {
         let i = 0
-        if (index % len == 0) {
+        if (index % len == 0) 
             i = index/len - 1
-            console.log(i)
-        } else {
+        else
             i = ((index/len) >> 0)
-        }
-        indexes.unshift(index - i)
+            
+        indexes.unshift(index - i*len)
         index = i
     }
     return indexes
