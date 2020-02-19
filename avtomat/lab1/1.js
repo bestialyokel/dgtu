@@ -1,6 +1,5 @@
 
-var alphabet = ['a', 'b', 'c'];
-var word = function (alphabet, index) {
+var word = (alphabet, index) => {
     var indexes = []
     var len = alphabet.length
     while (index > 0) {
@@ -9,12 +8,30 @@ var word = function (alphabet, index) {
             i = index/len - 1
         else
             i = ((index/len) >> 0)
-            
+
         indexes.unshift(index - i*len)
         index = i
     }
-    return indexes
+    return indexes.map(x => alphabet[x-1]).join('')
 };
 
-var x = word(alphabet, 321);
-console.log(x);
+let number = (alphabet, word) => {
+    word = Array.from(word).reverse()
+    let result = 0;
+    let grade = 1
+    word.forEach(char => {
+        result += grade * (alphabet.indexOf(char) + 1)
+        grade *= alphabet.length
+    })
+    return result
+}
+
+
+var alphabet = ['а', 'б', 'в', 'г'];
+
+
+
+var x = word(alphabet, 274)
+var y = number(alphabet, 'гааб')
+
+console.log(x,y);
