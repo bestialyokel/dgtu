@@ -1,4 +1,4 @@
-const randomArray = (amount, a, b) => [...Array(amount)].map(x => Math.round(Math.random() * (b-a) + a) );
+const randomArray = (amount, a, b) => Array(amount).fill(0).map(x => Math.round(Math.random() * (b-a) + a) );
 
 let minIndex = (A) => {
     let index = 0
