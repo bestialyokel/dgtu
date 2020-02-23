@@ -45,14 +45,10 @@ let deleteOne = async (id) => {
     return req.rows[0]
 }
 
-let rollBackOne = async (id, toDate) => {
-    // call & get result
-    let query = {
-        text: 'SELECT * FROM ROLLBACK_WORKER($1,$2)',
-        values: [id, toDate]
-    }
-    let req = await pool.query(query)
-    return req.rows 
+let getHistoryByID = async (id) => {
+    let sql = 'SELECT * FROM Workers_tmp WHERE id_worker=$1'
+    let {rows} = await pool.query(sql, [id])
+    return rows
 }
 
 const Worker = {
@@ -61,7 +57,7 @@ const Worker = {
     updateOne,
     addOne,
     deleteOne,
-    rollBackOne,
+    getHistoryByID,
 }
 
 module.exports = Worker

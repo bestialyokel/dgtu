@@ -2,7 +2,7 @@ const pool = require('../../db/pool')
 
 let getAll = async () => {
     let query = {
-        text: 'SELECT id_job FROM Jobs',
+        text: 'SELECT id_appeal FROM Appeals',
         values: []
     }
     let req = await pool.query(query)
@@ -11,7 +11,7 @@ let getAll = async () => {
 
 let getOne = async (id) => {
     let query = {
-        text: 'SELECT * FROM Jobs WHERE id_job=$1',
+        text: 'SELECT * FROM Appeals WHERE id_appeal=$1',
         values: [id]
     }
     let req = await pool.query(query)
@@ -20,17 +20,17 @@ let getOne = async (id) => {
 
 let updateOne = async ({id, description, status}) => {
     let query = {
-        text: 'UPDATE Jobs SET description=$1, status=$2 WHERE id_job=$3 RETURNING id_job',
+        text: 'UPDATE Appeals SET description=$1, status=$2 WHERE id_appeal=$3 RETURNING id_appeal',
         values: [description, status, id]
     }
     let req = await pool.query(query)
     return req.rows[0]
 }
 
-let addOne = async ({id_appeal, description, status}) => {
+let addOne = async ({id_contract, description, status}) => {
     let query = {
-        text: 'INSERT INTO Jobs VALUES (DEFAULT, $1, $2, $3) RETURNING id_job',
-        values: [id_appeal, description, status]
+        text: 'INSERT INTO Appeals VALUES (DEFAULT, $1, $2, $3) RETURNING id_appeal',
+        values: [id_contract, description, status]
     }
     let req = await pool.query(query)
     return req.rows[0]
@@ -38,32 +38,28 @@ let addOne = async ({id_appeal, description, status}) => {
 
 let deleteOne = async (id) => {
     let query = {
-        text: 'DELETE FROM Jobs WHERE id_job=$1 RETURNING id_appeal',
+        text: 'DELETE FROM Appeals WHERE id_appeal=$1 RETURNING id_contract',
         values: [id]
     }
     let req = await pool.query(query)
     return req.rows[0]
 }
 
-let rollBackOne = async (id, toDate) => {
-    // call & get result
-    let query = {
-        text: 'SELECT * FROM ROLLBACK_JOB($1,$2)',
-        values: [id, toDate]
-    }
-    let req = await pool.query(query)
-    return req.rows 
+let getHistoryByID = async (id) => {
+    let sql = 'SELECT * FROM Appeals_tmp WHERE id_appeal=$1'
+    let {rows} = await pool.query(sql, [id])
+    return rows
 }
 
-const Job = {
+const Appeal = {
     getAll,
     getOne,
     updateOne,
     addOne,
     deleteOne,
-    rollBackOne,
+    getHistoryByID,
 }
 
-module.exports = Job
+module.exports = Appeal
 
 

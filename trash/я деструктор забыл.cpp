@@ -49,7 +49,10 @@ class Zoo {
         }
     public:
         Zoo(vector<Animal*> *a = new vector<Animal*>()) : animals(a) {}
-        ~Zoo() {
+        //деструктор забыл
+	~Zoo() {
+	    for (auto it = begin(); it != end(); ++it)
+                delete *it;
             delete animals;
         }
         typedef vector<Animal*>::const_iterator const_iterator;

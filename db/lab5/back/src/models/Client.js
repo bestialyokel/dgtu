@@ -52,40 +52,13 @@ let getHistoryByID = async (id) => {
     return rows
 }
 
-
-let rollBackOne = async (id, toDate) => {
-    let sql = 'SELECT id_client, name, surname, patronymic, phone_number \
-                FROM Clients_tmp \
-                WHERE id_client = $1 AND create_date <= $2 \
-                ORDER BY create_date DESC \
-                LIMIT 1'
-    let record = await pool.query(sql, [id, toDate])
-    if (record.rowCount == 0) {
-        await pool.query('DELETE FROM Clients WHERE id_client=$1', [id])
-        return record.rows[0]
-    }
-    let client = record.rows[0]
-    sql =  'UPDATE Clients SET \
-                    name = $1, \
-                    surname = $2 \
-                    patronymic = $3 \
-                    phone_number = $4 \
-                WHERE id_client = $5 RETURNING id_client'
-    let update = await pool.query(query)
-    if (update.rowCount == 0) {
-        sql = 'INSERT INTO Clients(id_client, name, surname, patronymic, phone_number) VALUES ($1,$2,$3,$4,$5)'
-        await pool.query(sql, [.name, service.description, id])
-    }
-    return record.rows[0]
-}
-
 const Client = {
     getAll,
     getOne,
     updateOne,
     addOne,
     deleteOne,
-    rollBackOne,
+    getHistoryByID,
 }
 
 module.exports = Client
