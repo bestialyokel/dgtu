@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Tariff = require('../interfaces/Tariff')
+const Worker = require('../models/workerModel')
 
 
 const router = new Router()
@@ -7,10 +7,10 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
     try {
-        let tariffs = await Tariff.getAll()
+        let workers = await Worker.getAll()
         res.json({
             success: true,
-            tariffs: tariffs.map(x => x.id_tariff)
+            workers: workers.map(x => x.id_worker)
         })
     } catch(error) {
 
@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        let tariff = await Tariff.getOne(req.params.id)
+        let worker = await Worker.getOne(req.params.id)
         res.json({
             success: true,
-            tariff
+            worker
         })
     } catch(error) {
 
@@ -31,13 +31,13 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let tariff = await Tariff.updateOne({
+        let worker = await Worker.updateOne({
             id: req.params.id,
             ...req.query
         })
         res.json({
             success: true,
-            id: tariff.id_tariff
+            id: worker.id_worker
         })
     } catch(error) {
 
@@ -46,10 +46,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let tariff = await Tariff.addOne(...req.query)
+        let worker = await Worker.addOne(...req.query)
         res.json({
             success: true,
-            id: tariff.id_tariff
+            id: worker.id_worker
         })
     } catch (error) {
         
@@ -58,10 +58,10 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        let tariff = await Tariff.deleteOne(req.params.id)
+        let worker = await Worker.deleteOne(req.params.id)
         res.json({
             success: true,
-            name: tariff.name
+            id_worker: worker.id_worker
         })
 
     } catch(error) {

@@ -1,7 +1,7 @@
 const globalRouter = require('./globalRouter')
 const express = require('express')
 const cors = require('cors')
-const pool = require('../db/pool')
+const pool = require('./db/pool')
 const app = express()
 
 pool.connect((err, client, release) => {

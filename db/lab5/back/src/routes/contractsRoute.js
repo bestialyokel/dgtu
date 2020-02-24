@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Job = require('../interfaces/Job')
+const Contract = require('../models/contractModel')
 
 
 const router = new Router()
@@ -7,10 +7,10 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
     try {
-        let jobs = await Job.getAll()
+        let contracts = await Contract.getAll()
         res.json({
             success: true,
-            jobs: jobs.map(x => x.id_job)
+            contracts: contracts.map(x => x.id_contract)
         })
     } catch(error) {
 
@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        let job = await Job.getOne(req.params.id)
+        let contract = await Contract.getOne(req.params.id)
         res.json({
             success: true,
-            job
+            contract
         })
     } catch(error) {
 
@@ -31,13 +31,13 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let job = await Job.updateOne({
+        let contract = await Contract.updateOne({
             id: req.params.id,
             ...req.query
         })
         res.json({
             success: true,
-            id: job.id_job
+            id: contract.id_contract
         })
     } catch(error) {
 
@@ -46,10 +46,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let job = await Job.addOne(...req.query)
+        let contract = await Contract.addOne(...req.query)
         res.json({
             success: true,
-            id: job.id_job
+            id: contract.id_contract
         })
     } catch (error) {
         
@@ -58,10 +58,10 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        let job = await Job.deleteOne(req.params.id)
+        let contract = await Contract.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_appeal: job.id_appeal
+            id_client: contract.id_client
         })
 
     } catch(error) {

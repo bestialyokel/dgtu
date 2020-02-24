@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS Users (
     role User_Role
 );
 
-CREATE TABLE IF NOT EXISTS Logins (
-    key varchar(32) PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Tokens (
+    key varchar(24) PRIMARY KEY,
     login varchar(20) NOT NULL REFERENCES Users ON DELETE CASCADE
 )

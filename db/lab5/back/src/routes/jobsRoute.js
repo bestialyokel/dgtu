@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Contract = require('../interfaces/Contract')
+const Job = require('../models/jobModel')
 
 
 const router = new Router()
@@ -7,10 +7,10 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
     try {
-        let contracts = await Contract.getAll()
+        let jobs = await Job.getAll()
         res.json({
             success: true,
-            contracts: contracts.map(x => x.id_contract)
+            jobs: jobs.map(x => x.id_job)
         })
     } catch(error) {
 
@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        let contract = await Contract.getOne(req.params.id)
+        let job = await Job.getOne(req.params.id)
         res.json({
             success: true,
-            contract
+            job
         })
     } catch(error) {
 
@@ -31,13 +31,13 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let contract = await Contract.updateOne({
+        let job = await Job.updateOne({
             id: req.params.id,
             ...req.query
         })
         res.json({
             success: true,
-            id: contract.id_contract
+            id: job.id_job
         })
     } catch(error) {
 
@@ -46,10 +46,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let contract = await Contract.addOne(...req.query)
+        let job = await Job.addOne(...req.query)
         res.json({
             success: true,
-            id: contract.id_contract
+            id: job.id_job
         })
     } catch (error) {
         
@@ -58,10 +58,10 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        let contract = await Contract.deleteOne(req.params.id)
+        let job = await Job.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_client: contract.id_client
+            id_appeal: job.id_appeal
         })
 
     } catch(error) {

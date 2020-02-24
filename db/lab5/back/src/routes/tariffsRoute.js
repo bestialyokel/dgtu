@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Service = require('../interfaces/Service')
+const Tariff = require('../models/tariffModel')
 
 
 const router = new Router()
@@ -7,10 +7,10 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
     try {
-        let services = await Service.getAll()
+        let tariffs = await Tariff.getAll()
         res.json({
             success: true,
-            services: services.map(x => x.id_service)
+            tariffs: tariffs.map(x => x.id_tariff)
         })
     } catch(error) {
 
@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        let service = await Service.getOne(req.params.id)
+        let tariff = await Tariff.getOne(req.params.id)
         res.json({
             success: true,
-            service
+            tariff
         })
     } catch(error) {
 
@@ -31,13 +31,13 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let service = await Service.updateOne({
+        let tariff = await Tariff.updateOne({
             id: req.params.id,
             ...req.query
         })
         res.json({
             success: true,
-            id: service.id_service
+            id: tariff.id_tariff
         })
     } catch(error) {
 
@@ -46,10 +46,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let service = await Service.addOne(...req.query)
+        let tariff = await Tariff.addOne(...req.query)
         res.json({
             success: true,
-            id: service.id_service
+            id: tariff.id_tariff
         })
     } catch (error) {
         
@@ -58,10 +58,10 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        let service = await Service.deleteOne(req.params.id)
+        let tariff = await Tariff.deleteOne(req.params.id)
         res.json({
             success: true,
-            name: service.name
+            name: tariff.name
         })
 
     } catch(error) {

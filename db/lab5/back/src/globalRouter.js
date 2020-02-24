@@ -2,33 +2,30 @@
 const {Router} = require('express')
 
 
-const policyHandler = require('./policy/policyHandler')
-
-
-
-const loginHandler = require('./handlers/login')
-const clientsHandler = require('./handlers/clients')
-const contractsHandler = require('./handlers/contracts')
-const appealsHandler = require('./handlers/appeals')
-const servicesHandler = require('./handlers/services')
-const tariffsHandler = require('./handlers/tariffs')
-const jobsHandler = require('./handlers/jobs')
-const workersHandler = require('./handlers/workers')
+const policyRoute = require('./policy/policyRoute')
+const loginRoute = require('./routes/loginRoute')
+const clientsRoute = require('./routes/clientsRoute')
+const contractsRoute = require('./routes/contractsRoute')
+const appealsRoute = require('./routes/appealsRoute')
+const servicesRoute = require('./routes/servicesRoute')
+const tariffsRoute = require('./routes/tariffsRoute')
+const jobsRoute = require('./routes/jobsRoute')
+const workersRoute = require('./routes/workersRoute')
 
 
 const router = new Router()
 
 
-router.use(policyHandler)
+router.use(policyRoute)
 
+router.use('/login', loginRoute)
+router.use('/clients', clientsRoute)
+router.use('/contracts', contractsRoute)
+router.use('/appeals', appealsRoute)
+router.use('/services', servicesRoute)
+router.use('/tariffs', tariffsRoute)
+router.use('/jobs', jobsRoute)
+router.use('/workers', workersRoute)
 
-router.use('/login', loginHandler)
-router.use('/clients', clientsHandler)
-router.use('/contracts', contractsHandler)
-router.use('/appeals', appealsHandler)
-router.use('/services', servicesHandler)
-router.use('/tariffs', tariffsHandler)
-router.use('/jobs', jobsHandler)
-router.use('/workers', workersHandler)
 
 module.exports = router

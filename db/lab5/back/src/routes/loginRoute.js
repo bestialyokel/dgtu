@@ -1,7 +1,7 @@
 const {Router} = require('express')
 const crypto = require('crypto')
-const User = require('../interfaces/User')
-const Login = require('../interfaces/Login')
+const User = require('../models/userModel')
+const Token = require('../models/tokenModel')
 
 
 const router = new Router()
@@ -10,15 +10,15 @@ const router = new Router()
 router.get('/', async (req, res) => {
     try {
         let {key} = req.query
-        let login = await Login.getLogin(key)
-        if (login == null) {
+        let token = await Token.getOne(key)
+        if (token == null) {
             res.json({
                 success: false,
                 msg: 'key not valid'
             })
             return
         }
-        let user = await User.getUser(login.login)
+        let user = await User.getUser(token.login)
         res.json({
             success: true,
             user
@@ -42,13 +42,13 @@ router.post('/', async (req, res) => {
             return
         }
         let key = await crypto.randomBytes(8).toString('hex')
-        let loginReq = await Login.addLogin({
+        let tokenReq = await Token.addOne({
             login: user.login,
             key
         })
         res.json({
             success: true,
-            key: loginReq.key
+            key: tokenReq.key
         })
         
         

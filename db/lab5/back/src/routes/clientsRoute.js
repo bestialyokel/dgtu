@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Client = require('../interfaces/Client')
+const Client = require('../models/clientModel')
 
 
 const router = new Router()

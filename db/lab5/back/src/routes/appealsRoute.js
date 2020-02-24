@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const Appeal = require('../interfaces/Appeal')
+const Appeal = require('../models/appealModel')
 
 
 const router = new Router()
