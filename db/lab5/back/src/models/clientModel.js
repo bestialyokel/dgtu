@@ -13,9 +13,8 @@ let getOne = async (id) => {
 }
 
 let updateOne = async ({id, name, surname, patronymic, phone_number}) => {
-    let sql = 'UPDATE Clients SET name=$1, surname=$2, patronymic=$3, phone_number=$4 WHERE id_client=$5 RETURNING id_client'
-    let { rows } = await pool.query(sql, [name, surname, patronymic, phone_number, id])
-    return rows[0]
+    let sql = 'UPDATE Clients SET name=$1, surname=$2, patronymic=$3, phone_number=$4 WHERE id_client=$5'
+    await pool.query(sql, [name, surname, patronymic, phone_number, id])
 }
 
 let addOne = async ({name, surname, patronymic, phone_number}) => {
@@ -25,9 +24,8 @@ let addOne = async ({name, surname, patronymic, phone_number}) => {
 }
 
 let deleteOne = async (id) => {
-    let sql = 'DELETE FROM Clients WHERE id_client=$1 RETURNING phone_number'
-    let { rows } = await pool.query(sql, [id])
-    return rows[0]
+    let sql = 'DELETE FROM Clients WHERE id_client=$1'
+    await pool.query(sql, [id])
 }
 
 let getHistoryByID = async (id) => {

@@ -13,9 +13,8 @@ let getOne = async (id) => {
 }
 
 let updateOne = async ({id, name, description}) => {
-    let sql = 'UPDATE Services SET name=$1, description=$2 WHERE id_service=$3 RETURNING id_service'
-    let { rows } = await pool.query(sql, [name, description, id])
-    return rows[0]
+    let sql = 'UPDATE Services SET name=$1, description=$2 WHERE id_service=$3'
+    await pool.query(sql, [name, description, id])
 }
 
 let addOne = async ({name, description}) => {
@@ -25,9 +24,8 @@ let addOne = async ({name, description}) => {
 }
 
 let deleteOne = async (id) => {
-    let sql = 'DELETE FROM Services WHERE id_service=$1 RETURNING name'
-    let { rows } = await pool.query(sql, [id])
-    return rows[0]
+    let sql = 'DELETE FROM Services WHERE id_service=$1'
+    await pool.query(sql, [id])
 }
 
 let getHistoryByID = async (id) => {

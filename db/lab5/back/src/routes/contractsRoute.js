@@ -29,6 +29,18 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+
+router.get('/history/:id', async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            history: await Contract.getHistoryByID(req.params.id)
+        })
+    } catch(error) {
+
+    }
+})
+
 router.put('/:id', async (req, res) => {
     try {
         let contract = await Contract.updateOne({

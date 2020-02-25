@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS Services_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_service INTEGER,
     name varchar(30),
     description varchar(50) DEFAULT '' NOT NULL,
@@ -8,7 +7,6 @@ CREATE TABLE IF NOT EXISTS Services_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Tariffs_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_tariff INTEGER,
     name varchar(30),
     payment REAL CHECK(payment >= 0),
@@ -18,7 +16,6 @@ CREATE TABLE IF NOT EXISTS Tariffs_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Clients_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_client INTEGER,
     name varchar(30),
     surname varchar(30),
@@ -29,7 +26,6 @@ CREATE TABLE IF NOT EXISTS Clients_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Contracts_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_contract INTEGER,
     id_client INTEGER NOT NULL,
     id_tariff INTEGER,
@@ -40,7 +36,6 @@ CREATE TABLE IF NOT EXISTS Contracts_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Appeals_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_appeal INTEGER,
     id_contract INTEGER NOT NULL,
     description text,
@@ -50,7 +45,6 @@ CREATE TABLE IF NOT EXISTS Appeals_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Jobs_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_job INTEGER,
     id_appeal INTEGER,
     description text,
@@ -60,7 +54,6 @@ CREATE TABLE IF NOT EXISTS Jobs_tmp (
 );
 
 CREATE TABLE IF NOT EXISTS Workers_tmp (
-    id_record SERIAL PRIMARY KEY,
     id_worker INTEGER,
     id_job INTEGER,
     name varchar(30),
@@ -92,11 +85,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION tariffs_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Tariffs_tmp(id_record, id_tariff, name, payment, period, create_date, override_date) VALUES (DEFAULT, NEW.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, NULL);
+            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, override_date) VALUES (NEW.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Tariffs_tmp SET override_date = NOW() 
                 WHERE id_tariff = OLD.id_tariff AND override_date IS NULL;
-            INSERT INTO Tariffs_tmp(id_record, id_tariff, name, payment, period, create_date, override_date) VALUES (DEFAULT, OLD.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, NULL);
+            INSERT INTO Tariffs_tmp(id_tariff, name, payment, period, create_date, override_date) VALUES (OLD.id_tariff, NEW.name, NEW.payment, NEW.period, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Tariffs_tmp SET override_date = NOW()
                 WHERE id_tariff = OLD.id_tariff AND override_date IS NULL;
@@ -109,11 +102,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION clients_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Clients_tmp(id_record, id_client, name, surname, patronymic, phone_number, create_date, override_date) VALUES (DEFAULT, NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, NULL);
+            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, override_date) VALUES (NEW.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Clients_tmp SET override_date = NOW() 
                 WHERE id_client = OLD.id_client AND override_date IS NULL;
-            INSERT INTO Clients_tmp(id_record, id_client, name, surname, patronymic, phone_number, create_date, override_date) VALUES (DEFAULT, OLD.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, NULL);
+            INSERT INTO Clients_tmp(id_client, name, surname, patronymic, phone_number, create_date, override_date) VALUES (OLD.id_client, NEW.name, NEW.surname, NEW.patronymic, NEW.phone_number, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Clients_tmp SET override_date = NOW()
                 WHERE id_client = OLD.id_client AND override_date IS NULL;
@@ -127,11 +120,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION contracts_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Contracts_tmp(id_record, id_contract, id_client, id_tariff, address, contract_type, create_date, override_date) VALUES (DEFAULT, NEW.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, NULL);
+            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, override_date) VALUES (NEW.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Contracts_tmp SET override_date = NOW() 
                 WHERE id_contract = OLD.id_contract AND override_date IS NULL;
-            INSERT INTO Contracts_tmp(id_record, id_contract, id_client, id_tariff, address, contract_type, create_date, override_date) VALUES (DEFAULT, OLD.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, NULL);
+            INSERT INTO Contracts_tmp(id_contract, id_client, id_tariff, address, contract_type, create_date, override_date) VALUES (OLD.id_contract, NEW.id_client, NEW.id_tariff, NEW.address, NEW.contract_type, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Contracts_tmp SET override_date = NOW()
                 WHERE id_contract = OLD.id_contract AND override_date IS NULL;
@@ -145,11 +138,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION appeals_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Appeals_tmp(id_record, id_appeal, id_contract, description, status, create_date, override_date) VALUES (DEFAULT, NEW.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, NULL);
+            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, override_date) VALUES (NEW.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Appeals_tmp SET override_date = NOW() 
                 WHERE id_appeal = OLD.id_appeal AND override_date IS NULL;
-            INSERT INTO Appeals_tmp(id_record, id_appeal, id_contract, description, status, create_date, override_date) VALUES (DEFAULT, OLD.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, NULL);
+            INSERT INTO Appeals_tmp(id_appeal, id_contract, description, status, create_date, override_date) VALUES (OLD.id_appeal, NEW.id_contract, NEW.description, NEW.status, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Appeals_tmp SET override_date = NOW()
                 WHERE id_appeal = OLD.id_appeal AND override_date IS NULL;
@@ -163,11 +156,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION jobs_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Jobs_tmp(id_record, id_job, id_appeal, description, status, create_date, override_date) VALUES (DEFAULT, NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, NULL);
+            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, override_date) VALUES (NEW.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Jobs_tmp SET override_date = NOW() 
                 WHERE id_job = OLD.id_job AND override_date IS NULL;
-            INSERT INTO Jobs_tmp(id_record, id_job, id_appeal, description, status, create_date, override_date) VALUES (DEFAULT, OLD.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, NULL);
+            INSERT INTO Jobs_tmp(id_job, id_appeal, description, status, create_date, override_date) VALUES (OLD.id_job, NEW.id_appeal, NEW.description, NEW.status, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Jobs_tmp SET override_date = NOW()
                 WHERE id_job = OLD.id_job AND override_date IS NULL;
@@ -181,11 +174,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION workers_handler() RETURNS TRIGGER AS $$
     BEGIN
         IF TG_OP = 'INSERT' THEN
-            INSERT INTO Workers_tmp(id_record, id_worker, id_job, name, surname, patronymic, skills, create_date, override_date) VALUES (DEFAULT, NEW.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, NULL);
+            INSERT INTO Workers_tmp(id_worker, id_job, name, surname, patronymic, skills, create_date, override_date) VALUES (NEW.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, NULL);
         ELSIF TG_OP = 'UPDATE' THEN
             UPDATE Workers_tmp SET override_date = NOW() 
                 WHERE id_worker = OLD.id_worker AND override_date IS NULL;
-            INSERT INTO Workers_tmp(id_record, id_worker, id_job, name, surname, patronymic, skills, create_date, override_date) VALUES (DEFAULT, OLD.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, NULL);
+            INSERT INTO Workers_tmp(id_worker, id_job, name, surname, patronymic, skills, create_date, override_date) VALUES (OLD.id_worker, NEW.id_job, NEW.name, NEW.surname, NEW.patronymic, NEW.skills, DEFAULT, NULL);
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE Workers_tmp SET override_date = NOW()
                 WHERE id_job = OLD.id_job AND override_date IS NULL;
