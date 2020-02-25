@@ -32,7 +32,7 @@ class MyClass {
     }
 }
 
-// копипаст.. модфикация класса? bad practice, наверно
+// копипаст...
 static partial class MethodInfo {
     public static object GetValue(this MemberInfo memberInfo, object forObject) {
         switch (memberInfo.MemberType) {
