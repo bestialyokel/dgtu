@@ -1,7 +1,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <functional>
 
 using namespace std;
 
@@ -77,55 +76,41 @@ class MyMenu {
         }
 
         void addAnimal() {
-            cout << "viberi kogo dobavit" << endl
-                 <<  "1 - Dog" << endl
-                 <<  "2 - Parrot" << endl;
-            int i = cin.get();
-            switch( i ) {
-                case 49: {
+            int i;
+            while ( i != 3) {
+                cout << "viberi kogo dobavit" << endl
+                    <<  "1 - Dog" << endl
+                    <<  "2 - Parrot" << endl;
+                cin >> i;
+                if (i == 1) {
                     string name;
                     cout << "imya ?" << endl;
                     cin >> name;
                     z += new Dog(name);
-                    break;
-                }
-                case 50: {
+                    return;
+                } else if (i == 2) {
                     string name;
                     cout << "imya ?" << endl;
                     cin >> name;
                     z += new Parrot(name);
-                    break;
-                }
-                default: {
-                    cout << "?" << endl;
-                    addAnimal();
-                    break;
+                    return;
                 }
             }
         }
     public:
         void showMenu() {
-            cout << "viberi che sdelat" << endl
-                 <<  "1 - pokazat talanti" << endl
-                 <<  "2 - dobavit animal" << endl
-                 <<  "3 - quit" << endl;
-            int i = cin.get();
-            switch( i ) {
-                case 49:
-                    demonstrate();
-                    break;
-                case 50:
-                    addAnimal();
-                    break;
-                case 51:
-                    return;
-                    break;
-                default:
-                    cout << "?" << endl;
-                    break;
+            int i;
+            while ( i != 3) {
+                cout << "viberi che sdelat" << endl
+                    <<  "1 - pokazat talanti" << endl
+                    <<  "2 - dobavit animal" << endl
+                    <<  "3 - quit" << endl;
+                cin >> i;
+                if (i == 1) demonstrate();
+                else if (i == 2) addAnimal();
             }
-            showMenu();
         }
+
 };
 
 
