@@ -63,20 +63,17 @@ const App = (props) => {
     useEffect(() => {
         (async () => {
             let url = new URL('login', 'http://localhost:8080')
-            url.search = new URLSearchParams({
-                key: key
-            })
-            console.log(key)
-            const req = await fetch(url, {
-                method: 'GET'
-            })
+            url.search = new URLSearchParams({key})
+            const req = await fetch(url)
             const json = await req.json()
+            console.log(json)
             setLoading(false)
             if (json.success) {
                 setUser({
                     id: json.userid,
                     role: json.role
                 })
+                document.cookies = `key=${json.key`
             }
             
         })()
