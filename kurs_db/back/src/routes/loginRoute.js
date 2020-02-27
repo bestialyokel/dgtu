@@ -10,7 +10,7 @@ const router = new Router()
 router.get('/', async (req, res) => {
     try {
         let { key } = req.query
-        let { login } = await Token.getOne(key)
+        let { login } = await Token.getOne(key) || {}
         if (login == void(0)) 
             res.json({
                 success: false,

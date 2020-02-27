@@ -1,20 +1,22 @@
 import React, { Component, useState, useEffect } from "react";
 import getCookie from '../../tools/getcookie'
-import Table from '../Table';
+import Table from '../common/Table';
 
-const Services = (props) => {
+const Jobs = (props) => {
     const {user} = props
     const [state, setState] = useState({
         columns: [
-            {title: 'ID услуги', field: 'idservice', editable: 'never'},
-            {title: 'Название', field: 'name'},
+            {title: 'ID работы', field: 'idjob', editable: 'never'},
+            {title: 'ID обращения', field: 'idappeal', editable: 'onAdd'},
+            {title: 'Описание', field: 'descr'},
+            {title: 'Статус', field: 'status'}
         ],
         data: []
     })
 
     useEffect(() => {
         (async () => {
-            let url = new URL('services', 'http://localhost:8080')
+            let url = new URL('jobs', 'http://localhost:8080')
             url.search = new URLSearchParams({
                 key: getCookie('key')
             })
@@ -22,8 +24,8 @@ const Services = (props) => {
                 method: 'GET'
             })
             const json = await req.json()
-            json.services.forEach(async (x) => {
-                let url = new URL(`services/${x.idservice}`, 'http://localhost:8080')
+            json.jobs.forEach(async (x) => {
+                let url = new URL(`jobs/${x.idjob}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -34,17 +36,17 @@ const Services = (props) => {
                 setState(oldState => {
                     return {
                         ...oldState,
-                        data: [...oldState.data, json.service]
+                        data: [...oldState.data, json.job]
                     }
                 })
             })
             
         })()
-        return () => {console.error('services svernut da')}
+        return () => {console.error('jobs svernut da')}
     }, [])
 
     let onAdd = async (newData) => {
-        let url = new URL(`services`, 'http://localhost:8080')
+        let url = new URL(`jobs`, 'http://localhost:8080')
         url.search = new URLSearchParams({
             key: getCookie('key'),
             ...newData
@@ -56,14 +58,14 @@ const Services = (props) => {
         setState(oldState => {
             return {
                 ...oldState,
-                data: [...state.data, {...newData, idservice: json.id}]
+                data: [...state.data, {...newData, idjob: json.id}]
             }
         })
     }
     let onUpdate = async (newData, oldData) => {
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`services/${oldData.idservice}`, 'http://localhost:8080')
+                let url = new URL(`jobs/${oldData.idjob}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key'),
                     ...newData
@@ -88,7 +90,7 @@ const Services = (props) => {
     let onDelete = async (oldData) => 
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`services/${oldData.idservice}`, 'http://localhost:8080')
+                let url = new URL(`jobs/${oldData.idjob}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -110,24 +112,20 @@ const Services = (props) => {
         )
 
     let editable = {
-        onRowAdd: ['d'].includes(user.role) ? onAdd : null,
-        onRowUpdate: ['d'].includes(user.role) ? onUpdate : null,
-        onRowDelete: ['d'].includes(user.role) ? onDelete : null
+        onRowAdd: onAdd,
+        onRowUpdate: onUpdate,
+        onRowDelete: onDelete
     }
     
-
     return (
         <Table
-            title="Services"
+            title="Jobs"
             columns={state.columns}
             data={state.data}
             editable={editable}
         />
     )
 
-
-
-
 }
 
-export default Services
+export default Jobs

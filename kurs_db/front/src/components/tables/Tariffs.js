@@ -1,23 +1,24 @@
 import React, { Component, useState, useEffect } from "react";
 import getCookie from '../../tools/getcookie'
-import Table from '../Table';
+import Table from '../common/Table';
 
-const Contracts = (props) => {
+const Tariffs = (props) => {
     const {user} = props
     const [state, setState] = useState({
         columns: [
-            {title: 'ID контракта', field: 'idcontract', editable: 'never'},
-            {title: 'ID клиента', field: 'idclient', editable: 'onAdd'},
-            {title: 'ID тарифа', field: 'idtariff'},
-            {title: 'Адрес', field: 'address'},
-            {title: 'Тип', field: 'type'}
+            {title: 'ID тарифа', field: 'idtariff', editable: 'never'},
+            {title: 'Имя', field: 'name'},
+            {title: 'Платеж', field: 'payment'},
+            {title: 'Период', field: 'period'},
+            {title: 'Услуги', field: 'services'}
+
         ],
         data: []
     })
 
     useEffect(() => {
         (async () => {
-            let url = new URL('contracts', 'http://localhost:8080')
+            let url = new URL('tariffs', 'http://localhost:8080')
             url.search = new URLSearchParams({
                 key: getCookie('key')
             })
@@ -25,8 +26,8 @@ const Contracts = (props) => {
                 method: 'GET'
             })
             const json = await req.json()
-            json.contracts.forEach(async (x) => {
-                let url = new URL(`contracts/${x.idcontract}`, 'http://localhost:8080')
+            json.tariffs.forEach(async (x) => {
+                let url = new URL(`tariffs/${x.idtariff}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -37,17 +38,17 @@ const Contracts = (props) => {
                 setState(oldState => {
                     return {
                         ...oldState,
-                        data: [...oldState.data, json.contract]
+                        data: [...oldState.data, {...json.tariff, services: json.services.map(x=>x.idservice).join(',')}]
                     }
                 })
             })
             
         })()
-        return () => {console.error('contracts svernut da')}
+        return () => {console.error('tariffs svernut da')}
     }, [])
 
     let onAdd = async (newData) => {
-        let url = new URL(`contracts`, 'http://localhost:8080')
+        let url = new URL(`tariffs`, 'http://localhost:8080')
         url.search = new URLSearchParams({
             key: getCookie('key'),
             ...newData
@@ -59,14 +60,14 @@ const Contracts = (props) => {
         setState(oldState => {
             return {
                 ...oldState,
-                data: [...state.data, {...newData, idcontract: json.id}]
+                data: [...state.data, {...newData, idtariff: json.id}]
             }
         })
     }
     let onUpdate = async (newData, oldData) => {
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`contracts/${oldData.idcontract}`, 'http://localhost:8080')
+                let url = new URL(`tariffs/${oldData.idtariff}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key'),
                     ...newData
@@ -91,7 +92,7 @@ const Contracts = (props) => {
     let onDelete = async (oldData) => 
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`contracts/${oldData.idcontract}`, 'http://localhost:8080')
+                let url = new URL(`tariffs/${oldData.idtariff}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -113,20 +114,23 @@ const Contracts = (props) => {
         )
 
     let editable = {
-        onRowAdd: onAdd,
-        onRowUpdate: onUpdate,
-        onRowDelete: onDelete
+        onRowAdd: ['d'].includes(user.role) ? onAdd : null,
+        onRowUpdate: ['d'].includes(user.role) ? onUpdate : null,
+        onRowDelete: ['d'].includes(user.role) ? onDelete : null
     }
     
     return (
         <Table
-            title="Contracts"
+            title="Tariffs"
             columns={state.columns}
             data={state.data}
             editable={editable}
         />
     )
 
+
+
+
 }
 
-export default Contracts
+export default Tariffs

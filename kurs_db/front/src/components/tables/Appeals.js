@@ -1,24 +1,22 @@
 import React, { Component, useState, useEffect } from "react";
 import getCookie from '../../tools/getcookie'
-import Table from '../Table';
 
-const Tariffs = (props) => {
+import Table from '../common/Table';
+
+const Appeals = (props) => {
     const {user} = props
     const [state, setState] = useState({
         columns: [
-            {title: 'ID тарифа', field: 'idtariff', editable: 'never'},
-            {title: 'Имя', field: 'name'},
-            {title: 'Платеж', field: 'payment'},
-            {title: 'Период', field: 'period'},
-            {title: 'Услуги', field: 'services'}
-
+            {title: 'ID обращения', field: 'idappeal', editable: 'never'},
+            {title: 'ID контракт', field: 'idcontract', editable: 'onAdd'},
+            {title: 'Описание', field: 'descr', emptyValue: 'null'}
         ],
         data: []
     })
-
+    
     useEffect(() => {
         (async () => {
-            let url = new URL('tariffs', 'http://localhost:8080')
+            let url = new URL('appeals', 'http://localhost:8080')
             url.search = new URLSearchParams({
                 key: getCookie('key')
             })
@@ -26,8 +24,8 @@ const Tariffs = (props) => {
                 method: 'GET'
             })
             const json = await req.json()
-            json.tariffs.forEach(async (x) => {
-                let url = new URL(`tariffs/${x.idtariff}`, 'http://localhost:8080')
+            json.appeals.forEach(async (x) => {
+                let url = new URL(`appeals/${x.idappeal}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -38,17 +36,17 @@ const Tariffs = (props) => {
                 setState(oldState => {
                     return {
                         ...oldState,
-                        data: [...oldState.data, {...json.tariff, services: json.services.map(x=>x.idservice).join(',')}]
+                        data: [...oldState.data, json.appeal]
                     }
                 })
             })
             
         })()
-        return () => {console.error('tariffs svernut da')}
+        return () => {console.error('appeals svernut da')}
     }, [])
 
     let onAdd = async (newData) => {
-        let url = new URL(`tariffs`, 'http://localhost:8080')
+        let url = new URL(`appeals`, 'http://localhost:8080')
         url.search = new URLSearchParams({
             key: getCookie('key'),
             ...newData
@@ -60,14 +58,15 @@ const Tariffs = (props) => {
         setState(oldState => {
             return {
                 ...oldState,
-                data: [...state.data, {...newData, idtariff: json.id}]
+                data: [...state.data, {...newData, idappeal: json.id}]
             }
         })
     }
+
     let onUpdate = async (newData, oldData) => {
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`tariffs/${oldData.idtariff}`, 'http://localhost:8080')
+                let url = new URL(`appeals/${oldData.idappeal}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key'),
                     ...newData
@@ -89,10 +88,11 @@ const Tariffs = (props) => {
             }
         )
     }
+
     let onDelete = async (oldData) => 
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`tariffs/${oldData.idtariff}`, 'http://localhost:8080')
+                let url = new URL(`appeals/${oldData.idappeal}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -113,24 +113,23 @@ const Tariffs = (props) => {
             }
         )
 
+
     let editable = {
-        onRowAdd: ['d'].includes(user.role) ? onAdd : null,
-        onRowUpdate: ['d'].includes(user.role) ? onUpdate : null,
-        onRowDelete: ['d'].includes(user.role) ? onDelete : null
+        onRowAdd: ['a'].includes(user.role) ? onAdd : null, //добавить проверки на роли.
+        onRowUpdate: ['a'].includes(user.role) ? onUpdate : null,
+        onRowDelete: ['a'].includes(user.role) ? onUpdate : null
     }
-    
+
+
     return (
         <Table
-            title="Tariffs"
+            title="Appeals"
             columns={state.columns}
             data={state.data}
             editable={editable}
         />
     )
 
-
-
-
 }
 
-export default Tariffs
+export default Appeals

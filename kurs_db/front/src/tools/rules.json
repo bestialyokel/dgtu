@@ -1,0 +1,44 @@
+{
+    "clients": {
+        "GET": ["a"],
+        "POST": ["a"],
+        "PUT": ["a"],
+        "DELETE": ["a"]
+    },
+    "contracts": {
+        "GET": ["a"],
+        "POST": ["a"],
+        "PUT": ["a"],
+        "DELETE": ["a"]
+    },
+    "appeals": {
+        "GET": ["a", "t"],
+        "POST": ["a"],
+        "PUT": ["aA"],
+        "DELETE": ["a"]
+    },
+    "services": {
+        "GET": ["d", "a"],
+        "POST": ["d"],
+        "PUT": ["d"],
+        "DELETE": ["d"]
+    },
+    "tariffs": {
+        "GET": ["d", "a"],
+        "POST": ["d"],
+        "PUT": ["d"],
+        "DELETE": ["d"]
+    },
+    "jobs": {
+        "GET": ["t"],
+        "POST": ["t"],
+        "PUT": ["t"],
+        "DELETE": ["t"]
+    },
+    "workers": {
+        "GET": ["t"],
+        "POST": ["t"],
+        "PUT": ["t"],
+        "DELETE": ["t"]
+    }
+}

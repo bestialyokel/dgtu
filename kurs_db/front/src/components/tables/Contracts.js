@@ -1,22 +1,23 @@
 import React, { Component, useState, useEffect } from "react";
 import getCookie from '../../tools/getcookie'
+import Table from '../common/Table';
 
-import Table from '../Table';
-
-const Appeals = (props) => {
+const Contracts = (props) => {
     const {user} = props
     const [state, setState] = useState({
         columns: [
-            {title: 'ID обращения', field: 'idappeal', editable: 'never'},
-            {title: 'ID контракт', field: 'idcontract', editable: 'onAdd'},
-            {title: 'Описание', field: 'descr', emptyValue: 'null'}
+            {title: 'ID контракта', field: 'idcontract', editable: 'never'},
+            {title: 'ID клиента', field: 'idclient', editable: 'onAdd'},
+            {title: 'ID тарифа', field: 'idtariff'},
+            {title: 'Адрес', field: 'address'},
+            {title: 'Тип', field: 'type'}
         ],
         data: []
     })
-    
+
     useEffect(() => {
         (async () => {
-            let url = new URL('appeals', 'http://localhost:8080')
+            let url = new URL('contracts', 'http://localhost:8080')
             url.search = new URLSearchParams({
                 key: getCookie('key')
             })
@@ -24,8 +25,8 @@ const Appeals = (props) => {
                 method: 'GET'
             })
             const json = await req.json()
-            json.appeals.forEach(async (x) => {
-                let url = new URL(`appeals/${x.idappeal}`, 'http://localhost:8080')
+            json.contracts.forEach(async (x) => {
+                let url = new URL(`contracts/${x.idcontract}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -36,17 +37,17 @@ const Appeals = (props) => {
                 setState(oldState => {
                     return {
                         ...oldState,
-                        data: [...oldState.data, json.appeal]
+                        data: [...oldState.data, json.contract]
                     }
                 })
             })
             
         })()
-        return () => {console.error('appeals svernut da')}
+        return () => {console.error('contracts svernut da')}
     }, [])
 
     let onAdd = async (newData) => {
-        let url = new URL(`appeals`, 'http://localhost:8080')
+        let url = new URL(`contracts`, 'http://localhost:8080')
         url.search = new URLSearchParams({
             key: getCookie('key'),
             ...newData
@@ -58,15 +59,14 @@ const Appeals = (props) => {
         setState(oldState => {
             return {
                 ...oldState,
-                data: [...state.data, {...newData, idappeal: json.id}]
+                data: [...state.data, {...newData, idcontract: json.id}]
             }
         })
     }
-
     let onUpdate = async (newData, oldData) => {
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`appeals/${oldData.idappeal}`, 'http://localhost:8080')
+                let url = new URL(`contracts/${oldData.idcontract}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key'),
                     ...newData
@@ -88,11 +88,10 @@ const Appeals = (props) => {
             }
         )
     }
-
     let onDelete = async (oldData) => 
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`appeals/${oldData.idappeal}`, 'http://localhost:8080')
+                let url = new URL(`contracts/${oldData.idcontract}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -113,17 +112,15 @@ const Appeals = (props) => {
             }
         )
 
-
     let editable = {
-        onRowAdd: ['a'].includes(user.role) ? onAdd : null, //добавить проверки на роли.
-        onRowUpdate: ['a'].includes(user.role) ? onUpdate : null,
-        onRowDelete: ['a'].includes(user.role) ? onUpdate : null
+        onRowAdd: onAdd,
+        onRowUpdate: onUpdate,
+        onRowDelete: onDelete
     }
-
-
+    
     return (
         <Table
-            title="Appeals"
+            title="Contracts"
             columns={state.columns}
             data={state.data}
             editable={editable}
@@ -132,4 +129,4 @@ const Appeals = (props) => {
 
 }
 
-export default Appeals
+export default Contracts

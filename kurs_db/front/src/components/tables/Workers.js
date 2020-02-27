@@ -1,24 +1,24 @@
 import React, { Component, useState, useEffect } from "react";
 import getCookie from '../../tools/getcookie'
+import Table from '../common/Table';
 
-import Table from '../Table';
-
-const Clients = (props) => {
+const Workers = (props) => {
     const {user} = props
     const [state, setState] = useState({
         columns: [
-            {title: 'ID клиента', field: 'idclient', editable: 'never'},
+            {title: 'ID сотрудника', field: 'idworker', editable: 'never'},
+            {title: 'ID работы', field: 'idjob', type: 'numeric', emptyValue: 'null'},
             {title: 'Имя', field: 'name', editable: 'onAdd'},
             {title: 'Фамилия', field: 'surname', editable: 'onAdd'},
             {title: 'Отчество', field: 'patronymic', editable: 'onAdd'},
-            {title: 'Номер тел.', field: 'phonenumber'}
+            {title: 'Квалификация', field: 'qual',}
         ],
         data: []
     })
 
     useEffect(() => {
         (async () => {
-            let url = new URL('clients', 'http://localhost:8080')
+            let url = new URL('workers', 'http://localhost:8080')
             url.search = new URLSearchParams({
                 key: getCookie('key')
             })
@@ -26,8 +26,8 @@ const Clients = (props) => {
                 method: 'GET'
             })
             const json = await req.json()
-            json.clients.forEach(async (x) => {
-                let url = new URL(`clients/${x.idclient}`, 'http://localhost:8080')
+            json.workers.forEach(async (x) => {
+                let url = new URL(`workers/${x.idworker}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -38,17 +38,18 @@ const Clients = (props) => {
                 setState(oldState => {
                     return {
                         ...oldState,
-                        data: [...oldState.data, json.client]
+                        data: [...oldState.data, json.worker]
                     }
                 })
             })
             
         })()
-        return () => {console.error('clients svernut da')}
+        return () => {console.error('workers svernut da')}
     }, [])
 
+
     let onAdd = async (newData) => {
-        let url = new URL(`clients`, 'http://localhost:8080')
+        let url = new URL(`workers`, 'http://localhost:8080')
         url.search = new URLSearchParams({
             key: getCookie('key'),
             ...newData
@@ -60,14 +61,14 @@ const Clients = (props) => {
         setState(oldState => {
             return {
                 ...oldState,
-                data: [...state.data, {...newData, idclient: json.id}]
+                data: [...state.data, {...newData, idworker: json.id}]
             }
         })
     }
     let onUpdate = async (newData, oldData) => {
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`clients/${oldData.idclient}`, 'http://localhost:8080')
+                let url = new URL(`workers/${oldData.idworker}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key'),
                     ...newData
@@ -92,7 +93,7 @@ const Clients = (props) => {
     let onDelete = async (oldData) => 
         new Promise(
             async (resolve, reject) => {
-                let url = new URL(`clients/${oldData.idclient}`, 'http://localhost:8080')
+                let url = new URL(`workers/${oldData.idworker}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({
                     key: getCookie('key')
                 })
@@ -113,7 +114,6 @@ const Clients = (props) => {
             }
         )
 
-
     let editable = {
         onRowAdd: onAdd,
         onRowUpdate: onUpdate,
@@ -122,13 +122,16 @@ const Clients = (props) => {
     
     return (
         <Table
-            title="Clients"
+            title="Workers"
             columns={state.columns}
             data={state.data}
             editable={editable}
         />
     )
 
+
+
+
 }
 
-export default Clients
+export default Workers
