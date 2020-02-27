@@ -1,43 +1,58 @@
-const INF = -1
+const randomInt = (a, b) => Math.round(Math.random() * (b-a) + a)
 
-let getOst = (pairs) => {
-    //getSource(... , cur , ...) => cur togda vershina tipa novaya
-    //ctr - massiv metok
-    let getSource = (ctr, cur, prev = INF) => cur == INF ? prev : getSource(ctr, ctr[cur], cur)
-    //naverno, spread - eto dorogo
-    //mb VERTEX_AMOUNT Izvestno zaranee
-    let VERTEX_AMOUNT = 1 + Math.max(...pairs.map(pair => Math.max(...pair)))
-    let ctr = Array(VERTEX_AMOUNT).fill(INF) 
-
-    return pairs.filter(
-        (pair) => {
-            //hz nado li swapnut
-            //if (pair[0] < pair[1]) [ pair[0], pair[1] ] = [ pair[1], pair[0] ]
-            let s1 = getSource(ctr, pair[0])
-            let s2 = getSource(ctr, pair[1])
-            if (s1 != s2)
-                ctr[ pair[1] ] = pair[0]
-        
-            return s1 != s2
-        }
-    )
-            
+let minIndex = (A) => {
+    let index = 0
+    for (let i = 0; i < A.length; i++) if (A[i] < A[index]) 
+        index = i
+    return index
 }
 
-let pairs = [
-    [0,1],
-    [3,4],
-    [2,3],
-    [1,2],
-    [1,3],
-    [3,0],
-    [0,3],
-    [2,4]
-]
+const cpus = 5
+const tasks = 3
+const t1 = 5
+const t2 = 30
 
-let a = getOst(pairs)
+let load = Array(tasks).fill(0)
 
-console.log(a)
+let matrix = Array(cpus).fill().map(
+    line => Array(tasks).fill().map(x => randomInt(t1, t2))
+)
 
+let sum = (A) => A.reduce((acc, cur) => acc + cur)
 
+console.log("VOZRAsT")
 
+matrix.sort(
+    (a,b) => sum(b) - sum(a)
+)
+
+matrix.forEach(
+    line => {
+        let i = minIndex(line)
+        load[i] += line[i]
+    }
+)
+
+let maxMinElem = Math.max(...load)
+
+console.log(matrix, load, maxMinElem)
+
+console.log("UB")
+
+load.fill(0)
+
+matrix.sort(
+    (a,b) => sum(a) - sum(b)
+)
+
+matrix.forEach(
+    line => {
+        let i = minIndex(line)
+        load[i] += line[i]
+    }
+)
+
+maxMinElem = Math.max(...load)
+
+// matrix.map(x=>sum(x))
+console.log(matrix, load, maxMinElem)
