@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useContext, useReducer } from "react";
 import {
     BrowserRouter as Router,
     Switch,
@@ -38,11 +38,54 @@ const UserTabs = [
     {title: 'jobs', component: Jobs}
 ]
 
+const userReducer = (state, event) => {
+    switch(event.type) {
+        case "FETCH":
+            return {
+                ...state,
+                status: "loading"
+            }
+        case "RESOLVE":
+            return {
+                ...state,
+                user: event.data
+            }
+        case "REJECT":
+            return {
+                ...state,
+                error: event.error
+            }
+        case "CANCEL":
+            return {
+                ...state,
+                status: "idle"
+            }
+        default:
+            return state
+    }
+}
+
+const initialState = {
+    status: "loading",
+    user: null,
+    error: null
+}
+
 const App = (props) => {
-    const [isLoading, setLoading] = useState(true)
-    const [key, setKey] = useState(getCookie('key'))
-    const [user, setUser] = useState(null)
-    const [tabIndex, setTabIndex] = useState(0)
+    const key = getCookie('key')
+    const [state, dispatch] = useReducer(userReducer, initialState)
+    const {user, status, error} = state
+
+    useEffect(() => {
+        let canceled = false
+        (async () => {
+            if (status == "loading") 
+        })()
+        if (status == "loading") {
+            let canceled = false
+
+        }
+    }, [status])
     
 
     
@@ -58,7 +101,7 @@ const App = (props) => {
         setKey(null)
         setUser(null)
         document.cookie = 'key='
-    }*/
+    }
 
     useEffect(() => {
         (async () => {
@@ -73,7 +116,7 @@ const App = (props) => {
                     id: json.userid,
                     role: json.role
                 })
-                document.cookies = `key=${json.key`
+                document.cookies = `key=${json.key}`
             }
             
         })()
@@ -122,7 +165,7 @@ const App = (props) => {
             </Switch>
         </Router>
     )
-
+                */
 }
 
 export default App;
