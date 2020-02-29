@@ -1,0 +1,11 @@
+﻿  3.cpp
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\3.cpp(33,16): warning C4305: инициализация: усечение из "double" в "float"
+  5.cpp
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\3.cpp(33,25): warning C4305: инициализация: усечение из "double" в "float"
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\5.cpp(33,2): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\5.cpp(30): message : во время компиляции функции-члена класс шаблон "void Menu<void>::ShowMenu(void)"
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\5.cpp(99): message : выполняется компиляция ссылки на экземпляр шаблон функции "void Menu<void>::ShowMenu(void)"
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\5.cpp(96): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "Menu<void>"
+  Создание кода...
+C:\Users\Orlov\source\repos\lab7C++\lab7C++\5.cpp(39,10): warning C4018: >: несоответствие типов со знаком и без знака
+  lab7C++.vcxproj -> C:\Users\Orlov\source\repos\lab7C++\Debug\lab7C++.exe
