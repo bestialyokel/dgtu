@@ -5,10 +5,13 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 
 [Serializable]
 public partial class Graph {
+    [XmlArray("Matrix-Line-List"), XmlArrayItem("Matrix-Line"), XmlArrayItem("Vertex-Weight")]
     List< List<uint> > matrix = new List< List<uint> >();
     public Graph(uint vertexAmount) {
         //хватит куска над верхней диагональю матрицы
@@ -19,20 +22,6 @@ public partial class Graph {
                 matrix[i].Add(0);
         }
     }
-    /*
-    private ref uint edge_ref(int x, int y) {
-        if (x < 0 && x > matrix.Count - 1 
-            || y < 0 && y > matrix.Count - 1) 
-            throw new Exception($"{x}-{y} out of range");
-        // swap?
-        if (x > y) {
-            x ^= y;
-            y ^= x;
-            x ^= y;
-        }
-        return ref matrix[x][y];
-    }
-    */
     public uint GetWeight(int x, int y) {
         if (x < 0 && x > matrix.Count - 1 
             || y < 0 && y > matrix.Count - 1) 
@@ -72,34 +61,10 @@ public partial class Graph {
             SerializeBinaryTo()
         })
     */
-    // try-catch-finally
-    public static async Task SerializeBinaryTo(Graph G, string fileName) {
-        using (Stream st = new FileStream(fileName, FileMode.Create) ) {
-            await Task.Run( () => new BinaryFormatter().Serialize(st, G) );
-        }
-    }
-    // async -> The return type of an async method must be void or task type 
-    /*public static Graph DeserializeFromBinary(string fileName) {
-        using (Stream st = new FileStream(fileName, FileMode.Open, FileAccess.Read) ) {
-            return (Graph) new BinaryFormatter().Deserialize(st);
-        }
-    }*/
-    // я хз но это должно работть наверно
-    // разобраться как получить результат / узнать исход сериализации
-    public static async Task<Graph> DeserializeFromBinary(string fileName) {
-        using (Stream st = new FileStream(fileName, FileMode.Open, FileAccess.Read) ) {
-            return await Task<Graph>.FromResult((Graph) new BinaryFormatter().Deserialize(st));
-        }
-    }
-    public static async Task<Graph> DeserializeFromJson(string fileName) {
-        using (Stream st = new FileStream(fileName, FileMode.Open, FileAccess.Read) ) {
-            return await Task<Graph>.FromResult((Graph) new BinaryFormatter().Deserialize(st));
-        }
-    }
-
-    public static async Task SerializeJsonTo(Graph G, string fileName) {
-        
-    }
+    public static void SerializeBinaryTo(Graph G, Stream st) => new BinaryFormatter().Serialize(st, G);
+    /*new BinaryFormatter().Serialize(st, G);*/ 
+    
+    public static Graph DeserializeFromBinary(Stream st) => (Graph) new BinaryFormatter().Deserialize(st);
 }
 
 
