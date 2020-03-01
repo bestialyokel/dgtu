@@ -14,6 +14,7 @@ pool.connect((err, client, release) => {
         path: ['/login']
     }))
     app.use('/', globalRouter)
+
     release()
 })
 
