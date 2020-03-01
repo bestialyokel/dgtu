@@ -10,7 +10,7 @@ import {
   } from "react-router-dom";
 
 import getCookie from '../../tools/getcookie'
-import FullWidthTabs from '../common/MainView'
+import MainView from '../common/MainView'
 
 export let AUTH_STATUS = {
     CHECKING: 0,
@@ -87,7 +87,8 @@ const App = (props) => {
                 <Route exact path="/">
                     {status == AUTH_STATUS.CHECKING && <p>...loading</p>}
                     {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"/>}
-                    {status == AUTH_STATUS.AUTHORIZED && <FullWidthTabs/>}
+                    {status == AUTH_STATUS.AUTHORIZED && <MainView/>}
+                    {error && <p>{`Auth failed: ${error.message}`}</p>}
                 </Route>
                 <Route path="/login">
                     <p>login</p>
