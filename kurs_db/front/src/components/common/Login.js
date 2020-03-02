@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Paper, withStyles, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Face, Fingerprint } from '@material-ui/icons'
-import getCookie from '../../tools/getcookie';
+import getCookie from '../../tools/tokenTools';
 const styles = theme => ({
     margin: {
         margin: theme.spacing(2),

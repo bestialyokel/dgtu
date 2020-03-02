@@ -83,9 +83,9 @@ const App = (props) => {
 
     return (
         <Router>
+            {status == AUTH_STATUS.CHECKING && <p>...loading</p>}
             <Switch>
                 <Route exact path="/">
-                    {status == AUTH_STATUS.CHECKING && <p>...loading</p>}
                     {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"/>}
                     {status == AUTH_STATUS.AUTHORIZED && <MainView/>}
                     {error && <p>{`Auth failed: ${error.message}`}</p>}
