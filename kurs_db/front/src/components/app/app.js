@@ -9,7 +9,7 @@ import {
     useLocation
   } from "react-router-dom";
 
-import getCookie from '../../tools/getcookie'
+import {getCookie, setCookie} from '../../tools/cookieTools'
 import MainView from '../common/MainView'
 
 export let AUTH_STATUS = {
@@ -47,7 +47,7 @@ const authReducer = (state, event) => {
 }
 
 const initialState = {
-    status: AUTH_STATUS.LOADING,
+    status: AUTH_STATUS.CHECKING,
     user: null,
     error: null
 }
@@ -60,7 +60,7 @@ const App = (props) => {
     useEffect(() => {
         let canceled = false
         ;(async () => {
-            if (status != AUTH_STATUS.LOADING) return
+            if (status != AUTH_STATUS.CHECKING) return
             try {
                 let url = new URL('login', 'http://localhost:8080')
                 url.search = new URLSearchParams({key})
@@ -87,7 +87,7 @@ const App = (props) => {
             <Switch>
                 <Route exact path="/">
                     {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"/>}
-                    {status == AUTH_STATUS.AUTHORIZED && <MainView/>}
+                    {status == AUTH_STATUS.AUTHORIZED && 123}
                     {error && <p>{`Auth failed: ${error.message}`}</p>}
                 </Route>
                 <Route path="/login">
