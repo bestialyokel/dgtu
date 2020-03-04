@@ -9,14 +9,10 @@ import {
     useLocation
   } from "react-router-dom";
 
-import {getCookie, setCookie} from '../../tools/cookieTools'
+import {getCookie, setCookie} from '../utils/cookieTools'
 import MainView from '../common/MainView'
-
-export let AUTH_STATUS = {
-    CHECKING: 0,
-    AUTHORIZED: 1,
-    UNAUTHORIZED: 2,
-}
+import NavBar from '../common/NavBar'
+import {AUTH_STATUS} from '../utils/constants'
 
 const authReducer = (state, event) => {
     switch(event.type) {
@@ -80,16 +76,17 @@ const App = (props) => {
         return () => canceled = true
     }, [status])
     
+    let isLoading = [status == AUTH_STATUS.CHECKING,].includes(true)
 
     return (
-        <Router>
-            {status == AUTH_STATUS.CHECKING && <p>...loading</p>}
+        <Router>       
             <Switch>
+                
                 <Route exact path="/">
                     {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"/>}
-                    {status == AUTH_STATUS.AUTHORIZED && 123}
-                    {error && <p>{`Auth failed: ${error.message}`}</p>}
+                    {!isLoading ? <NavBar user={user} ></NavBar> : "loading"}
                 </Route>
+                {/* not login*/}
                 <Route path="/login">
                     <p>login</p>
                 </Route>
