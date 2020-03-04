@@ -1,5 +1,7 @@
 const randomInt = (a, b) => Math.round(Math.random() * (b-a) + a)
 
+let sum = (A) => A.reduce((acc, cur) => acc + cur)
+
 let minIndex = (A) => {
     let index = 0
     for (let i = 0; i < A.length; i++) if (A[i] < A[index]) 
@@ -18,9 +20,9 @@ let matrix = Array(cpus).fill().map(
     line => Array(tasks).fill().map(x => randomInt(t1, t2))
 )
 
-let sum = (A) => A.reduce((acc, cur) => acc + cur)
+let maxMinElem = 0
 
-console.log("VOZRAsT")
+console.log("по уб")
 
 matrix.sort(
     (a,b) => sum(b) - sum(a)
@@ -33,11 +35,11 @@ matrix.forEach(
     }
 )
 
-let maxMinElem = Math.max(...load)
+maxMinElem = Math.max(...load)
 
-console.log(matrix, load, maxMinElem)
+console.log({matrix, load, maxMinElem})
 
-console.log("UB")
+console.log("по возр")
 
 load.fill(0)
 
@@ -55,4 +57,4 @@ matrix.forEach(
 maxMinElem = Math.max(...load)
 
 // matrix.map(x=>sum(x))
-console.log(matrix, load, maxMinElem)
+console.log({matrix, load, maxMinElem})
