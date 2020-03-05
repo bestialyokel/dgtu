@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Paper, withStyles, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Face, Fingerprint } from '@material-ui/icons'
-import getCookie from '../../tools/tokenTools';
-const styles = theme => ({
+
+import {getCookie, setCookie} from '../utils/cookieTools'
+import { useHistory, Redirect} from 'react-router-dom';
+
+const classes = theme => ({
     margin: {
         margin: theme.spacing(2),
     },
@@ -11,13 +14,18 @@ const styles = theme => ({
     }
 });
 
-const LoginTab = (props) => {
-    const { classes, setKey, setLoading } = props
-
+const Login = (props) => {
+    const {user} = props
+    const history = useHistory()
     const [fields, setFields] = useState({
         login: '',
         password: ''
     })
+    let canceled = false
+
+    useEffect(() => {
+        return () => canceled = true
+    }, [])
 
 
     const tryLogin = async () => {
@@ -29,11 +37,11 @@ const LoginTab = (props) => {
         const req = await fetch(url, {
             method: 'POST'
         })
-        const json = await req.json()
-        document.cookie = `key=${json.key}`
+        const {key} = await req.json()
         if (json.key) {
-            setLoading(true)
-            setKey(json.key)
+            if (canceled) return
+            setCookie('key', key)
+            history.push("/")
         } else 
             setFields({
                 login: '',
@@ -42,6 +50,10 @@ const LoginTab = (props) => {
     }
            
 
+    if (user != null)
+        return (
+            <Redirect to="/"/>
+        )
 
     return (
         <Paper className={classes.padding}>
@@ -70,4 +82,4 @@ const LoginTab = (props) => {
     );
 }
 
-export default withStyles(styles)(LoginTab);
+export default withStyles(classes)(Login);

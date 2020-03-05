@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -13,7 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
 
-import {ROLE} from '../utils/constants'
+import {setCookie, getCookie} from '../utils/cookieTools'
+import { useHistory } from 'react-router-dom';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,20 +37,38 @@ export default function MenuAppBar(props) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-
+    const history = useHistory()
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
     };
+    let canceled = false
+
+    useEffect(() => {
+        return () => canceled = true
+    }, [])
+
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
+    const handleLogOut = async () => {
+        let url = new URL('login', 'http://localhost:8080')
+        url.search = new URLSearchParams({key: getCookie('key')})
+        const req = await fetch(url, {
+            method: 'DELETE'
+        })
+        const {success} = await req.json()
+        if (canceled) return
+        setCookie(key, '')
+        history.push("/login")
+    }
+
     return (
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" className={classes.title}>
-                    Провайдер(самый лучший)
+                    я не дизайнер
                 </Typography>
                 <div>
                     <Typography display="inline" variant="h6" className={classes.title}>
@@ -79,7 +99,7 @@ export default function MenuAppBar(props) {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={handleClose}>Log out</MenuItem>
+                        <MenuItem onClick={handleLogOut}>Log out</MenuItem>
                     </Menu>
                 </div>
             </Toolbar>

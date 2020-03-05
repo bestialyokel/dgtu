@@ -12,6 +12,7 @@ import {
 import {getCookie, setCookie} from '../utils/cookieTools'
 import MainView from '../common/MainView'
 import NavBar from '../common/NavBar'
+import Login from '../common/Login'
 import {AUTH_STATUS} from '../utils/constants'
 
 const authReducer = (state, event) => {
@@ -52,6 +53,7 @@ const App = (props) => {
     const key = getCookie('key') || 'f376434a41c97e65'
     const [authState, authDispatch] = useReducer(authReducer, initialState)
     const {user, status, error} = authState
+    
 
     useEffect(() => {
         let canceled = false
@@ -79,16 +81,19 @@ const App = (props) => {
     let isLoading = [status == AUTH_STATUS.CHECKING,].includes(true)
 
     return (
-        <Router>       
+        <Router>     
+            {status == AUTH_STATUS.AUTHORIZED && <NavBar user={user} ></NavBar>}  
             <Switch>
-                
                 <Route exact path="/">
                     {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"/>}
-                    {!isLoading ? <NavBar user={user} ></NavBar> : "loading"}
+                    {!isLoading ?      
+                        <MainView user={user}></MainView>
+                    : "loading"}
                 </Route>
                 {/* not login*/}
                 <Route path="/login">
-                    <p>login</p>
+                    <Login user={user} authDispatch={authDispatch}> 
+                    </Login>
                 </Route>
                 <Route path="/services">
                     <p>services</p>

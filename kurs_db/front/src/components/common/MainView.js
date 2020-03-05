@@ -1,93 +1,86 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import { Typography } from "@material-ui/core";
 
-/*import React from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+import {RULES} from "../utils/constants"
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  );
-}
+const Paths = [
+    {
+        path: "services",
+        title: "services",
+        roles: RULES["services"]["GET"]
+    },
+    {
+        path: "tariffs",
+        title: "tariffs",
+        roles: RULES["tariffs"]["GET"]
+    },
+    {
+        path: "clients",
+        title: "clients",
+        roles: RULES["clients"]["GET"]
+    },
+    {
+        path: "contracts",
+        title: "contracts",
+        roles: RULES["contracts"]["GET"]
+    },
+    {
+        path: "appeals",
+        title: "appealss",
+        roles: RULES["appeals"]["GET"]
+    },
+    {
+        path: "jobs",
+        title: "jobs",
+        roles: RULES["jobs"]["GET"]
+    },
+    {
+        path: "workers",
+        title: "workers",
+        roles: RULES["workers"]["GET"]
+    },
 
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
+]
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.black
-  },
+    container: {
+        padding: theme.spacing(5)
+    },
+    itemContainer: {
+        marginBottom: theme.spacing(5)
+    },
+    item: {
+        padding: theme.spacing(1),
+        display: "inline-block",
+        width: theme.spacing(30),
+        borderRadius: theme.spacing(1),
+        color: "white",
+        textDecoration: "none",
+        backgroundColor: "#3f51b5",
+        textTransform: "capitalize"
+    }
 }));
 
-export default function FullWidthTabs() {
-  const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleChangeIndex = index => {
-    setValue(index);
-  };
-
-  return (
-    <div className={classes.root}>
-      <AppBar position="static" color="default">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-          centered
-        >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          Item One
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          Item Three
-        </TabPanel>
-    </div>
-  );
-}
-*/
-
 const MainView = (props) => {
+    const {user} = props
+    const history = useHistory()
+    const classes = useStyles()
     return (
-        <Link to="/login">
-            <a>abc</a>
-        </Link>
+        <Grid container spacing={1} justify="flex-start" wrap="wrap" className={classes.container}>
+            {Paths.filter(x => x.roles.includes(user.role)).map((x,i) => (
+                <Grid lg={3} md={6} xs={12} item key={i} className={classes.itemContainer}>
+                    <Typography align="center" >
+                        <Link to={`/${x.path}`} state={{user: user}} className={classes.item}>
+                            {x.title}
+                        </Link>
+                    </Typography>
+                </Grid>
+            ))}
+        </Grid>
     )
 }
 
