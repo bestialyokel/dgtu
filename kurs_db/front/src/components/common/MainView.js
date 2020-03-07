@@ -1,11 +1,12 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from "@material-ui/core";
 
 
-import {RULES} from "../utils/constants"
+import {RULES} from "../../utils/constants"
+import { UserContext, TokenContext} from '../../context/context'
 
 const Paths = [
     {
@@ -66,8 +67,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MainView = (props) => {
-    const {user} = props
-    const history = useHistory()
+    const user = useContext(UserContext)
     const classes = useStyles()
     return (
         <Grid container spacing={1} justify="flex-start" wrap="wrap" className={classes.container}>

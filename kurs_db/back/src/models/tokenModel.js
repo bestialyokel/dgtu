@@ -14,7 +14,8 @@ let addOne = async ({login, key}) => {
 
 let deleteOne = async (key) => {
     let sql = 'DELETE FROM Tokens WHERE key=$1'
-    await pool.query(sql, [key])
+    let a = await pool.query(sql, [key])
+    console.log(key)
 }
 
 const Login = {

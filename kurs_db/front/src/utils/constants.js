@@ -2,6 +2,7 @@ export const AUTH_STATUS = {
     CHECKING: 0,
     AUTHORIZED: 1,
     UNAUTHORIZED: 2,
+    ERROR: 3,
 }
 
 export const ROLE = {

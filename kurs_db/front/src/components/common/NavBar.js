@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -13,8 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
 
-import {setCookie, getCookie} from '../utils/cookieTools'
+import {setCookie, getCookie} from '../../utils/cookieTools'
 import { useHistory } from 'react-router-dom';
+import { UserContext, TokenContext} from '../../context/context'
 
 
 const useStyles = makeStyles(theme => ({
@@ -33,35 +34,38 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function MenuAppBar(props) {
-    const {user} = props
+    const user = useContext(UserContext)
+    const token = useContext(TokenContext)
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = useState(null);
     const history = useHistory()
+
+    const open = Boolean(anchorEl);
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
     };
+
     let canceled = false
 
-    useEffect(() => {
-        return () => canceled = true
-    }, [])
+    // prevent fetch mut.
+    useEffect(() => () => canceled = true, [])
 
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const handleClose = () => setAnchorEl(null);
 
     const handleLogOut = async () => {
         let url = new URL('login', 'http://localhost:8080')
-        url.search = new URLSearchParams({key: getCookie('key')})
+        url.search = new URLSearchParams({key: token})
         const req = await fetch(url, {
             method: 'DELETE'
         })
         const {success} = await req.json()
-        if (canceled) return
-        setCookie(key, '')
-        history.push("/login")
+        if (success)
+        setCookie('key', '')
+        history.push({
+            pathname: "/login",
+            state: {user: null}
+        })
     }
 
     return (
