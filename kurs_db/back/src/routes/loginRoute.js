@@ -16,10 +16,10 @@ router.get('/', async (req, res) => {
                 success: false,
                 msg: 'key not valid'
             })
-        let user = await User.getOne(login)
+        let { role } = await User.getOne(login)
         res.json({
             success: true,
-            user
+            user: {login, role}
         })
     } catch(error) {
     }
