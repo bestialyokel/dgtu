@@ -59,8 +59,9 @@ class RefLab {
         foreach (MemberInfo MI in members) {
             DebugPrintAttribute DPA = 
                 (DebugPrintAttribute) MI.GetCustomAttribute(typeof(DebugPrintAttribute));
-            if (DPA == null) continue;
-            Console.WriteLine(DPA.format, MI.GetValue(obj), MI.Name, MI.ReflectedType);
+            if (DPA != null) 
+                Console.WriteLine(DPA.format, MI.GetValue(obj), MI.Name, MI.ReflectedType);
+            
         }
     }
 }
