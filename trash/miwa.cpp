@@ -5,8 +5,12 @@
 using namespace std;
 
 class Animal {
+    
+    /* вариант ниже для выблядков
     private:
-        string name;
+        string name;*/
+    // вот это заебись 
+    string name;
     public:
         Animal(const string name = "bezrodni zver") {
             this->name = name;
@@ -22,18 +26,18 @@ class Animal {
 };
 
 class Parrot : public Animal {
-    private:
     public:
         Parrot(const string name) : Animal(name) {}
+        Parrot() : Animal() {}
         virtual string speech() {
             return "ya popugai : " + Animal::getName();
         }
 };
 
 class Dog : public Animal {
-    private:
     public:
         Dog(const string name) : Animal(name) {}
+        Dog() : Animal() {}
         virtual string speech() {
             return "ya pes : " + Animal::getName();
         }
@@ -41,11 +45,10 @@ class Dog : public Animal {
 
 
 class Zoo {
-    private:
-        vector<Animal*> *animals;
-        inline void addAnimal(Animal *a) {
-            animals->push_back(a);
-        }
+    vector<Animal*> *animals;
+    inline void addAnimal(Animal *a) {
+        animals->push_back(a);
+    }
     public:
         Zoo(vector<Animal*> *a = new vector<Animal*>()) : animals(a) {}
         //деструктор забыл
@@ -68,35 +71,38 @@ class Zoo {
 };
 
 class MyMenu {
-    private:
-        Zoo z;    
-        void demonstrate() {
-            for (auto &it : z)
-                cout << (*it).speech() << endl;
-        }
+    Zoo z;    
+    void demonstrate() {
+        for (auto &it : z)
+            cout << (*it).speech() << endl;
+    }
 
-        void addAnimal() {
-            int i;
-            while ( i != 3) {
-                cout << "viberi kogo dobavit" << endl
-                    <<  "1 - Dog" << endl
-                    <<  "2 - Parrot" << endl;
-                cin >> i;
-                if (i == 1) {
-                    string name;
-                    cout << "imya ?" << endl;
-                    cin >> name;
-                    z += new Dog(name);
-                    return;
-                } else if (i == 2) {
-                    string name;
-                    cout << "imya ?" << endl;
-                    cin >> name;
-                    z += new Parrot(name);
-                    return;
-                }
+    void addAnimal() {
+        int i;
+        while ( i != 3) {
+            cout << "viberi kogo dobavit" << endl
+                <<  "1 - Dog" << endl
+                <<  "2 - Parrot" << endl;
+            cin >> i;
+            if (i == 1) {
+                string name;
+                cout << "imya ?" << endl;
+                cin.ignore();
+                getline(cin, name);
+                Dog *dog = name.length() == 0 ? new Dog() : new Dog(name);
+                z += dog;
+                return;
+            } else if (i == 2) {
+                string name;
+                cout << "imya ?" << endl;
+                cin.ignore();
+                getline(cin, name);
+                Parrot *parrot = name.length() == 0 ? new Parrot() : new Parrot(name);
+                z += parrot;
+                return;
             }
         }
+    }
     public:
         void showMenu() {
             int i;
@@ -117,5 +123,6 @@ class MyMenu {
 int main() {
     MyMenu m;
     m.showMenu();
+    //Dog *m = new Dog();
     return 0;
 }
