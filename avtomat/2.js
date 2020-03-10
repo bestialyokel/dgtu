@@ -5,7 +5,7 @@ const { word } = require('./deps')
 
 ^  ---> ^+ (whithout E)
 
-eps + 0 + 2 + (1 + 2^1 + 0^1)* + (1 + 12^ + 10^)*
+eps + 0^ + 2^ + (1 + 2^1 + 0^1)* + (1 + 12^ + 10^)*
 
 */
 
@@ -18,6 +18,6 @@ function* myreg(amount) {
     while(result.length > 0) yield result.shift()
 }
 
-let x = myreg(16)
+let x = myreg(32)
 
-for (y of x) console.log(y)
+console.log(...x)
