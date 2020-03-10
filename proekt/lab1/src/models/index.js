@@ -1,8 +1,8 @@
 
 
 class Model {
-    constructor(db) {
-        this.db = db
+    constructor(pool) {
+        this.pool = pool
     }
     getAll() {}
     getOne() {}

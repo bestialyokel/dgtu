@@ -14,7 +14,7 @@ import MainView from '../common/MainView'
 import NavBar from '../common/NavBar'
 import Login from '../common/Login'
 import {AUTH_STATUS} from '../../utils/constants'
-import { UserContext, TokenContext} from '../../context/context'
+import { UserContext, TokenContext } from '../../context/context'
 
 const authReducer = (state, event) => {
     switch(event.type) {
@@ -127,6 +127,7 @@ const App = (props) => {
                     </Route>
                     {/* not login*/}
                     <Route path="/login">
+                        {status == AUTH_STATUS.AUTHORIZED && <Redirect to="/"/>}
                         <Login setToken={setToken}> 
                         </Login>
                     </Route>

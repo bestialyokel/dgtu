@@ -1,7 +1,6 @@
-
-var word = (alphabet, index) => {
-    var indexes = []
-    var len = alphabet.length
+let word = (alphabet, index) => {
+    let indexes = []
+    let len = alphabet.length
     while (index > 0) {
         let i = 0
         if (index % len == 0) 
@@ -26,12 +25,4 @@ let number = (alphabet, word) => {
     return result
 }
 
-
-var alphabet = ['а', 'б', 'в', 'г'];
-
-
-
-var x = word(alphabet, 274)
-var y = number(alphabet, 'гааб')
-
-console.log(x,y);
+module.exports = {number, word}
