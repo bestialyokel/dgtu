@@ -2,10 +2,6 @@ import React, {useState, useEffect, useContext} from 'react';
 import { Paper, withStyles, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Face, Fingerprint } from '@material-ui/icons'
 
-
-import { useHistory, Redirect} from 'react-router-dom';
-import { UserContext, TokenContext } from '../../context/context'
-
 const classes = theme => ({
     margin: {
         margin: theme.spacing(2),

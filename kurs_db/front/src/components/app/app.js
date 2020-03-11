@@ -15,6 +15,7 @@ import NavBar from '../common/NavBar'
 import Login from '../common/Login'
 import {AUTH_STATUS} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
+import Appeals from "../views/appeals";
 
 const authReducer = (state, event) => {
     switch(event.type) {
@@ -135,7 +136,7 @@ const App = (props) => {
                         <p>contracts</p>
                     </Route>
                     <Route path="/appeals">
-                        <p>appeals</p>
+                        {status == AUTH_STATUS.AUTHORIZED && <Appeals></Appeals>}
                     </Route>
                     <Route path="/jobs">
                         <p>jobs</p>
