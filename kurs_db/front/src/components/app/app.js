@@ -18,26 +18,43 @@ import { UserContext, TokenContext } from '../../context/context'
 
 const authReducer = (state, event) => {
     switch(event.type) {
-        case "FETCH":
+        case "CHECK":
             return {
                 ...state,
                 status: AUTH_STATUS.CHECKING
-            }
-        case "RESOLVE":
-            return {
-                ...state,
-                status: AUTH_STATUS.AUTHORIZED,
-                user: event.data
             }
         case "REJECT":
             return {
                 ...state,
                 status: AUTH_STATUS.UNAUTHORIZED,
             }
+        case "LOGGED":
+            return {
+                ...state,
+                status: AUTH_STATUS.AUTHORIZED,
+                user: event.data
+            }
+        case "LOGIN":
+            setCookie('session-key', event.token)
+            return {
+                ...state,
+                status: AUTH_STATUS.UNAUTHORIZED,
+                token: event.token,
+            }
+            break;
+        case "LOGOUT":
+            setCookie('session-key', String()) 
+            return {
+                ...state,
+                status: AUTH_STATUS.UNAUTHORIZED,
+                token: String(),
+                user: null,
+            }
+            break;
         case "ERROR": 
             return {
                 ...state,
-                status: AUTH_STATUS.ERROR,
+                status: AUTH_STATUS.UNAUTHORIZED,
                 error: event.error
             }
         default:
@@ -45,49 +62,25 @@ const authReducer = (state, event) => {
     }
 }
 
-const tokenReducer = (state, event) => {
-    switch(event.type) {
-        case "FETCH":
-            return {
-                ...state,
-                status: AUTH_STATUS.CHECKING
-            }
-        case "RESOLVE":
-            return {
-                ...state,
-                status: AUTH_STATUS.AUTHORIZED,
-                user: event.data
-            }
-        case "REJECT":
-            return {
-                ...state,
-                status: AUTH_STATUS.UNAUTHORIZED,
-            }
-        case "ERROR": 
-            return {
-                ...state,
-                status: AUTH_STATUS.ERROR,
-                error: event.error
-            }
-        default:
-            return state
-    }
-}
-
-const initialState = {
+const authInitialState = {
     status: AUTH_STATUS.CHECKING,
     user: null,
-    token: getCookie('key'),
-    error: null
+    error: null,
+    token: getCookie('session-key')
 }
 
-
-
 const App = (props) => {
-    const [authState, authDispatch] = useReducer(authReducer, initialState)
+    const [authState, authDispatch] = useReducer(authReducer, authInitialState)
     const {user, status, error, token} = authState
 
+    const isLoading = [status == AUTH_STATUS.CHECKING,].includes(true)
 
+    const setToken = (token) => {
+        authDispatch({type: "LOGIN", token: token})
+        authDispatch({type: 'CHECK'})
+    }
+
+    const logOut = () => authDispatch({type: "LOGOUT"})
 
     useEffect(() => {
         let canceled = false
@@ -100,7 +93,7 @@ const App = (props) => {
                 const {success, user} = await req.json()
                 if (canceled) return
                 if (success) 
-                    authDispatch({type: "RESOLVE", data: user})
+                    authDispatch({type: "LOGGED", data: user})
                 else 
                     authDispatch({type: "REJECT"})
             } catch(error) {
@@ -112,14 +105,12 @@ const App = (props) => {
         return () => canceled = true
     }, [status])
     
-    let isLoading = [status == AUTH_STATUS.CHECKING,].includes(true)
-
     return (
         <UserContext.Provider value={user}>
         <TokenContext.Provider value={token}>
             <Router> 
-                {/*isLoading && "loading"*/}    
-                {status == AUTH_STATUS.AUTHORIZED && <NavBar></NavBar>}
+                {isLoading && "loading"}
+                {status == AUTH_STATUS.AUTHORIZED && <NavBar logOut={logOut} ></NavBar>}
                 {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"></Redirect>}
                 <Switch>
                     <Route exact path="/">
@@ -165,7 +156,5 @@ const App = (props) => {
     )
         
 }
-
-
 
 export default App

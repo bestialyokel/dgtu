@@ -48,7 +48,6 @@ router.put('/:id', async (req, res) => {
         })
         res.json({
             success: true,
-            id: worker.id_worker
         })
     } catch(error) {
 
@@ -72,7 +71,6 @@ router.delete('/:id', async (req, res) => {
         let worker = await Worker.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_worker: worker.id_worker
         })
 
     } catch(error) {

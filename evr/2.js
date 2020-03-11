@@ -1,69 +1,70 @@
 const randomInt = (a, b) => Math.round(Math.random() * (b-a) + a)
+const sum = (A) => A.reduce((acc, cur) => acc + cur)
 
-const cpus = 5
-const tasks = 3
-const t1 = 5
-const t2 = 30
-
-let min_sum_task_load = (matrix) => {
+const min_sum_task_load = (inMatrix, config) => {
+    const {cpus, tasks, t1, t2, sortOrder} = config
     //copy 
-    matrix = matrix.map(line => [...line])
-    const sum = (A) => A.reduce((acc, cur) => acc + cur)
-    let load = Array(tasks).fill(0)
     const specificMinFunc = 
         (accumulator, element, index, array) => 
             array[index] + load[index] < array[accumulator] + load[accumulator] 
             ? index : accumulator
-    matrix.sort(
-        (a,b) => sum(b) - sum(a)
-    )
+    let load = Array(tasks).fill(0)
+    const matrix = inMatrix.map(line => [...line])
+    matrix.sort( (a,b) => sortOrder * (sum(a) - sum(b))  )
     matrix.forEach(
         line => {
-            let i = line.reduce(specificMinFunc, 0)
+            const i = line.reduce(specificMinFunc, 0)
             load[i] += line[i]
         }
     )
     return {
         matrix,
         load,
-        min: Math.min(...load),
+        max: Math.max(...load),
     }
 }
 
-let min_task = (matrix) => {
-    //copy 
-    matrix = matrix.map(line => [...line])
-    const sum = (A) => A.reduce((acc, cur) => acc + cur)
+const min_task = (inMatrix, config) => {
+    const {cpus, tasks, t1, t2, sortOrder} = config
     const specificMinFunc = 
         (accumulator, element, index, array) => array[index] < array[accumulator] ? index : accumulator
-
     let load = Array(tasks).fill(0)
-    matrix.sort(
-        (a,b) => sum(b) - sum(a)
-    )
+    const matrix = inMatrix.map(line => [...line])
+    matrix.sort( (a,b) => sortOrder * (sum(a) - sum(b)) )
     matrix.forEach(
         line => {
-            let i = line.reduce(specificMinFunc, 0)
+            const i = line.reduce(specificMinFunc, 0)
             load[i] += line[i]
         }
     )
     return {
         matrix,
         load,
-        min: Math.min(...load),
+        max: Math.max(...load),
     }
 }
 
+const config = {
+    cpus: 5,
+    tasks: 3,
+    t1: 5,
+    t2: 30,
+}
+const {cpus, tasks, t1, t2} = config
 
-let matrix = Array(cpus).fill().map(
+const matrix = Array(cpus).fill().map(
     line => Array(tasks).fill().map(x => randomInt(t1, t2))
 )
+const res1 = min_sum_task_load(matrix, {...config, sortOrder: 1})
+const res2 = min_sum_task_load(matrix, {...config, sortOrder: -1})
+const res3 = min_task(matrix, {...config, sortOrder: 1})
+const res4 = min_task(matrix, {...config, sortOrder: -1})
 
-let res1 = min_sum_task_load(matrix)
-let res2 = min_task(matrix)
-console.log("минимум с учетом загрузки процессора")
+console.log("Алгоритм построения расписания с произвольной загрузкой, по возрастанию")
 console.log(res1)
-console.log("минимум среди задач")
+console.log("Алгоритм построения расписания с произвольной загрузкой, по убыванию")
 console.log(res2)
-console.log("матрица")
-console.log(matrix)
+console.log("Минимальный элемент в строке, по возрастанию")
+console.log(res3)
+console.log("Минимальный элемент в строке, по убыванию")
+console.log(res4)

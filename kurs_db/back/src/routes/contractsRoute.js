@@ -49,7 +49,6 @@ router.put('/:id', async (req, res) => {
         })
         res.json({
             success: true,
-            id: contract.id_contract
         })
     } catch(error) {
 
@@ -58,10 +57,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let contract = await Contract.addOne(...req.query)
+        let {id_contract} = await Contract.addOne(...req.query)
         res.json({
             success: true,
-            id: contract.id_contract
+            id: id_contract
         })
     } catch (error) {
         
@@ -73,7 +72,6 @@ router.delete('/:id', async (req, res) => {
         let contract = await Contract.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_client: contract.id_client
         })
 
     } catch(error) {

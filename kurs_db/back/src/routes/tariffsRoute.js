@@ -48,7 +48,6 @@ router.put('/:id', async (req, res) => {
         })
         res.json({
             success: true,
-            id: tariff.id_tariff
         })
     } catch(error) {
 
@@ -72,7 +71,6 @@ router.delete('/:id', async (req, res) => {
         let tariff = await Tariff.deleteOne(req.params.id)
         res.json({
             success: true,
-            name: tariff.name
         })
 
     } catch(error) {

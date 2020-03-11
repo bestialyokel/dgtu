@@ -42,13 +42,9 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let appeal = await Appeal.updateOne({
-            id: req.params.id,
-            ...req.query
-        })
+        let appeal = await Appeal.updateOne({id: req.params.id,...req.query})
         res.json({
             success: true,
-            id: appeal.id_appeal
         })
     } catch(error) {
 
@@ -57,10 +53,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let appeal = await Appeal.addOne(...req.query)
+        let {id_appeal} = await Appeal.addOne(...req.query)
         res.json({
             success: true,
-            id: appeal.id_appeal
+            id: id_appeal
         })
     } catch(error) {
         
@@ -72,7 +68,6 @@ router.delete('/:id', async (req, res) => {
         let appeal = await Appeal.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_contract: appeal.id_contract
         })
 
     } catch(error) {

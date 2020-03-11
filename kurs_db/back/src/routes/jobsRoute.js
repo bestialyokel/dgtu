@@ -42,13 +42,9 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let job = await Job.updateOne({
-            id: req.params.id,
-            ...req.query
-        })
+        let job = await Job.updateOne({id: req.params.id,...req.query})
         res.json({
             success: true,
-            id: job.id_job
         })
     } catch(error) {
 
@@ -57,10 +53,10 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let job = await Job.addOne(...req.query)
+        let {id_job} = await Job.addOne(...req.query)
         res.json({
             success: true,
-            id: job.id_job
+            id: id_job
         })
     } catch (error) {
         
@@ -72,7 +68,6 @@ router.delete('/:id', async (req, res) => {
         let job = await Job.deleteOne(req.params.id)
         res.json({
             success: true,
-            id_appeal: job.id_appeal
         })
 
     } catch(error) {

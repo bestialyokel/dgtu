@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -36,36 +36,31 @@ const useStyles = makeStyles(theme => ({
 export default function MenuAppBar(props) {
     const user = useContext(UserContext)
     const token = useContext(TokenContext)
-    const classes = useStyles();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const history = useHistory()
+    const classes = useStyles()
+    const { logOut } = props
+    const [anchorEl, setAnchorEl] = useState(null)
 
-    const open = Boolean(anchorEl);
-    const handleMenu = event => {
-        setAnchorEl(event.currentTarget);
-    };
+    const open = Boolean(anchorEl)
+    const handleMenu = event => setAnchorEl(event.currentTarget)
 
     let canceled = false
-
     // prevent fetch mut.
     useEffect(() => () => canceled = true, [])
 
 
-    const handleClose = () => setAnchorEl(null);
+    const handleClose = () => setAnchorEl(null)
 
     const handleLogOut = async () => {
         let url = new URL('login', 'http://localhost:8080')
         url.search = new URLSearchParams({key: token})
-        const req = await fetch(url, {
-            method: 'DELETE'
-        })
-        const {success} = await req.json()
-        if (success)
-        setCookie('key', '')
-        history.push({
-            pathname: "/login",
-            state: {user: null}
-        })
+        try {
+            const req = await fetch(url, {method: 'DELETE'})
+            const {success} = await req.json()
+            if (success) logOut()
+            else throw "owibka"
+        } catch(error) {
+            console.log(error)
+        }
     }
 
     return (

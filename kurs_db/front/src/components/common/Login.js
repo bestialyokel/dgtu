@@ -16,10 +16,7 @@ const classes = theme => ({
 });
 
 const Login = (props) => {
-    const user = useContext(UserContext)
-    const token = useContext(TokenContext)
     const {setToken} = props
-    const history = useHistory()
     const [fields, setFields] = useState({login: String(), password: String()})
     const {login, password} = fields
 
@@ -37,17 +34,13 @@ const Login = (props) => {
             const {key} = await req.json()
             if (!key) throw "wrong auth params"
             if (canceled) return
-            setCookie('token', key)
+            setToken(key)
 
         } catch(error) {
             console.log(error)
             setFields({login: String(), password: String()})
         }
     }
-           
-
-    if (user) return <Redirect to="/"/>
-        
 
     return (
         <Paper className={classes.padding}>
