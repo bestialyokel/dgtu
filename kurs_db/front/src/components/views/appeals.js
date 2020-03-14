@@ -36,28 +36,6 @@ const fillData = async (setState, token) => {
     }
 }
 
-const handleAdd = async (setState, token, newData) => {
-    let url = new URL(`appeals`, 'http://localhost:8080')
-    url.search = new URLSearchParams({ key: token, ...newData })
-    try {
-        const req = await fetch(url, {method: 'POST'})
-        const {id} = await req.json()
-
-        url = new URL(`appeals/${id}`, 'http://localhost:8080')
-        url.search = new URLSearchParams({key: token})
-        req = await fetch(url, {method: 'GET'})
-        const {appeal} = await req.json()
-        setState(oldState => {
-            return {
-                ...oldState,
-                data: [...state.data, {...appeal}]
-            }
-        })
-    } catch(error) {
-
-    }
-}
-
 const Appeals = (props) => {
     const user = useContext(UserContext)
     const token = useContext(TokenContext)
@@ -74,7 +52,6 @@ const Appeals = (props) => {
         try {
             const req = await fetch(url, {method: 'POST'})
             const {id} = await req.json()
-    
             url = new URL(`appeals/${id}`, 'http://localhost:8080')
             url.search = new URLSearchParams({key: token})
             req = await fetch(url, {method: 'GET'})

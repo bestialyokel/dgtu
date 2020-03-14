@@ -16,6 +16,7 @@ import Login from '../common/Login'
 import {AUTH_STATUS} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
 import Appeals from "../views/appeals";
+import Clients from "../views/clients";
 
 const authReducer = (state, event) => {
     switch(event.type) {
@@ -120,8 +121,7 @@ const App = (props) => {
                     {/* not login*/}
                     <Route path="/login">
                         {status == AUTH_STATUS.AUTHORIZED && <Redirect to="/"/>}
-                        <Login setToken={setToken}> 
-                        </Login>
+                        <Login setToken={setToken}/>
                     </Route>
                     <Route path="/services">
                         <p>services</p>
@@ -130,7 +130,7 @@ const App = (props) => {
                         <p>tariffs</p>
                     </Route>
                     <Route path="/clients">
-                        <p>clients</p>
+                    {status == AUTH_STATUS.AUTHORIZED && <Clients></Clients>}
                     </Route>
                     <Route path="/contracts">
                         <p>contracts</p>

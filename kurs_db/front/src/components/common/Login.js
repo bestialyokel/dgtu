@@ -1,20 +1,25 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { Paper, withStyles, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Face, Fingerprint } from '@material-ui/icons'
+import { makeStyles } from '@material-ui/core/styles';
 
-const classes = theme => ({
+const useStyles = makeStyles(theme => ({
     margin: {
-        margin: theme.spacing(2),
+        margin: theme.spacing(5),
     },
     padding: {
-        padding: theme.spacing(1)
+        padding: theme.spacing(15)
     }
-});
+}));
 
 const Login = (props) => {
     const {setToken} = props
     const [fields, setFields] = useState({login: String(), password: String()})
     const {login, password} = fields
+
+    const classes = useStyles()
+
+
 
     let canceled = false
     useEffect(() => {
@@ -39,9 +44,9 @@ const Login = (props) => {
     }
 
     return (
-        <Paper className={classes.padding}>
-            <div className={classes.margin}>
-                <Grid container spacing={8} alignItems="flex-end">
+        <Paper >
+            <div className={classes.padding}>
+                <Grid container spacing={2} alignItems="flex-end">
                     <Grid item>
                         <Face />
                     </Grid>
@@ -49,7 +54,7 @@ const Login = (props) => {
                         <TextField value={login} onChange={event => setFields({login: event.target.value, password}) } id="username" label="Username" type="email" fullWidth autoFocus required />
                     </Grid>
                 </Grid>
-                <Grid container spacing={8} alignItems="flex-end">
+                <Grid container spacing={2} alignItems="flex-end">
                     <Grid item>
                         <Fingerprint />
                     </Grid>
@@ -65,4 +70,4 @@ const Login = (props) => {
     );
 }
 
-export default withStyles(classes)(Login);
+export default Login;
