@@ -19,6 +19,28 @@ let Ins = (a) => {
     }
 }
 
+//
+let InsRec = (a) => {
+    let rec = (a, p, r) => {
+        if (p > r) return
+        rec(a, p, r - 1)
+        let i = r
+        while(i > p - 1 && a[i] < a[i-1]) {
+            let t = a[i]
+            a[i] = a[i-1]
+            a[i-1] = t
+            i--
+        }
+    }
+    rec(a, 1, a.length - 1)
+}
+
+console.log(arr)
+
+InsRec(arr)
+
+console.log(arr)
+
 const Sel = (a) => {
     for(let i = 0; i < a.length; i++) {
         let index = i;
