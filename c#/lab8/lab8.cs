@@ -7,11 +7,12 @@ using System.Xml;
 using System.Xml.Serialization;
 
 
-public partial class Graph {
 
-    //kak zdelat Matrix-Lines -> Matrix-Line -> Weight?
-    // esli ostavit uint vezde, to alloc dohuya raz delaetsa i kill process
-    [ XmlArray("Matrix-Lines"), XmlText("Matrix-Line")]
+// если сделать uint, то походу при конвертации 
+//kak zdelat Matrix-Lines -> Matrix-Line -> Weight?
+[Serializable]
+public partial class Graph {
+    [XmlArray("Lines"), XmlArrayItem("Line")]
     public List< List<int> > matrix = new List< List<int> >();
     public Graph() : this(0) {}
     public Graph(int vertexAmount) {
@@ -26,14 +27,8 @@ public partial class Graph {
     private int GetWeight(int[] vertexPair) => matrix[ vertexPair[0] ][ vertexPair[1] ];
     private void SetWeight(int[] vertexPair, int value) => matrix[ vertexPair[0] ][ vertexPair[1] ] = value;
 
- 
-    public int this[int x, int y] {
-        get => x == y ? 0 : GetWeight( NormalizeVertexes(x, y) );
-        // x == y ? (Func<void>)(()=>{})() : SetWeight( NormalizeVertexes(x, y), value)
-        set {
-            if (x != y) SetWeight( NormalizeVertexes(x, y), value); 
-        }
-    }
+    public int GetWeight(int x, int y) => GetWeight( NormalizeVertexes(x, y) );
+    public void SetWeight(int x, int y, int value) => SetWeight(NormalizeVertexes(x,y), value);
 
     public void AddVertex() {
         matrix.Add(new List<int>());
@@ -54,9 +49,13 @@ class Lab8 {
         Graph G = new Graph(4);
         G.AddVertex();
         using (Stream st1 = new FileStream("somefile1.xml", FileMode.Open, FileAccess.Read) )
-        using (Stream st2 = new FileStream("somefile2.xml", FileMode.Create) ) {
-            Graph G1 = Graph.DeserializeFromXml(st1);
-            Graph.SerializeXmlTo(G1, st2);
-        }
+            using (Stream st2 = new FileStream("somefile2.xml", FileMode.Create) ) {
+                Graph G1 = Graph.DeserializeFromXml(st1);
+                Graph.SerializeXmlTo(G1, st2);
+            }
+        
+        /*using(Stream st1 = new FileStream("somefile1.xml", FileMode.Open, FileAccess.Write) ) {
+            Graph.SerializeXmlTo(G, st1);
+        }*/
     }
 }
