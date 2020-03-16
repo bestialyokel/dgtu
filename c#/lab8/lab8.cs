@@ -23,12 +23,12 @@ public partial class Graph {
         }
     }
 
-    private int[] NormalizeVertexes(int x, int y) => x > y ? new int[]{y, x} : new int[]{x, y};
+    private int[] NormalizedVertexes(int x, int y) => x > y ? new int[]{y, x} : new int[]{x, y};
     private int GetWeight(int[] vertexPair) => matrix[ vertexPair[0] ][ vertexPair[1] ];
     private void SetWeight(int[] vertexPair, int value) => matrix[ vertexPair[0] ][ vertexPair[1] ] = value;
 
-    public int GetWeight(int x, int y) => GetWeight( NormalizeVertexes(x, y) );
-    public void SetWeight(int x, int y, int value) => SetWeight(NormalizeVertexes(x,y), value);
+    public int GetWeight(int x, int y) => GetWeight( NormalizedVertexes(x, y) );
+    public void SetWeight(int x, int y, int value) => SetWeight(NormalizedVertexes(x,y), value);
 
     public void AddVertex() {
         matrix.Add(new List<int>());
