@@ -1,6 +1,3 @@
-const randomInt = (a, b) => Math.round(Math.random() * (b-a) + a)
-
-let arr = Array(10).fill().map(x => randomInt(-10, 10))
 
 //оценивать каждую операцию в Ci времени, 
 let Ins = (a) => { 
@@ -35,12 +32,6 @@ let InsRec = (a) => {
     rec(a, 1, a.length - 1)
 }
 
-console.log(arr)
-
-InsRec(arr)
-
-console.log(arr)
-
 const Sel = (a) => {
     for(let i = 0; i < a.length; i++) {
         let index = i;
@@ -55,13 +46,13 @@ const Sel = (a) => {
     }
 }
 
-// наверно 0(n)
 let Gorn = (a, x) => {
     const G = (a, x, index = 0) => (index == a.length - 1) ? a[index] : a[index] + x*G(a, x, index+1)
     return G(a, x)
 
 }
 
+// ne rabotaet
 const MergeSort = (a, p ,r) => {
     const Merge = (a, p, q, r) => {
         // 2 elems
@@ -87,3 +78,40 @@ const MergeSort = (a, p ,r) => {
     }
 }
 
+
+const BinarySearch = (A, x) => {
+    let t1 = 0
+    let t2 = A.length - 1
+    while ( t2 >= t1 ) {
+        let c = (t1+t2)/2 >> 0
+        if (x < A[c]) {
+            t2 = c - 1
+        } else if (x == A[c]) {
+            return c
+        } else if (x > A[c]) {
+            t1 = c + 1
+        }
+    }
+    return -1
+} 
+
+const randomInt = (a, b) => Math.round(Math.random() * (b-a) + a)
+
+let a = Array(10).fill().map(x => randomInt(0, 10))
+
+a.sort((a,b) => a-b);
+
+console.log(a);
+
+
+let x = BinarySearch(a, 5);
+
+console.log(x);
+
+
+
+
+
+module.exports = {
+    Ins, InsRec, Sel, Gorn, MergeSort
+}
