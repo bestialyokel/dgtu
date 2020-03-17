@@ -15,8 +15,9 @@ import NavBar from '../common/NavBar'
 import Login from '../common/Login'
 import {AUTH_STATUS} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
-import Appeals from "../views/appeals";
-import Clients from "../views/clients";
+
+import {Appeals, Clients, Contracts, Services, Tariffs, Jobs, Workers} from "../views"
+
 
 const authReducer = (state, event) => {
     switch(event.type) {
@@ -123,27 +124,31 @@ const App = (props) => {
                         {status == AUTH_STATUS.AUTHORIZED && <Redirect to="/"/>}
                         <Login setToken={setToken}/>
                     </Route>
-                    <Route path="/services">
-                        <p>services</p>
-                    </Route>
-                    <Route path="/tariffs">
-                        <p>tariffs</p>
-                    </Route>
-                    <Route path="/clients">
-                    {status == AUTH_STATUS.AUTHORIZED && <Clients></Clients>}
-                    </Route>
-                    <Route path="/contracts">
-                        <p>contracts</p>
-                    </Route>
-                    <Route path="/appeals">
-                        {status == AUTH_STATUS.AUTHORIZED && <Appeals></Appeals>}
-                    </Route>
-                    <Route path="/jobs">
-                        <p>jobs</p>
-                    </Route>
-                    <Route path="/workers">
-                        <p>workers</p>
-                    </Route>
+                    {status == AUTH_STATUS.AUTHORIZED &&
+                        <>
+                            <Route path="/services">
+                                <Services/>
+                            </Route>
+                            <Route path="/tariffs">
+                                <Tariffs/>
+                            </Route>
+                            <Route path="/clients">
+                                <Clients/>
+                            </Route>
+                            <Route path="/contracts">
+                                <Contracts/>
+                            </Route>
+                            <Route path="/appeals">
+                                <Appeals></Appeals>
+                            </Route>
+                            <Route path="/jobs">
+                                <Jobs/>
+                            </Route>
+                            <Route path="/workers">
+                                <Workers/>
+                            </Route>
+                        </>
+                    }
                     {/*
                             ---> * always match
                     */}

@@ -32,7 +32,8 @@ class MyClass {
     }
 }
 
-// копипаст...
+// копипаст... нехороший
+
 static partial class MethodInfo {
     public static object GetValue(this MemberInfo memberInfo, object forObject) {
         switch (memberInfo.MemberType) {

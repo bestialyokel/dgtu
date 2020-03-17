@@ -1,1 +1,1 @@
-curl -X POST 'localhost:8080/login?login=danil&password=123'
+curl -X PUT 'localhost:8080/services/3?key=11e02d5acc0e1b7e&name=2&description=2'

@@ -42,10 +42,8 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let worker = await Worker.updateOne({
-            id: req.params.id,
-            ...req.query
-        })
+        const {id_job, name, surname, patronymic, skills} = req.query 
+        let worker = await Worker.updateOne({id: req.params.id, id_job, name, surname, patronymic, skills})
         res.json({
             success: true,
         })
@@ -56,7 +54,8 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let worker = await Worker.addOne(...req.query)
+        const {id_job, name, surname, patronymic, skills} = req.query 
+        let worker = await Worker.addOne({id_job, name, surname, patronymic, skills})
         res.json({
             success: true,
             id: worker.id_worker

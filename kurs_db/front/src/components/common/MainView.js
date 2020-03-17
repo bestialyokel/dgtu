@@ -31,7 +31,7 @@ const Paths = [
     },
     {
         path: "appeals",
-        title: "appealss",
+        title: "appeals",
         roles: RULES["appeals"]["GET"]
     },
     {

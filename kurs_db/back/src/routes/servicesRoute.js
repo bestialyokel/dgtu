@@ -42,10 +42,8 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let service = await Service.updateOne({
-            id: req.params.id,
-            ...req.query
-        })
+        const {name, description} = req.query 
+        let service = await Service.updateOne({id: req.params.id, name, description})
         res.json({
             success: true,
         })
@@ -56,7 +54,8 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let service = await Service.addOne(...req.query)
+        const {name, description} = req.query 
+        let service = await Service.addOne({name, description})
         res.json({
             success: true,
             id: service.id_service

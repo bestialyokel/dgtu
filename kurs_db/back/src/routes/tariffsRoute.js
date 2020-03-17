@@ -42,10 +42,8 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        let tariff = await Tariff.updateOne({
-            id: req.params.id,
-            ...req.query
-        })
+        const {name, payment, period, services} = req.query 
+        let tariff = await Tariff.updateOne({id: req.params.id, name, payment, period, services})
         res.json({
             success: true,
         })
@@ -56,7 +54,8 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let tariff = await Tariff.addOne(...req.query)
+        const {name, payment, period, services} = req.query 
+        let tariff = await Tariff.addOne({name, payment, period, services})
         res.json({
             success: true,
             id: tariff.id_tariff

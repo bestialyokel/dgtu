@@ -53,13 +53,14 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        let {id_client} = await Client.addOne(...req.query)
+        const {name, surname, patronymic, phone_number} = req.query
+        let {id_client} = await Client.addOne({name, surname, patronymic, phone_number})
         res.json({
             success: true,
             id: id_client
         })
     } catch(error) {
-        
+        console.log(error)
     }
 })
 

@@ -50,9 +50,8 @@ const Clients = (props) => {
         let url = new URL(`clients`, 'http://localhost:8080')
         url.search = new URLSearchParams({ key: token, ...newData })
         try {
-            const req = await fetch(url, {method: 'POST'})
+            let req = await fetch(url, {method: 'POST'})
             const {id} = await req.json()
-            console.log(id)
             url = new URL(`clients/${id}`, 'http://localhost:8080')
             url.search = new URLSearchParams({key: token})
             req = await fetch(url, {method: 'GET'})
@@ -60,7 +59,7 @@ const Clients = (props) => {
             setState(oldState => {
                 return {
                     ...oldState,
-                    data: [...state.data, {...client}]
+                    data: [...state.data, client]
                 }
             })
         } catch(error) {
@@ -70,15 +69,14 @@ const Clients = (props) => {
     const editable = {
         onRowAdd: RULES["clients"]["POST"].includes(user.role) ? handleAdd : null
     }
-    console.log(editable)
     return (
         <Switch>
             <Route path="/">
                 <Table
-                title="Clients"
-                columns={state.columns}
-                data={state.data}
-                editable={editable}
+                    title="Clients"
+                    columns={state.columns}
+                    data={state.data}
+                    editable={editable}
                 />
             </Route>
             <Route path="/123">
