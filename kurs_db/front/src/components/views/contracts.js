@@ -4,11 +4,30 @@ import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
 
+import { Link } from "react-router-dom";
 
 const columns = [
-    {title: 'ID контракта', field: 'id_contract'},
-    {title: 'ID клиента', field: 'id_client'},
-    {title: 'ID тарифа', field: 'id_tariff'},
+    {title: 'ID контракта', field: 'id_contract',
+        render: rowData => (
+            <Link to={`/contracts/${rowData.id_contract}`}>
+                {rowData.id_contract}
+            </Link>
+        )
+    },
+    {title: 'ID клиента', field: 'id_client',
+        render: rowData => (
+            <Link to={`/clients/${rowData.id_client}`}>
+                {rowData.id_client}
+            </Link>
+        )
+    },
+    {title: 'ID тарифа', field: 'id_tariff',
+        render: rowData => (
+            <Link to={`/tariffs/${rowData.id_tariff}`}>
+                {rowData.id_tariff}
+            </Link>
+        )
+    },
     {title: 'Адресс', field: 'address'},
     {title: 'Тип контракта', field: 'contract_type'}
 ]
@@ -72,19 +91,12 @@ const Contracts = (props) => {
     }
     */
     return (
-        <Switch>
-            <Route path="/">
-                <Table
-                title="Contracts"
-                columns={state.columns}
-                data={state.data}
-                //editable={editable}
-                />
-            </Route>
-            <Route path="/123">
-                123
-            </Route>
-        </Switch>
+        <Table
+            title="Contracts"
+            columns={state.columns}
+            data={state.data}
+            //editable={editable}
+        />
     )
 
 }

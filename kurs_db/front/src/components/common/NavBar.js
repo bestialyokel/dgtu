@@ -17,18 +17,24 @@ import {setCookie, getCookie} from '../../utils/cookieTools'
 import { useHistory } from 'react-router-dom';
 import { UserContext, TokenContext} from '../../context/context'
 
+import {Link} from "react-router-dom"
+
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
+    root: {
+        flexGrow: 1,
+        
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+    link: {
+        color: 'inherit',
+        textDecoration: 'none'
+    }
 }));
 
 
@@ -67,7 +73,7 @@ export default function MenuAppBar(props) {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" className={classes.title}>
-                    я не дизайнер
+                    <Link className={classes.link} to="/">я не дизайнер</Link>
                 </Typography>
                 <div>
                     <Typography display="inline" variant="h6" className={classes.title}>

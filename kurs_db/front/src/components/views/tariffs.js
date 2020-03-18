@@ -4,9 +4,16 @@ import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
 
+import { Link } from "react-router-dom";
 
 const columns = [
-    {title: 'ID тарифа', field: 'id_tariff'},
+    {title: 'ID тарифа', field: 'id_tariff',
+        render: rowData => (
+            <Link to={`/tariffs/${rowData.id_tariff}`}>
+                {rowData.id_tariff}
+            </Link>
+        )
+    },
     {title: 'Имя', field: 'name'},
     {title: 'Платеж', field: 'payment'},
     {title: 'Период', field: 'period'},
@@ -65,25 +72,18 @@ const Tariffs = (props) => {
             console.log(error)
         }
     }
-    /*
+
     const editable = {
         onRowAdd: RULES["clients"]["POST"].includes(user.role) ? handleAdd : null
     }
-    */
+    
     return (
-        <Switch>
-            <Route path="/">
-                <Table
-                title="Tariffs"
-                columns={state.columns}
-                data={state.data}
-                //editable={editable}
-                />
-            </Route>
-            <Route path="/123">
-                123
-            </Route>
-        </Switch>
+        <Table
+            title="Tariffs"
+            columns={state.columns}
+            data={state.data}
+            editable={editable}
+        />
     )
 
 }

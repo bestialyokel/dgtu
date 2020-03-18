@@ -17,6 +17,7 @@ import {AUTH_STATUS} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
 
 import {Appeals, Clients, Contracts, Services, Tariffs, Jobs, Workers} from "../views"
+import {Appeal, Client, Contract, Service, Tariff, Job, Worker} from "../views/subviews"
 
 
 const authReducer = (state, event) => {
@@ -116,39 +117,54 @@ const App = (props) => {
                 {status == AUTH_STATUS.AUTHORIZED && <NavBar logOut={logOut} ></NavBar>}
                 {status == AUTH_STATUS.UNAUTHORIZED && <Redirect to="/login"></Redirect>}
                 <Switch>
-                    <Route exact path="/">
-                        {status == AUTH_STATUS.AUTHORIZED && <MainView></MainView>}
-                    </Route>
+                    {/* если вложить в Fragment, то не доходит до * почему-то */}
+                    {status == AUTH_STATUS.AUTHORIZED &&
+                        [
+                            <Route exact path="/">
+                                <MainView></MainView>
+                            </Route>,
+
+                            <Route exact path="/services">
+                                <Services/>
+                            </Route>,
+                                <Route path="/services/:id"><Service/></Route>,
+                                
+                            <Route exact path="/tariffs">
+                                <Tariffs/>
+                            </Route>,
+                                <Route path="/tariffs/:id"><Tariff/></Route>,
+
+                            <Route exact path="/clients">
+                                <Clients/>
+                            </Route>,
+                                <Route path="/clients/:id"><Client/></Route>,
+
+                            <Route exact path="/contracts">
+                                <Contracts/>
+                            </Route>,
+                                <Route path="/contracts/:id"><Contract/></Route>,
+
+                            <Route exact path="/appeals">
+                                <Appeals></Appeals>
+                            </Route>,
+                                <Route path="/appeals/:id"><Appeal/></Route>,
+
+                            <Route exact path="/jobs">
+                                <Jobs/>
+                            </Route>,
+                                <Route path="/jobs/:id"><Job/></Route>,
+
+                            <Route exact path="/workers">
+                                <Workers/>
+                            </Route>,
+                                <Route path="/workers/:id"><Worker/></Route>,
+                        ]
+                    }
                     {/* not login*/}
                     <Route path="/login">
                         {status == AUTH_STATUS.AUTHORIZED && <Redirect to="/"/>}
                         <Login setToken={setToken}/>
                     </Route>
-                    {status == AUTH_STATUS.AUTHORIZED &&
-                        <>
-                            <Route path="/services">
-                                <Services/>
-                            </Route>
-                            <Route path="/tariffs">
-                                <Tariffs/>
-                            </Route>
-                            <Route path="/clients">
-                                <Clients/>
-                            </Route>
-                            <Route path="/contracts">
-                                <Contracts/>
-                            </Route>
-                            <Route path="/appeals">
-                                <Appeals></Appeals>
-                            </Route>
-                            <Route path="/jobs">
-                                <Jobs/>
-                            </Route>
-                            <Route path="/workers">
-                                <Workers/>
-                            </Route>
-                        </>
-                    }
                     {/*
                             ---> * always match
                     */}

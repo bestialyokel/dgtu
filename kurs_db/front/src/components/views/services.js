@@ -4,9 +4,16 @@ import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
 
+import { Link } from "react-router-dom";
 
 const columns = [
-    {title: 'ID услуги', field: 'id_service', editable: 'never'},
+    {title: 'ID услуги', field: 'id_service', editable: 'never',
+        render: rowData => (
+            <Link to={`/services/${rowData.id_service}`}>
+                {rowData.id_service}
+            </Link>
+        )
+    },
     {title: 'Название', field: 'name'},
     {title: 'Описание', field: 'description'},
 ]
@@ -66,28 +73,16 @@ const Services = (props) => {
     }
 
     const editable = {
-        onRowAdd: RULES["clients"]["POST"].includes(user.role) ? handleAdd : null,
-        onRowDelete: oldData =>
-            new Promise(async (resolve, reject) => {
-                console.log(1)
-                resolve()
-            }),
+        onRowAdd: RULES["services"]["POST"].includes(user.role) ? handleAdd : null,
     }
     
     return (
-        <Switch>
-            <Route path="/">
-                <Table
-                title="Services"
-                columns={state.columns}
-                data={state.data}
-                editable={editable}
-                />
-            </Route>
-            <Route path="/123">
-                123
-            </Route>
-        </Switch>
+        <Table
+            title="Services"
+            columns={state.columns}
+            data={state.data}
+            editable={editable}
+        />
     )
 
 }

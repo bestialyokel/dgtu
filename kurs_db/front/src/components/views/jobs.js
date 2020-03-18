@@ -4,10 +4,23 @@ import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
 
+import { Link } from "react-router-dom";
 
 const columns = [
-    {title: 'ID работы', field: 'id_job'},
-    {title: 'ID обращения', field: 'id_appeal'},
+    {title: 'ID работы', field: 'id_job',
+        render: rowData => (
+            <Link to={`/jobs/${rowData.id_job}`}>
+                {rowData.id_job}
+            </Link>
+        )
+    },
+    {title: 'ID обращения', field: 'id_appeal',
+        render: rowData => (
+            <Link to={`/appeals/${rowData.id_appeal}`}>
+                {rowData.id_appeal}
+            </Link>
+        )
+    },
     {title: 'Описание', field: 'description'},
     {title: 'Статус', field: 'status'},
 ]
@@ -72,19 +85,12 @@ const Jobs = (props) => {
     */
     //console.log(editable)
     return (
-        <Switch>
-            <Route path="/">
-                <Table
-                title="Jobs"
-                columns={state.columns}
-                data={state.data}
-                //editable={editable}
-                />
-            </Route>
-            <Route path="/123">
-                123
-            </Route>
-        </Switch>
+        <Table
+            title="Jobs"
+            columns={state.columns}
+            data={state.data}
+            //editable={editable}
+        />
     )
 
 }

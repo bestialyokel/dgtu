@@ -1,11 +1,27 @@
-import React, { Component, useState, useEffect, useContext } from "react";
+import React, { Component, useState, useEffect, useContext} from "react";
 
 import {UserContext, TokenContext} from '../../context/context'
 import Table from '../common/Table'
 
+import { Link } from "react-router-dom";
+
+
 const columns = [
-    {title: 'ID обращения', field: 'id_appeal'},
-    {title: 'ID контракт', field: 'id_contract'},
+    {title: 'ID обращения', field: 'id_appeal', editable: 'never',
+        render: rowData => (
+            <Link to={`/appeals/${rowData.id_appeal}`}>
+                {rowData.id_appeal}
+            </Link>
+        )
+
+    },
+    {title: 'ID контракт', field: 'id_contract', 
+        render: rowData => (
+            <Link to={`/contracts/${rowData.id_contract}`}>
+                {rowData.id_contract}
+            </Link>
+        )
+    },
     {title: 'Описание', field: 'description'},
     {title: 'Статус', field: 'status', emptyValue: 'null', 
         //lookup: 
