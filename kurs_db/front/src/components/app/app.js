@@ -158,6 +158,7 @@ const App = (props) => {
                                 <Workers/>
                             </Route>,
                                 <Route path="/workers/:id"><Worker/></Route>,
+                                <Route path="/test"><Client/></Route>,
                         ]
                     }
                     {/* not login*/}

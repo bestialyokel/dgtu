@@ -8,8 +8,13 @@ let getAll = async () => {
 
 let getOne = async (id) => {
     let sql = 'SELECT * FROM Clients WHERE id_client=$1'
-    let { rows } = await pool.query(sql, [id])
-    return rows[0]
+
+    let clientReq = await pool.query(sql, [id])
+    sql = 'SELECT id_contract FROM Contracts WHERE id_client=$1'
+    let contractReq = await pool.query(sql, [id])
+    let client = clientReq.rows[0]
+    let contracts = contractReq.rows.map(x => x.id_contract)
+    return {...client, contracts}
 }
 
 let updateOne = async ({id, name, surname, patronymic, phone_number}) => {

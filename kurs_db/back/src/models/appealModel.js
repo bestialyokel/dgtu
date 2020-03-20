@@ -8,8 +8,13 @@ let getAll = async () => {
 
 let getOne = async (id) => {
     let sql = 'SELECT * FROM Appeals WHERE id_appeal=$1'
-    let { rows } = await pool.query(sql, [id])
-    return rows[0]
+
+    let appealReq = await pool.query(sql, [id])
+    sql = 'SELECT id_job FROM Jobs WHERE id_appeal=$1'
+    let jobsReq = await pool.query(sql, [id])
+    let appeal = appealReq.rows[0]
+    let jobs = jobsReq.rows.map(x => x.id_job)
+    return {...appeal, jobs}
 }
 
 let updateOne = async ({id, description, status}) => {
