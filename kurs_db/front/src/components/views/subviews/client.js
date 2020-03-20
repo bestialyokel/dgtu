@@ -13,14 +13,11 @@ import { useContext } from "react"
 import { UserContext, TokenContext } from "../../../context/context"
 
 
-
-/*
-
 const STATUS = {
     FETCH: 0,
     IDLE: 1,
     EDIT: 2,
-    DELETED: 3,
+    DELETE: 3,
     ERROR: 4,
 }
 
@@ -40,7 +37,7 @@ const reducer = (state, event) => {
         case "IDLE":
             return {
                 ...state,
-                status: STATUS.FETCH,
+                status: STATUS.IDLE,
                 data: event.data
             }
         case "EDIT":
@@ -51,38 +48,18 @@ const reducer = (state, event) => {
         case "DELETE":
             return {
                 ...state,
-                status: STATUS.DELETED
+                status: STATUS.DELETE
             }
     }
 }
 
+
 const initState = {
     status: STATUS.FETCH,
     data: null,
-    error: null,
+    error: null
 }
 
-const TextFields = [
-    {disabled: true, label: "ID клиента", defaultValue: (data) => data.id_client,
-    },
-    {label: "Имя", defaultValue: (data) => data.name, 
-        onChange: (data, setData) => setData({...data, name: event.target.value})
-    },
-    {label: "Фамилия", defaultValue: (data) => data.name, 
-        onChange: (data, setData) => setData({...data, name: event.target.value})
-    },
-    {label: "Отчество", defaultValue: (data) => data.name, 
-        onChange: (data, setData) => setData({...data, name: event.target.value})
-    },
-    {label: "Имя", defaultValue: (data) => data.name, 
-        onChange: (data, setData) => setData({...data, name: event.target.value})
-    }
-]
-
-
-onChange: (data, setData) => setData({...data, id_client: event.target.value})
-
-*/
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -97,43 +74,45 @@ const client = (props) => {
     const {id} = useParams()
     const classes = useStyles()
 
+    const [state, dispatch] = useReducer(reducer, initState)
 
-    const [isLoading, setLoading] = useState(true)
-    const [client, setClient] = useState(null)
+    const {data, status, error} = state
 
     useEffect(() => {
         ;(async () => {
             try {
-                let url = new URL(`clients/${6}`, 'http://localhost:8080')
+                let url = new URL(`clients/${9}`, 'http://localhost:8080')
                 url.search = new URLSearchParams({key: token})
                 const req = await fetch(url, {method: 'GET'})
                 const {client} = await req.json()
-                setClient(client)
+                dispatch({type: "IDLE", data: client})
             } catch (error) {
                 console.log(error)
             }
         })()
     }, [])
-
+    
+    if (status == STATUS.FETCH) return "...loading"
+    
     return (
         <Grid container spacing={6} className={classes.container}>
             <Grid container item xs={12} md={6} lg={3} justify='center'>
-                <TextField disabled id="standard-required" label="ID клиента" defaultValue="0" />
+                <TextField disabled id="standard-required" label="ID клиента" defaultValue={data.id_client} />
             </Grid>
             <Grid container item xs={12} md={6} lg={3} justify='center'>
-                <TextField required id="standard-required" label="Имя" defaultValue="Имя" />
+                <TextField required id="standard-required" label="Имя" defaultValue={data.name}/>
             </Grid>
             <Grid container item xs={12} md={6} lg={3} justify='center'>
-                <TextField required id="standard-required" label="Фамилия" defaultValue="Фамилия" />
+                <TextField required id="standard-required" label="Фамилия" defaultValue={data.surname} />
             </Grid>
             <Grid container item xs={12} md={6} lg={3} justify='center'>
-                <TextField required id="standard-required" label="Отчество" defaultValue="Отчество" />
+                <TextField required id="standard-required" label="Отчество" defaultValue={data.patronymic} />
             </Grid>
             <Grid container item xs={12} md={6} lg={3} justify='center'>
-                <TextField required id="standard-required" label="Тел. номер" defaultValue="+79991112233" />
+                <TextField required id="standard-required" label="Тел. номер" defaultValue={data.phone_number}/>
             </Grid>
             <Grid container item justify='center'>
-                {client ? JSON.stringify(client) : "client"}
+                
             </Grid>
         </Grid>
     )
