@@ -73,7 +73,7 @@ export default function MenuAppBar(props) {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" className={classes.title}>
-                    <Link className={classes.link} to="/">я не дизайнер</Link>
+                    <Link className={classes.link} to="/">и уже завтра..</Link>
                 </Typography>
                 <div>
                     <Typography display="inline" variant="h6" className={classes.title}>

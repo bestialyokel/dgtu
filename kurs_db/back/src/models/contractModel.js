@@ -17,14 +17,14 @@ let getOne = async (id) => {
     return {...contract, appeals}
 }
 
-let updateOne = async ({id, id_tariff, address, type}) => {
-    let sql = 'UPDATE Contracts SET id_tariff=$1, address=$2, type=$3 WHERE id_contract=$4'
-    await pool.query(sql, [id_tariff, address, type, id])
+let updateOne = async ({id, id_tariff, address, contract_type}) => {
+    let sql = 'UPDATE Contracts SET id_tariff=$1, address=$2, contract_type=$3 WHERE id_contract=$4'
+    await pool.query(sql, [id_tariff, address, contract_type, id])
 }
 
-let addOne = async ({id_client, id_tariff, address, type}) => {
+let addOne = async ({id_client, id_tariff, address, contract_type}) => {
     let sql = 'INSERT INTO Contracts VALUES (DEFAULT, $1, $2, $3, $4) RETURNING id_contract'
-    let { rows } = await pool.query(sql, [id_client, id_tariff, address, type])
+    let { rows } = await pool.query(sql, [id_client, id_tariff, address, contract_type])
     return rows[0]
 }
 

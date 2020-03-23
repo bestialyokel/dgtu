@@ -8,18 +8,10 @@ import { Link } from "react-router-dom";
 
 const columns = [
     {title: 'ID работы', field: 'id_job',
-        render: rowData => (
-            <Link to={`/jobs/${rowData.id_job}`}>
-                {rowData.id_job}
-            </Link>
-        )
+
     },
     {title: 'ID обращения', field: 'id_appeal',
-        render: rowData => (
-            <Link to={`/appeals/${rowData.id_appeal}`}>
-                {rowData.id_appeal}
-            </Link>
-        )
+
     },
     {title: 'Описание', field: 'description'},
     {title: 'Статус', field: 'status'},

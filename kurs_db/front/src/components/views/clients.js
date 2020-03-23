@@ -8,11 +8,6 @@ import { Link } from "react-router-dom";
 
 const columns = [
     {title: 'ID клиента', field: 'id_client', editable: 'never',
-        render: rowData => (
-            <Link to={`/clients/${rowData.id_client}`}>
-                {rowData.id_client}
-            </Link>
-        )
     },
     {title: 'Имя', field: 'name'},
     {title: 'Фамилия', field: 'surname'},
