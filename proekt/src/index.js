@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { Pool } = require('pg')
 const app = express()
-const credentials = require('./credentials.json')
+const credentials = require('./credentials.json.js')
 
 
 const pool = new Pool({
