@@ -32,20 +32,6 @@ class MyClass {
     }
 }
 
-// копипаст... нехороший
-
-static partial class MethodInfo {
-    public static object GetValue(this MemberInfo memberInfo, object forObject) {
-        switch (memberInfo.MemberType) {
-            case MemberTypes.Field:
-                return ((FieldInfo)memberInfo).GetValue(forObject);
-            case MemberTypes.Property:
-                return ((PropertyInfo)memberInfo).GetValue(forObject);
-            default:
-                throw new NotImplementedException();
-        }
-    } 
-}
 class RefLab {
     public static void DebugPrint(object obj) {
         Type t = obj.GetType();
@@ -67,9 +53,24 @@ class RefLab {
     }
 }
 
-class Lab7 {
+
+
+static class Lab7 {
+
+    public static object GetValue(this MemberInfo memberInfo, object forObject) {
+        switch (memberInfo.MemberType) {
+            case MemberTypes.Field:
+                return ((FieldInfo) memberInfo).GetValue(forObject);
+            case MemberTypes.Property:
+                return ((PropertyInfo) memberInfo).GetValue(forObject);
+            default:
+                throw new NotImplementedException();
+        }
+    } 
+
     public static void Main() {
         MyClass a = new MyClass(1,2);
         RefLab.DebugPrint(a);
+        //RefLab.GetValue();
     }
 }

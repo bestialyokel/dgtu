@@ -3,7 +3,7 @@ import React, { Component, useState, useEffect, useContext} from "react";
 import {UserContext, TokenContext} from '../../context/context'
 import Table from '../common/Table'
 
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 
 const columns = [
@@ -15,8 +15,8 @@ const columns = [
 
     },
     {title: 'Описание', field: 'description'},
-    {title: 'Статус', field: 'status', emptyValue: 'null', 
-        //lookup: 
+    {title: 'Статус', field: 'status', 
+        lookup: {'o' : 'Открыт', 'c': 'Закрыт', 'p': 'Ведутся работы'}
     }
 ]
 
@@ -48,36 +48,14 @@ const Appeals = (props) => {
     const token = useContext(TokenContext)
     const [state, setState] = useState({columns, data: []})
     
+    const history = useHistory()
+
     useEffect(() => {
         fillData(setState, token)
         return () => {}
     }, [])
 
-    /*
-    const handleAdd = async (newData) => {
-        let url = new URL(`appeals`, 'http://localhost:8080')
-        url.search = new URLSearchParams({ key: token, ...newData })
-        try {
-            const req = await fetch(url, {method: 'POST'})
-            const {id} = await req.json()
-            url = new URL(`appeals/${id}`, 'http://localhost:8080')
-            url.search = new URLSearchParams({key: token})
-            req = await fetch(url, {method: 'GET'})
-            const {appeal} = await req.json()
-            setState(oldState => {
-                return {
-                    ...oldState,
-                    data: [...state.data, appeal]
-                }
-            })
-        } catch(error) {
     
-        }
-    }
-
-    const editable = {
-        onRowAdd: RULES["appeals"]["POST"].includes(user.role) ? handleAdd : null
-    }*/
 
 
     return (
@@ -85,7 +63,7 @@ const Appeals = (props) => {
             title="Appeals"
             columns={state.columns}
             data={state.data}
-            //editable={editable}
+            onRowClick={(event, rowData) => history.push(`/appeals/${rowData.id_appeal}`) }
         />
     )
 

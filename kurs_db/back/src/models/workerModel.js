@@ -12,9 +12,9 @@ let getOne = async (id) => {
     return rows[0]
 }
 
-let updateOne = async ({id, id_job, skills}) => {
-    let sql = 'UPDATE Workers SET id_job=$1, skills=$2 WHERE id_worker=$3'
-    await pool.query(sql, [id_job, skills, id])
+let updateOne = async ({id, id_job, skills, name, surname, patronymic}) => {
+    let sql = 'UPDATE Workers SET id_job=$1, name=$2, surname=$3, patronymic=$4, skills=$5 WHERE id_worker=$6'
+    await pool.query(sql, [id_job, name, surname, patronymic, skills, id])
 }
 
 let addOne = async ({name, surname, patronymic, id_job, skills}) => {

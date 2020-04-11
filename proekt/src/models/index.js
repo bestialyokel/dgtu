@@ -1,20 +1,26 @@
+const {DataAccessObject} = require('../daos') 
+
 class Model {
     constructor() {
-        if (Object.getPrototypeOf(this) == Model.prototype) throw "Abstract class"
-        const ThisClass = Object.getPrototypeOf(this)
-        const ModelClass = Model.prototype
-
-        ["getAll", "getOne", "updateOne", "deleteOne"].forEach(x => {
-            if (ThisClass[x] == void(0)) 
-                throw `${x} is undefined`
-            if (ThisClass[x] == ModelClass[x]) 
-                throw `${x} is virtual`
-        })
+        if (!(dataAccessObject instanceof DataAccessObject))
+            throw "Model requires DAO"
     }
-    getAll() {}
-    getOne() {}
-    updateOne() {}
-    deleteOne() {}
 }
 
 module.exports = {Model}
+
+const UserModel = require('./user')
+const MessageModel = require('./message')
+const UserTokenModel = require('./userToken')
+const UserConversationPairModel = require('./userConversationPair')
+const ConversationModel = require('./conversation')
+
+module.exports = {
+    ...module.exports,
+    UserConversationPairModel, 
+    UserModel, 
+    UserTokenModel, 
+    MessageModel,
+    ConversationModel,
+    
+}

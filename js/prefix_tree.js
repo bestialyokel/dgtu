@@ -1,4 +1,9 @@
 
+/*
+
+  полагается на хэш таблицу
+
+*/
 class Prefix_Tree {
   constructor() {
     this.root = {}

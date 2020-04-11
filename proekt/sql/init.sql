@@ -7,11 +7,13 @@ DROP TABLE IF EXISTS User_Conversation_Pair CASCADE;
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
     login varchar(20),
-    password varchar(30)
+    password varchar(30),
+    UNIQUE(login)
 );
 
 CREATE TABLE Conversation (
     id SERIAL PRIMARY KEY
+    name varchar(20),
 );
 
 CREATE TABLE User_Token (

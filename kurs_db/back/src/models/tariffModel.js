@@ -16,25 +16,31 @@ let getOne = async (id) => {
     let servicesReq = await pool.query(sql, [id])
     return {
         ...tariff,
-        services: servicesReq.rows
+        services: servicesReq.rows.map(x => x.id_service)
     }
 }
 
 let updateOne = async ({id, name, description, period, payment, services}) => {
-    let sql = 'UPDATE Tariffs SET name=$1, description=$2, period=$3, payment=$4 WHERE id_tariff=$5'
-    await pool.query(sql, [name, description, period, payment, id])
+    let sql = 'UPDATE Tariffs SET name=$1,period=$2, payment=$3 WHERE id_tariff=$4'
+    await pool.query(sql, [name, period, payment, id])
     await pool.query('DELETE FROM TSPairs WHERE id_tariff=$1', [id])
-    services.filter(x => !isNaN(x)).forEach(
-        x => pool.query('INSERT INTO TSPairs VALUES ($1, $2)', 
-                                                    [id, x]) )
+
+    services = services.split(',')
+
+    if (services)
+        services.filter(x => !isNaN(x)).forEach(
+            x => pool.query('INSERT INTO TSPairs VALUES ($1, $2)', 
+                                                        [id, x]) )
 }
 
-let addOne = async ({name, description, period, payment, services}) => {
-    let sql = 'INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3, $4) RETURNING id_tariff'
-    let { rows } = await pool.query(sql, [name, description, period, payment])
-    services.filter(x => !isNaN(x)).forEach(
-        x => pool.query('INSERT INTO TSPairs VALUES ($1, $2)', 
-                                                    [id, x]) )
+let addOne = async ({name, period, payment, services}) => {
+    let sql = 'INSERT INTO Tariffs VALUES (DEFAULT, $1, $2, $3) RETURNING id_tariff'
+    let { rows } = await pool.query(sql, [name, payment, period])
+
+    if (services) 
+        services.filter(x => !isNaN(x)).forEach(
+            x => pool.query('INSERT INTO TSPairs VALUES ($1, $2)', 
+                                                        [id, x]) )
     return rows[0]
 }
 

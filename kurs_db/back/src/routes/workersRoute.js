@@ -42,13 +42,22 @@ router.get('/history/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const {id_job, name, surname, patronymic, skills} = req.query 
+        let {id_job, name, surname, patronymic, skills} = req.query 
+
+        id_job = Number(id_job)
+
+        if (id_job == 0 || isNaN(id_job)) 
+            id_job = void(0)
+
+            
+        console.log(req.query)
+
         let worker = await Worker.updateOne({id: req.params.id, id_job, name, surname, patronymic, skills})
         res.json({
             success: true,
         })
     } catch(error) {
-
+        console.log(error)
     }
 })
 

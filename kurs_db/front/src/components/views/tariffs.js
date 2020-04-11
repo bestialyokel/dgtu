@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useContext } from "react";
-import {Switch, Route} from "react-router-dom"
+import {Switch, Route, useHistory} from "react-router-dom"
 import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
@@ -7,7 +7,7 @@ import {RULES} from "../../utils/constants"
 import { Link } from "react-router-dom";
 
 const columns = [
-    {title: 'ID тарифа', field: 'id_tariff',
+    {title: 'ID тарифа', field: 'id_tariff', editable: 'never',
     },
     {title: 'Имя', field: 'name'},
     {title: 'Платеж', field: 'payment'},
@@ -41,6 +41,7 @@ const Tariffs = (props) => {
     const user = useContext(UserContext)
     const token = useContext(TokenContext)
     const [state, setState] = useState({columns,data: []})
+    const history = useHistory()
 
     useEffect(() => {
         fillData(setState, token)
@@ -78,6 +79,7 @@ const Tariffs = (props) => {
             columns={state.columns}
             data={state.data}
             editable={editable}
+            onRowClick={(event, rowData) => history.push(`/tariffs/${rowData.id_tariff}`) }
         />
     )
 

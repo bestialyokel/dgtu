@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useContext } from "react";
-import {Switch, Route} from "react-router-dom"
+import {Switch, Route, useHistory} from "react-router-dom"
 import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
@@ -45,6 +45,7 @@ const Clients = (props) => {
     const user = useContext(UserContext)
     const token = useContext(TokenContext)
     const [state, setState] = useState({columns,data: []})
+    const history = useHistory()
 
     useEffect(() => {
         fillData(setState, token)
@@ -83,6 +84,7 @@ const Clients = (props) => {
             title="Workers"
             columns={state.columns}
             data={state.data}
+            onRowClick={(event, rowData) => history.push(`/workers/${rowData.id_worker}`) }
             //editable={editable}
         />
     )

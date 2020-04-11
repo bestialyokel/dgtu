@@ -73,7 +73,9 @@ export default function MenuAppBar(props) {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" className={classes.title}>
-                    <Link className={classes.link} to="/">и уже завтра..</Link>
+                    <Link className={classes.link} to="/">
+                        Мутант на реакте ((16 мегабайт бандл и 80+мб озу)) готов, Милорд
+                    </Link>
                 </Typography>
                 <div>
                     <Typography display="inline" variant="h6" className={classes.title}>

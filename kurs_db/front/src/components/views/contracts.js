@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useContext } from "react";
-import {Switch, Route} from "react-router-dom"
+import {Switch, Route, useHistory} from "react-router-dom"
 import Table from '../common/Table'
 import {UserContext, TokenContext} from '../../context/context'
 import {RULES} from "../../utils/constants"
@@ -46,6 +46,7 @@ const Contracts = (props) => {
     const user = useContext(UserContext)
     const token = useContext(TokenContext)
     const [state, setState] = useState({columns,data: []})
+    const history = useHistory()
 
     useEffect(() => {
         fillData(setState, token)
@@ -82,7 +83,7 @@ const Contracts = (props) => {
             title="Contracts"
             columns={state.columns}
             data={state.data}
-            //editable={editable}
+            onRowClick={(event, rowData) => history.push(`/contracts/${rowData.id_contract}`) }
         />
     )
 

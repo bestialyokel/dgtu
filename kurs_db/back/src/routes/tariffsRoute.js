@@ -48,7 +48,7 @@ router.put('/:id', async (req, res) => {
             success: true,
         })
     } catch(error) {
-
+        console.log(error)
     }
 })
 
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
             id: tariff.id_tariff
         })
     } catch (error) {
-        
+        console.log(error)
     }
 })
 

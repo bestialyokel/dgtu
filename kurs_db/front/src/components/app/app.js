@@ -13,7 +13,7 @@ import {getCookie, setCookie} from '../../utils/cookieTools'
 import MainView from '../common/MainView'
 import NavBar from '../common/NavBar'
 import Login from '../common/Login'
-import {AUTH_STATUS} from '../../utils/constants'
+import {AUTH_STATUS, RULES} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
 
 import {Appeals, Clients, Contracts, Services, Tariffs, Jobs, Workers} from "../views"
@@ -108,7 +108,7 @@ const App = (props) => {
         })()
         return () => canceled = true
     }, [status])
-    
+
     return (
         <UserContext.Provider value={user}>
         <TokenContext.Provider value={token}>
@@ -119,46 +119,60 @@ const App = (props) => {
                 <Switch>
                     {/* если вложить в Fragment, то не доходит до * почему-то */}
                     {status == AUTH_STATUS.AUTHORIZED &&
-                        [
+                        [   
                             <Route exact path="/">
                                 <MainView></MainView>
                             </Route>,
-
+                            
+                            RULES["services"]["GET"].includes(user.role) &&
                             <Route exact path="/services">
                                 <Services/>
                             </Route>,
+                                RULES["services"]["GET"].includes(user.role) &&
                                 <Route path="/services/:id"><Service/></Route>,
-                                
+                            
+                            RULES["tariffs"]["GET"].includes(user.role) &&
                             <Route exact path="/tariffs">
                                 <Tariffs/>
                             </Route>,
+                                RULES["tariffs"]["GET"].includes(user.role) &&
                                 <Route path="/tariffs/:id"><Tariff/></Route>,
-
+                            
+                            RULES["clients"]["GET"].includes(user.role) &&
                             <Route exact path="/clients">
                                 <Clients/>
                             </Route>,
+                                RULES["clients"]["GET"].includes(user.role) &&
                                 <Route path="/clients/:id"><Client/></Route>,
 
+                            RULES["contracts"]["GET"].includes(user.role) &&
                             <Route exact path="/contracts">
                                 <Contracts/>
                             </Route>,
+                                RULES["contracts"]["GET"].includes(user.role) &&
                                 <Route path="/contracts/:id"><Contract/></Route>,
 
+                            RULES["appeals"]["GET"].includes(user.role) &&
                             <Route exact path="/appeals">
                                 <Appeals></Appeals>
                             </Route>,
+                                RULES["appeals"]["GET"].includes(user.role) &&
                                 <Route path="/appeals/:id"><Appeal/></Route>,
 
+                            RULES["jobs"]["GET"].includes(user.role) &&
                             <Route exact path="/jobs">
                                 <Jobs/>
                             </Route>,
+                                RULES["jobs"]["GET"].includes(user.role) &&
                                 <Route path="/jobs/:id"><Job/></Route>,
 
+                            RULES["workers"]["GET"].includes(user.role) &&
                             <Route exact path="/workers">
                                 <Workers/>
                             </Route>,
+                                RULES["workers"]["GET"].includes(user.role) &&
                                 <Route path="/workers/:id"><Worker/></Route>,
-                                <Route path="/test"><Client/></Route>,
+                                <Route path="/test"><Tariff/></Route>,
                         ]
                     }
                     {/* not login*/}
