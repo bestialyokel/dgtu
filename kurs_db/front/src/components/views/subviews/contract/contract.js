@@ -188,10 +188,10 @@ const contract = (props) => {
             </Grid>
             <Grid container spacing={6} className={classes.container}>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled id="standard-required" label="ID контракта" defaultValue={id_contract}/>
+                    <TextField disabled id="standard-required" label="ID контракта" value={id_contract}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled id="standard-required" label="ID клиента" defaultValue={id_client}/>
+                    <TextField disabled id="standard-required" label="ID клиента" value={id_client}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
                     <TariffsSelect
@@ -201,7 +201,7 @@ const contract = (props) => {
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Адрес" defaultValue={address} 
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Адрес" value={address} 
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, address: event.target.value}})}
                     />
                 </Grid>

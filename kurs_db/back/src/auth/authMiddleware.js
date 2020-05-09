@@ -19,11 +19,14 @@ let topPath = (path) => {
 let auth = async (req, res, next) => {
     try {
         let subject = topPath(req.path)
-        if (rules[subject] == void(0))
-            next()
+        if (rules[subject] == void(0)) {
+            res.json("powel nax")
+            return
+        }
         let { key } = req.query
         let { login } = await Token.getOne(key) || {}
         let { role } = await User.getOne(login) || {}
+
         if (role != 'x' && !rules[subject][req.method].includes(role))
             res.json(403)
         next()

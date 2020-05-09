@@ -8,6 +8,7 @@ const servicesRoute = require('./routes/servicesRoute')
 const tariffsRoute = require('./routes/tariffsRoute')
 const jobsRoute = require('./routes/jobsRoute')
 const workersRoute = require('./routes/workersRoute')
+const dumpsRoute = require('./routes/dumpsRoute')
 
 const router = new Router()
 
@@ -19,5 +20,6 @@ router.use('/services', servicesRoute)
 router.use('/tariffs', tariffsRoute)
 router.use('/jobs', jobsRoute)
 router.use('/workers', workersRoute)
+router.use('/dumps', dumpsRoute)
 
 module.exports = router

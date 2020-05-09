@@ -186,10 +186,10 @@ const appeal = (props) => {
             </Grid>
             <Grid container spacing={6} className={classes.container}>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled id="standard-required" label="ID Обращения" defaultValue={id_appeal}/>
+                    <TextField disabled id="standard-required" label="ID Обращения" value={id_appeal}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled id="standard-required" label="ID Контракта" defaultValue={id_contract}/>
+                    <TextField disabled id="standard-required" label="ID Контракта" value={id_contract}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>                            {/* какого хуя везде адекватно работает defaultValue
                                                                                                             а здесь только value? эта параша имеет своё состояние.....*/}

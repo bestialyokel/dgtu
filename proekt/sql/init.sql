@@ -17,6 +17,7 @@ CREATE TABLE Conversation (
 );
 
 CREATE TABLE User_Token (
+    id SERIAL PRIMARY KEY,
     key varchar(24) PRIMARY KEY,
     id_user INTEGER REFERENCES Users (id) ON DELETE CASCADE
 );

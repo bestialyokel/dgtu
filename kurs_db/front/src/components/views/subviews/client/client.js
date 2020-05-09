@@ -194,22 +194,22 @@ const client = (props) => {
                     <TextField disabled id="standard-required" label="ID клиента" defaultValue={id_client}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Имя" defaultValue={name}
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Имя" value={name}
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, name: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Фамилия" defaultValue={surname} 
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Фамилия" value={surname} 
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, surname: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Отчество" defaultValue={patronymic} 
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Отчество" value={patronymic} 
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, patronymic: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField  disabled={status == STATUS.IDLE} id="standard-required" label="Тел. номер" defaultValue={phone_number}
+                    <TextField  disabled={status == STATUS.IDLE} id="standard-required" label="Тел. номер" value={phone_number}
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, phone_number: event.target.value}})}
                     />
                 </Grid>

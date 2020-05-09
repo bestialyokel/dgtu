@@ -1,19 +1,19 @@
-const express = require('express')
-const cors = require('cors')
 const { Pool } = require('pg')
-const app = express()
-const credentials = require('./credentials.json.js')
-
 
 const pool = new Pool({
-    user: credentials.user,
+    user: 'ddbachur',
     host: 'localhost',
     database: 'chat',
-    password: credentials.password,
+    password: 'g3mfcq4f',
     port: '5432'
 })
 
 ;(async () => {
-    let {rows} = await pool.query('SELECT * FROM Users');
-    console.log(rows)
+    try {
+        let {rows} = await pool.query('SELECT * FROM Usersa');
+        console.log(rows)
+    } catch(error) {
+        console.log(error.message);
+        
+    }
 })()

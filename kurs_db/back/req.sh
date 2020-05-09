@@ -1,1 +1,1 @@
-curl -X PUT 'localhost:8080/services/3?key=11e02d5acc0e1b7e&name=2&description=2'
+curl -X GET 'localhost:8080/dump?key=943eb3888c3d2557'

@@ -54,5 +54,10 @@ export const RULES = {
         "POST": ["t", "x"],
         "PUT": ["t", "x"],
         "DELETE": ["t", "x"]
+    },
+    "dumps": {
+        "GET": ["x"],
+        "PUT": ["x"],
+        "POST": ["x"]
     }
 }

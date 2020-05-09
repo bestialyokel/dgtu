@@ -193,7 +193,7 @@ const tariff = (props) => {
             </Grid>
             <Grid container spacing={6} className={classes.container}>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled id="standard-required" label="ID Тарифа" defaultValue={id_tariff}/>
+                    <TextField disabled id="standard-required" label="ID Тарифа" value={id_tariff}/>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>                            
                     <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Имя" value={name} 

@@ -220,22 +220,22 @@ const worker = (props) => {
                     </FormControl>
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Имя" defaultValue={name}
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Имя" value={name}
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, name: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Фамилия" defaultValue={surname} 
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Фамилия" value={surname} 
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, surname: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Отчество" defaultValue={patronymic} 
+                    <TextField disabled={status == STATUS.IDLE} id="standard-required" label="Отчество" value={patronymic} 
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, patronymic: event.target.value}})}
                     />
                 </Grid>
                 <Grid container item xs={12} md={6} lg={3} justify='center'>
-                    <TextField  disabled={status == STATUS.IDLE} id="standard-required" label="Навыки" defaultValue={skills}
+                    <TextField  disabled={status == STATUS.IDLE} id="standard-required" label="Навыки" value={skills}
                         onChange={(event) => dispatch({type: "EDIT", data: {...data, skills: event.target.value}})}
                     />
                 </Grid>

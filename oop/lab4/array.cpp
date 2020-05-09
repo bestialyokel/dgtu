@@ -34,11 +34,11 @@ class Array {
         }
         int& operator[](size_t index) {
             if (index < this->length) return this->arr[index];
-            this->arr = (int *)realloc(this->arr, (index + 1)* sizeof(int));
+            this->arr = (int *)realloc(this->arr, (index + 1) * sizeof(int));
             return this->arr[index];
         }
         const int& operator[](size_t index) const {
-            if (index >= this->length) throw "out of range"
+            if (index >= this->length) throw "out of range";
             return this->arr[index];
         }
 };

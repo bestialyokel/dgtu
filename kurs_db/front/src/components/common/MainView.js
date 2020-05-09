@@ -44,7 +44,11 @@ const Paths = [
         title: "workers",
         roles: RULES["workers"]["GET"]
     },
-
+    {
+        path: "dumps",
+        title: "dumps",
+        roles: RULES["dumps"]["GET"]
+    }
 ]
 
 const useStyles = makeStyles(theme => ({

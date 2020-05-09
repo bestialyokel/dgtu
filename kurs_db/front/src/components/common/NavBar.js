@@ -74,7 +74,7 @@ export default function MenuAppBar(props) {
             <Toolbar>
                 <Typography variant="h6" className={classes.title}>
                     <Link className={classes.link} to="/">
-                        Мутант на реакте ((16 мегабайт бандл и 80+мб озу)) готов, Милорд
+                        Мутант на js готов
                     </Link>
                 </Typography>
                 <div>

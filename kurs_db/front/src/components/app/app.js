@@ -16,7 +16,7 @@ import Login from '../common/Login'
 import {AUTH_STATUS, RULES} from '../../utils/constants'
 import { UserContext, TokenContext } from '../../context/context'
 
-import {Appeals, Clients, Contracts, Services, Tariffs, Jobs, Workers} from "../views"
+import {Appeals, Clients, Contracts, Services, Tariffs, Jobs, Workers, Dumps} from "../views"
 import {Appeal, Client, Contract, Service, Tariff, Job, Worker} from "../views/subviews"
 
 
@@ -172,7 +172,10 @@ const App = (props) => {
                             </Route>,
                                 RULES["workers"]["GET"].includes(user.role) &&
                                 <Route path="/workers/:id"><Worker/></Route>,
-                                <Route path="/test"><Tariff/></Route>,
+                            RULES["dumps"]["GET"].includes(user.role) &&
+                            <Route exact path="/dumps">
+                                <Dumps logOut={logOut}/>
+                            </Route>,
                         ]
                     }
                     {/* not login*/}

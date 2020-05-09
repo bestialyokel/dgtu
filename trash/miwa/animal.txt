@@ -1,0 +1,6 @@
+Animals
+Name,Weight,Age,xyi
+a,b,c,d
+normalnoeimya,horoshiiwes,serezniivozrast,nicecock
+novenki,12,312,dsa,d
+new,record,rabotai,pls
