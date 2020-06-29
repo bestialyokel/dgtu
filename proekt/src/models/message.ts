@@ -3,31 +3,34 @@ import { MessageDAO } from "../daos"
 import { Message } from "../types?"
 
 export default class MessageModel extends Model<Message> {
-    constructor(private dao: MessageDAO) {
-        super()
+    constructor(protected dao: MessageDAO) {
+        super(dao)
     }
 
     tryValidate(data: object) : Message {
-        let message = this.dao.tryConvert(data)
-        return message
+        return this.dao.tryConvert(data)
     }
 
-    async getOne(id: number) : Promise<Message> {
-        return await this.dao.getOne(id)
+    getByID(id: number) : never {
+        throw 0;
     }
 
-    async addOne(data: Object) : Promise<Message> {
+    async getConversationMessages(idConversation: number) : Promise<Message[]> {
+        return await this.dao.getConversationMessages(idConversation)
+    }
+
+    async addOne(data: object) : Promise<Message> {
         const message = this.tryValidate(data)
         return await this.dao.addOne(message)
     }
     
-    async updateOne(id: number, data: Object) : Promise<Message> {
+    async updateByID(id: number, data: object) : Promise<Message> {
         const message = this.tryValidate(data)
-        return await this.dao.updateOne(id, message)
+        return await this.dao.updateByID(id, message)
     }
 
-    async deleteOne(id: number) : Promise<Message> {
-        return await this.dao.deleteOne(id)
+    async deleteByID(id: number) : Promise<Message> {
+        return await this.dao.deleteByID(id)
     }
 }
 

@@ -1,40 +1,57 @@
 import DataAccessObject from './dao'
-import {Pool} from 'pg'
-import {UserConversationPair, User} from "../types?"
+import {UserConversationPair} from "../types?"
 import {DaoError} from '../errors'
+import {IQueryable} from '../types?'
 
-
+const _fields: object = {
+    idUser: "id_user",
+    idConversation: "id_conversation"
+}
 
 export default class UserConversationPairDAO extends DataAccessObject<UserConversationPair> {
-    constructor(driver: Pool, tableName: string) {
+    constructor(driver: IQueryable, tableName: string) {
         super(driver, tableName)
     }
+
+    updateByID() : never {
+        throw "plsno"
+    }
+
+    getByID() : never {
+        throw "plsno"
+    }
+
+    deleteByID() : never {
+        throw "plsno"
+    }
+    
+    
 
     async addOne(data: UserConversationPair) : Promise<UserConversationPair> {
         try {
             const {idUser, idConversation} = data
-            const sql = `INSERT INTO ${this.tableName}(id_user, id_conversation) VALUES(${idUser}, ${idConversation}) RETURNING *`
-            const {rows} = await this.driver.query(sql)
+            const sql = `INSERT INTO ${this.tableName}(${_fields["idUser"]}, ${_fields["idConversation"]}) VALUES(${idUser}, ${idConversation}) RETURNING *`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
         }
     }
 
-    async getUserConversations(idUser: number) : Promise<UserConversationPair[]> {
+    async getUserConversationsIDs(idUser: number) : Promise<UserConversationPair[]> {
         try {
-            const sql = `SELECT * FROM ${this.tableName} WHERE id_user = ${idUser}`
-            const {rows} = await this.driver.query(sql)
+            const sql = `SELECT * FROM ${this.tableName} WHERE ${_fields["idUser"]} = ${idUser}`
+            const rows = await this.driver.query(sql)
             return rows.map(x => this.tryConvert(x))
         } catch(error) {
             throw new DaoError(error)
         }
     }
 
-    async getConversationUsers(idConversation: number) : Promise<UserConversationPair[]> {
+    async getConversationUsersIDs(idConversation: number) : Promise<UserConversationPair[]> {
         try {
-            const sql = `SELECT * FROM ${this.tableName} WHERE id_conversation = ${idConversation}`
-            const {rows} = await this.driver.query(sql)
+            const sql = `SELECT * FROM ${this.tableName} WHERE ${_fields["idConversation"]} = ${idConversation}`
+            const rows = await this.driver.query(sql)
             return rows.map(x => this.tryConvert(x))
         } catch(error) {
             throw new DaoError(error)
@@ -44,21 +61,26 @@ export default class UserConversationPairDAO extends DataAccessObject<UserConver
     async deleteOne(data: UserConversationPair) : Promise<UserConversationPair> {
         try {
             const {idUser, idConversation} = data
-            const sql = `DELETE FROM ${this.tableName} WHERE id_user = ${idUser} AND id_conversation = ${idConversation} RETURNING *`
-            const {rows} = await this.driver.query(sql)
+            const sql = `DELETE FROM ${this.tableName} WHERE ${_fields["idUser"]} = ${idUser} AND ${_fields["idConversation"]} = ${idConversation} RETURNING *`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
         }
     }
 
-    tryConvert(data: object) : UserConversationPair{
-        if (data instanceof Object) {
-            return {
-                idUser: data["id_user"],
-                idConversation: data["id_conversation"]
-            } as UserConversationPair
+    tryConvert(data: object) : UserConversationPair {
+        let conversation = {}
+
+        if (data == null)
+            return null
+
+        for (const [field, value] of Object.entries(_fields)) {
+            conversation[field] = data[value]
         }
-        return null
-    } 
+
+        return conversation as UserConversationPair
+        
+    }
 }
+

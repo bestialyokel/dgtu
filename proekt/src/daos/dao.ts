@@ -1,9 +1,10 @@
-import {Pool} from 'pg'
 import {DaoError} from '../errors'
 
-export default abstract class DataAccessObject<T> {
+import {IQueryable} from '../types?'
 
-    constructor(protected driver: Pool, 
+
+export default abstract class DataAccessObject<T> {
+    constructor(protected driver: IQueryable, 
                 protected tableName: string) {
 
     }
@@ -12,4 +13,9 @@ export default abstract class DataAccessObject<T> {
     */
 
     abstract tryConvert(data: object) : T
+
+    abstract getByID(id: number) : Promise<T>
+    abstract deleteByID(id: number) : Promise<any>
+    abstract addOne(data: T) : Promise<any>
+    abstract updateByID(id: number, data: T) : Promise<any>
 }

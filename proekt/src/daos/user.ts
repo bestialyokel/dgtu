@@ -1,29 +1,33 @@
 import DataAccessObject from './dao'
-import {Pool} from 'pg'
 import {User} from "../types?"
 import {DaoError} from '../errors'
+import {IQueryable} from '../types?'
 
-
+const _fields: object = {
+    idUser: "id",
+    login: "login",
+    password: "password",
+}
 
 export default class UserDAO extends DataAccessObject<User> {
-    constructor(driver: Pool, tableName: string) {
+    constructor(driver: IQueryable, tableName: string) {
         super(driver, tableName)
     }
 
-    async getOne(id: number) : Promise<User> {
+    async getByID(id: number) : Promise<User> {
         try {
-            const sql = `SELECT * FROM ${this.tableName} WHERE id = ${id}`
-            const {rows} = await this.driver.query(sql)
+            const sql = `SELECT * FROM ${this.tableName} WHERE ${_fields["idUser"]} = ${id}`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
         }
     }
 
-    async deleteOne(id: number) : Promise<User> {
+    async deleteByID(id: number) : Promise<User> {
         try {
-            const sql = `DELETE FROM ${this.tableName} WHERE id = ${id} RETURNING *`
-            const {rows} = await this.driver.query(sql)
+            const sql = `DELETE FROM ${this.tableName} WHERE ${_fields["idUser"]} = ${id} RETURNING *`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
@@ -33,19 +37,19 @@ export default class UserDAO extends DataAccessObject<User> {
     async addOne(data: User) : Promise<User> {
         try {
             const {login, password} = data
-            const sql = `INSERT INTO ${this.tableName}(login, password) VALUES (${login}, ${password}) RETURNING *`
-            const {rows} = await this.driver.query(sql)
+            const sql = `INSERT INTO ${this.tableName}(${_fields["login"]}, ${_fields["password"]}) VALUES (${login}, ${password}) RETURNING *`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
         }
     }
 
-    async updateOne(id: number, data: User) : Promise<User> {
+    async updateByID(id: number, data: User) : Promise<User> {
         try {
             const {login, password} = data
-            const sql = `UPDATE ${this.tableName} SET login = ${login}, password = ${password} WHERE id = ${id} RETURNING *`
-            const {rows} = await this.driver.query(sql, [login, password, id])
+            const sql = `UPDATE ${this.tableName} SET ${_fields["login"]} = ${login}, ${_fields["password"]} = ${password} WHERE ${_fields["idUser"]} = ${id} RETURNING *`
+            const rows = await this.driver.query(sql)
             return this.tryConvert(rows[0])
         } catch(error) {
             throw new DaoError(error)
@@ -53,13 +57,18 @@ export default class UserDAO extends DataAccessObject<User> {
     }
 
     tryConvert(data: object) : User {
-        if (data instanceof Object) {
-            return {
-                id: data["id"],
-                login: data["login"],
-                password: data["password"]
-            } as User
+        let conversation = {}
+        
+        if (data == null)
+            return null
+
+
+        for (const [field, value] of Object.entries(_fields)) {
+            conversation[field] = data[value]
         }
-        return null
+
+        return conversation as User
+        
     }
 }
+

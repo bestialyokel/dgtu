@@ -10,7 +10,7 @@ const pool = new Pool({
 
 ;(async () => {
     try {
-        let {rows} = await pool.query('SELECT * FROM Usersa');
+        let {rows} = await pool.query('SELECT * FROM Users');
         console.log(rows)
     } catch(error) {
         console.log(error.message);

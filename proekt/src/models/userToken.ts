@@ -4,8 +4,8 @@ import { UserTokenDAO } from "../daos";
 
 
 export default class UserTokenModel extends Model<UserToken> {
-    constructor(private dao: UserTokenDAO) {
-        super()
+    constructor(protected dao: UserTokenDAO) {
+        super(dao)
     }
 
     /* Дописать наследников Exception для обработки ошибок, функцию валидации */
@@ -13,13 +13,17 @@ export default class UserTokenModel extends Model<UserToken> {
         const userToken = this.dao.tryConvert(data)
         return userToken
     }
+    
+    updateByID(id: never) : never {
+        throw 0;
+    }
 
     async findOne(key: string) {
         return await this.dao.findOne(key)
     } 
 
-    async getOne(id: number) {
-        return await this.dao.getOne(id)
+    async getByID(id: number) {
+        return await this.dao.getByID(id)
     }
 
     async addOne(data: object) {
@@ -27,8 +31,8 @@ export default class UserTokenModel extends Model<UserToken> {
         return await this.dao.addOne(userToken)
     }
 
-    async deleteOne(id: number) {
-        return await this.dao.deleteOne(id)
+    async deleteByID(id: number) {
+        return await this.dao.deleteByID(id)
     }
 
 }

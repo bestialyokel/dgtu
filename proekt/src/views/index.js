@@ -1,9 +1,10 @@
-class View {
-    constructor() {}
-
-    show(model) {
-        console.warn(model, "this is a virtual method")
+"use strict";
+exports.__esModule = true;
+var View = /** @class */ (function () {
+    function View() {
+        this.showError = console.log;
+        this.showResult = console.log;
     }
-}
-
-module.exports = {View}
+    return View;
+}());
+exports.View = View;

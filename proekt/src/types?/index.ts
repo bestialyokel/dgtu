@@ -27,3 +27,5 @@ export class UserToken {
     key: string;
     idUser: number;
 }
+
+export {default as IQueryable} from './IQueryable'

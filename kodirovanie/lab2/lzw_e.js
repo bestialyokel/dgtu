@@ -16,10 +16,12 @@ let lzw_encode = (text) => {
         if (table.includes(buf)) continue 
         let code = table.indexOf(buf.slice(0, -1))
         result += code < len ? table[code] : code + 256 - len
+        console.log(table[code])
         table.push(buf)
         buf = buf[buf.length - 1]
     }
     result += buf;
+    console.log(table)
     return result
 }
 

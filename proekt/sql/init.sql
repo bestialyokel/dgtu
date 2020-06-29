@@ -12,24 +12,25 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Conversation (
-    id SERIAL PRIMARY KEY
-    name varchar(20),
+    id SERIAL PRIMARY KEY,
+    name varchar(20)
 );
 
 CREATE TABLE User_Token (
     id SERIAL PRIMARY KEY,
-    key varchar(24) PRIMARY KEY,
-    id_user INTEGER REFERENCES Users (id) ON DELETE CASCADE
+    key varchar(24),
+    id_user INTEGER REFERENCES Users (id) ON DELETE CASCADE,
+    UNIQUE(key)
 );
 
 CREATE TABLE User_Conversation_Pair (
     id_user INTEGER REFERENCES Users(id),
-    id_conversation INTEGER REFERENCES Conversation (id)
+    id_conversation INTEGER REFERENCES Conversation(id)
 );
 
 CREATE TABLE Message (
     id SERIAL PRIMARY KEY,
     id_sender INTEGER REFERENCES Users(id),
-    id_conversation INTEGER REFERENCES Conversation (id),
+    id_conversation INTEGER REFERENCES Conversation(id),
     text text
 );

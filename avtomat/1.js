@@ -1,10 +1,10 @@
 const {word, number} = require('./deps')
 
-var alphabet = ['а', 'б', 'в', 'г'];
+var alphabet = ['a','b','c','d','e','f'];
 
 
 
-var x = word(alphabet, 274)
-var y = number(alphabet, 'гааб')
+var x = word(alphabet, 482)
+//var y = number(alphabet, 'гааб')
 
-console.log(x,y);
+console.log(x);
