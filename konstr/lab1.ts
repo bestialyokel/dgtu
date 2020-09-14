@@ -152,7 +152,7 @@ class GameView {
             for (let j = 0; j < n; j++) {
                 const num = cells.raw[j + i*n];
                 if (num > 9) {
-                    this.stdout.write(num == 15 ? '_' : String(num));
+                    this.stdout.write(num ==  n*n - 1 ? '_' : String(num));
                 } else {
                     this.stdout.write(' ' + num)
                 }
@@ -179,7 +179,7 @@ class GameController implements IObserver {
 
     public GameStart() {
 
-        this.moveEmptyCell(10);
+        this.moveEmptyCell(100);
 
         view.addObserver(this);
         view.Bind();
@@ -201,7 +201,7 @@ class GameController implements IObserver {
     }
 
     private isSorted() : boolean {
-        for (let i = 1; i < cells.raw.length - 1; i++) {
+        for (let i = 1; i < cells.raw.length; i++) {
             if (cells.raw[i] < cells.raw[i - 1])
                 return false;
         }
@@ -229,7 +229,7 @@ class GameController implements IObserver {
     }
 }
 
-const cells = new Cells(4);
+const cells = new Cells(5);
 
 const view = new GameView(process.stdin, process.stdout);
 
