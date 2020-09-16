@@ -179,7 +179,7 @@ class GameController implements IObserver {
 
     public GameStart() {
 
-        this.moveEmptyCell(100);
+        this.moveEmptyCell(10);
 
         view.addObserver(this);
         view.Bind();
@@ -229,7 +229,7 @@ class GameController implements IObserver {
     }
 }
 
-const cells = new Cells(5);
+const cells = new Cells(4);
 
 const view = new GameView(process.stdin, process.stdout);
 

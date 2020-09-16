@@ -1,13 +1,7 @@
 node_modules
 
-
-
 *.o
 *.obj
-
-!*.c
-!Makefile
+*.a
 
 *.exe
-
-*.psd
