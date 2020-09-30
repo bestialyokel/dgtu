@@ -5,6 +5,8 @@
 
 #define DEBUG
 
+#define pln(x) std::cout << (x) << std::endl; 
+
 Kosh task = {
     [](double x, double y) -> double { return -2 * y + exp(-x) + cos(2*x); },
     0,
@@ -15,10 +17,10 @@ Kosh task = {
 
 int main(void) {
     std::cout << "euler" << std::endl;
-    euler(task);
+    std::cout << euler(task) << std::endl;
     std::cout << "Runge-Kutta 2" << std::endl;
-    rk2(task);
+    std::cout << rk2(task) << std::endl;
     std::cout << "Runge-Kutta 4" << std::endl;
-    rk4(task);
+    std::cout << rk4(task) << std::endl;
     
 }

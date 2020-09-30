@@ -16,3 +16,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm ${DESTINATION}*
+
