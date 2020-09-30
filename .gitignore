@@ -5,3 +5,5 @@ node_modules
 *.a
 
 *.exe
+
+bin
