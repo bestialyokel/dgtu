@@ -3,10 +3,6 @@
 
 #include "include.h"
 
-#define DEBUG
-
-#define pln(x) std::cout << (x) << std::endl; 
-
 Kosh task = {
     [](double x, double y) -> double { return -2 * y + exp(-x) + cos(2*x); },
     0,
@@ -14,6 +10,27 @@ Kosh task = {
     0.5,
     10,
 };
+
+auto fsol = [](double x, double y) -> double {
+    return 1;
+};
+
+double exact() {
+    double x = task.x0;
+    double y = task.y0;
+
+    for (decltype(task.steps) i = 0; i < task.steps; i++) {
+
+        y = y + task.h * task.f(x, y);
+
+        #ifdef DEBUG
+                std::cout << "it: " << i << " x: " << x << " y: " << y << std::endl;
+        #endif
+
+        x = x + task.h;
+
+    }
+}
 
 int main(void) {
     std::cout << "euler" << std::endl;
