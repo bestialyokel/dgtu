@@ -1,15 +1,15 @@
 
-let N = 100;
+let N = 10;
 
 let t0 = 0;
 
-let T = 10;
+let T = 100;
 
 let tau = 0.1;
 
-let u = 2;
+let u = 0.99;
 
-let h = 1;
+let h = 0.99;
 
 let PREV = Array(N).fill(0);
 
@@ -23,13 +23,15 @@ CUR[0] = 1;
 do {
 
     for (let i = 1; i < N; i++) {
-        NEXT[i] = CUR[i-1] - u * tau * (CUR[i-1] - PREV[i-1]) / h;
+        NEXT[i] = CUR[i] - u * tau * (CUR[i] - CUR[i-1]) / h;
 
     }
+
 
     PREV = [...CUR];
 
     CUR = [...NEXT];
+
 
     t0 += tau;
 
@@ -37,4 +39,4 @@ do {
 
 } while (t0 < T);
 
-console.log(NEXT);
+console.log(CUR, PREV);
