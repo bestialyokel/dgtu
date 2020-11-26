@@ -1,1 +1,0 @@
-g++  -lglut -lGL -lGLEW -lGLU  -lSOIL lab.cpp -o lab

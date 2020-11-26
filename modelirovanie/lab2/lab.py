@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 #входные данные
 N = 150
 h = 1
-T = 3
-t = 0.05
+T = 12
+t = 1.0
 t0 = 0
-a = 0.9
+a = 0.5
 
-y = a*t/h
+y = (a*t)/h
 if y > 1:
     raise ValueError('y > 1')
 
@@ -19,23 +19,18 @@ cur = [0] * N
 next_ = [0] * N
 
 
+def func_Heviside(x):
+    return 1 if x >= 0 else 0
+
 #начальное заполнение
 def reset():
     global N, h, T, t0, a, y, prev, cur, next_
+
     for i in range(N):
-        if 20 - i < 0:
-            prev[i] = 0
-            cur[i] = 0
-            next_[i] = 0
-        else:
-            prev[i] = 1
-            cur[i] = 1
-            next_[i] = 1
+        prev[i] = cur[i] = next_[i] = func_Heviside(20-i)
 
 
     t0 = 0
-    #prev[0] = 1
-    #cur[0] = 1
 
 reset()
 
@@ -136,6 +131,7 @@ for i in range(N):
 
 
 plt.plot(x, hx, '#000000', label='h(20-x')
+
 plt.plot(x, u, '-r')
 plt.plot(x, c, '-g')
 
