@@ -19,19 +19,27 @@ const mulExcept = (A) => {
     return R;
 }
 
-const callLimiter = (f, delay) => {
-    let timerId = 0;
+const SECOND_MS = 1000;
 
-    const runLock = () => {
-        timerId = setTimeout(() => timerId = 0, delay);
-    };
+const callLimiter = (f, maxCount, delay = SECOND_MS) => {
+    let lastTS = performance.now();
+    let cnt = 0;
 
     return (...args) => {
-        if (timerId != 0)
-            return;
+        const nowTS = performance.now();
+
         
-        runLock();
-        f(...args);
+        if (nowTS - lastTS >= delay) {
+            console.log(nowTS, lastTS, '---')
+            lastTS = nowTS;
+            cnt = 0;  
+        }
+
+        if (cnt < maxCount) {
+            cnt += 1;
+            return f(...args);
+        }
+ 
     }
 }
 
@@ -44,28 +52,20 @@ let y = mulExcept(X);
 console.log(y.toString());
 
 
-
-
-
 const btn = document.getElementsByTagName('button')[0];
 
 const handler = (event) => {
-    console.log(event);
+    console.log(event); 
 };
 
-/*
 
-    Это не работает.
-
-*/
-let log = callLimiter(handler, 10);
+let log = callLimiter(handler, 3);
 
 for (let i = 0; i < 1000; i++) {
-    console.log(i)
     log('log');
 }
 
-btn.addEventListener('click', callLimiter(handler, 1000));
+btn.addEventListener('click', callLimiter(handler, 3));
 
 
 
