@@ -59,7 +59,7 @@ const handler = (event) => {
 };
 
 
-let log = callLimiter(handler, 3);
+let log = callLimiter(handler, 2);
 
 for (let i = 0; i < 1000; i++) {
     log('log');
