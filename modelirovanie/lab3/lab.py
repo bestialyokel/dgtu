@@ -1,64 +1,60 @@
 import matplotlib.pyplot as plt
 
-N = 100
-r = 1.0
-L = 0.1
-alpha = 0.7
-p = 0
-t = 60
-T0 = 20
-Tl = 300
-Tr = 100
-temp = [1 for item in range(N)]
-alp = [0 for item in range(N)]
-bet = [1 for item in range(N)]
-a = [0 for item in range(N)]
-b = [0 for item in range(N)]
-c = [0 for item in range(N)]
-f = [0 for item in range(N)]
+
+class LabThree:
+    def __init__(self):
+        self.N = 100
+        self.r = 1.0  # число Куранта
+        self.teta = [1] * self.N
+        self.alp = [0] * self.N
+        self.bet = [1] * self.N
+        self.a = [0] * self.N
+        self.b = [0] * self.N
+        self.c = [0] * self.N
+        self.f = [0] * self.N
+
+    def create_graphic(self):
+        h = 1.0 / (self.N - 1)
+        tau = self.r * h * h    
+        stime = 0.0
+        teta0 = 1.0  # нач температура не используется т.к мы в тете сделали все единицы изначально
+        Bio = 2.0  # число био
+        Toc = 0.0  # темп на правой границе
+        Hvne = 3.0  # коэф теплоотдачи в окр среду
+        Q = 10.0  # интенсивность источника тепла
 
 
-def create_graphic():
-    h = 1.0 / (N - 1)
-    tau = r * h * h
-    Bio = 2.0
-    TRight = 0.0
-    Factor = 3.0
-    Q = 10.0
+        while (stime < tau * 3000.0):
+            stime += tau
+    
+            for i in range(self.N - 1):
+                self.a[i] = self.r
+                self.b[i] = -2 * self.r - 1.0 - Hvne * tau
+                self.c[i] = self.r
+                self.f[i] = -self.teta[i] - Q * tau * (1.0 - h * (i - 1))
+    
+            for i in range(1, self.N - 1):
+                self.alp[i] = -self.a[i] / (self.b[i] + self.c[i] * self.alp[i - 1])
+                self.bet[i] = (self.f[i] - self.bet[i - 1] * self.c[i]) / (self.b[i] + self.c[i] * self.alp[i - 1])
+    
+            self.teta[self.N - 1] = (Bio * Toc * h + self.bet[self.N - 2]) / (1.0 - self.alp[self.N - 2] + Bio * h)
+    
+            for i in range(self.N - 2, 0, -1):
+                self.teta[i] = self.alp[i] * self.teta[i + 1] + self.bet[i]
 
-    stime = 0.0
-    while (stime < tau * 3000.0):
-        stime += tau
-
-        for i in range(N - 1):
-            a[i] = r
-            b[i] = -2 * r - 1.0 - Factor * tau
-            c[i] = r
-            f[i] = -temp[i] - Q * tau * (1.0 - h * (i - 1))
-
-        for i in range(1, N - 1):
-            alp[i] = -a[i] / (b[i] + c[i] * alp[i - 1])
-            bet[i] = (f[i] - bet[i - 1] * c[i]) / (b[i] + c[i] * alp[i - 1])
-
-        temp[N - 1] = (Bio * TRight * h + bet[N - 2]) / (1.0 - alp[N - 2] + Bio * h)
-
-        for i in range(N - 2, 0, -1):
-            temp[i] = alp[i] * temp[i + 1] + bet[i]
-
-
-def output_graphic():
-    create_graphic()
-    x = [0.0] * N
-    y = [0.0] * N
-    for i in range(N):
-        x[i] = i
-        y[i] = temp[i]
-
-    fig = plt.figure()
-    l1 = plt.plot(x, y)
-    fig.legend((l1), ('Line'))
-    plt.show()
+    def output_graphic(self):
+        self.create_graphic()
+        x = [0.0] * self.N
+        y = [0.0] * self.N
+        for i in range(self.N):
+            x[i] = i
+            y[i] = self.teta[i]
+    
+        fig = plt.figure()
+        l1 = plt.plot(x, y)
+        fig.legend((l1), ('Line'))
+        plt.show()
 
 
-output_graphic()
+LabThree().output_graphic()
 

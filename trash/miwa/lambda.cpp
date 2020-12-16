@@ -59,6 +59,8 @@ class Table {
     }
 };
 
+
+
 class MyDB {
     public:
         vector<string> tableFiles;
@@ -251,6 +253,9 @@ class TableView : public Menu {
 int main(void) {
     vector<string> files {"./animal.txt"};
     MyDB db(files);
+
+    vector<int> a = {1,2,3};
+    
 
     try {
         db.connect();
