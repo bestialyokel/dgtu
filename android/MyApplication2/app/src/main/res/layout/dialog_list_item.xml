@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/dialogCard"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/issuerPic"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"></ImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="14dp">
+
+        <TextView
+            android:id="@+id/issuerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"></TextView>
+
+        <TextView
+            android:id="@+id/issuerMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></TextView>
+
+    </LinearLayout>
+
+
+</LinearLayout>
