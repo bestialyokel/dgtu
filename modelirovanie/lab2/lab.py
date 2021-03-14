@@ -11,7 +11,7 @@ a = 0.9
 y = (a*t)/h
 
 if y > 1:
-    raise ValueError('y > 1')
+    raise ValueError('y >1o 1')
 
 def func_Heviside(x):
     return 1 if x >= 0 else 0
